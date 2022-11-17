@@ -1,27 +1,28 @@
-import axios from "axios";
-import logo from "./logo.svg";
-import "./App.css";
-import { useEffect, useState } from "react";
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { Route, Routes } from "react-router-dom"
+import Register from "./pages/Register"
+import RegisterPassword from "./pages/RegisterPassword"
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("")
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/greetings`
-      );
-      setMessage(data?.message || "");
-    })();
-  }, []);
+      )
+      setMessage(data?.message || "")
+    })()
+  }, [])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {message}
-      </header>
+      <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/register/verification" element={<RegisterPassword />} />
+      </Routes>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
