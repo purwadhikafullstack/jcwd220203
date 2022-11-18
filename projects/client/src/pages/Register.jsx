@@ -122,31 +122,33 @@ const Register = () => {
 
   return (
     <Box>
-      <Box
-        textAlign={"center"}
-        mt="20px"
-        minW={{ lg: "960px", md: null, base: null }}
-      >
-        <Image src={logo} height={"27px"} display={"inline"} />
+      <Link to={"/"}>
+        <Box
+          textAlign={"center"}
+          mt="20px"
+          minW={{ lg: "960px", md: null, base: null }}
+        >
+          <Image src={logo} height={"27px"} display={"inline"} />
 
-        <Text
-          fontSize={"24px"}
-          fontWeight="bold"
-          color={"#0095DA"}
-          display="inline"
-          my="auto"
-        >
-          Shop
-        </Text>
-        <Text
-          fontSize={"24px"}
-          fontWeight="bold"
-          color={"#F7931E"}
-          display="inline"
-        >
-          edia
-        </Text>
-      </Box>
+          <Text
+            fontSize={"24px"}
+            fontWeight="bold"
+            color={"#0095DA"}
+            display="inline"
+            my="auto"
+          >
+            Shop
+          </Text>
+          <Text
+            fontSize={"24px"}
+            fontWeight="bold"
+            color={"#F7931E"}
+            display="inline"
+          >
+            edia
+          </Text>
+        </Box>
+      </Link>
       <Box display={"flex"} maxW="1190px" mt="20px" pt="50px" mx={"auto"}>
         <Box
           width={"50%"}
