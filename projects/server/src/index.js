@@ -3,16 +3,19 @@ const express = require("express")
 const cors = require("cors")
 const { join } = require("path")
 const db = require("../models")
+const authRoute = require("../routes/authRoute")
 
 const PORT = process.env.PORT || 8000
 const app = express()
 app.use(
-    cors({
-        origin: [
-            process.env.WHITELISTED_DOMAIN &&
-                process.env.WHITELISTED_DOMAIN.split(","),
-        ],
-    })
+    cors(
+        //     {
+        //     origin: [
+        //         process.env.WHITELISTED_DOMAIN &&
+        //         process.env.WHITELISTED_DOMAIN.split(","),
+        //     ],
+        // }
+    )
 )
 
 app.use(express.json())
@@ -21,6 +24,8 @@ app.use(express.json())
 
 // ===========================
 // NOTE : Add your routes here
+
+app.use("/auth", authRoute)
 
 app.get("/api", (req, res) => {
     res.send(`Hello, this is my API`)
