@@ -178,45 +178,53 @@ const LoginPage = () => {
         <Box >
             {/* logo for mobile */}
             <Box textAlign={"center"} mt="30px" mb={'10px'} minW={"100px"} display={{ lg: "none", md: "none", base: "flex" }} justifyContent={'center'} >
-                <Image src={logo} width={'50px'} display={'inline'} />
-                <Text
-                    fontSize={"30px"}
-                    fontWeight="bold"
-                    color={"#0095DA"}
-                    display="inline"
-                >
-                    Shop
-                </Text>
-                <Text
-                    pl={'0'}
-                    fontSize={"30px"}
-                    fontWeight="bold"
-                    color={"#F7931E"}
-                    display="inline"
-                >
-                    edia
-                </Text>
+                <Link to={'/'}>
+                    <Image src={logo} width={'50px'} display={'inline'} />
+                </Link>
+                <Link to={'/'}>
+                    <Text
+                        fontSize={"30px"}
+                        fontWeight="bold"
+                        color={"#0095DA"}
+                        display="inline"
+                    >
+                        Shop
+                    </Text>
+                    <Text
+                        pl={'0'}
+                        fontSize={"30px"}
+                        fontWeight="bold"
+                        color={"#F7931E"}
+                        display="inline"
+                    >
+                        edia
+                    </Text>
+                </Link>
             </Box>
             {/* logo for dekstop */}
             <Box textAlign={"center"} mt="20px" mb={'15px'} minW={"960px"} display={{ lg: "flex", md: "none", base: "none" }} justifyContent={'center'} >
-                <Image src={logo} width={'50px'} display={'inline'} />
-                <Text
-                    fontSize={"40px"}
-                    fontWeight="bold"
-                    color={"#0095DA"}
-                    display="inline"
-                >
-                    Shop
-                </Text>
-                <Text
-                    pl={'0'}
-                    fontSize={"40px"}
-                    fontWeight="bold"
-                    color={"#F7931E"}
-                    display="inline"
-                >
-                    edia
-                </Text>
+                <Link to={'/'}>
+                    <Image src={logo} width={'50px'} display={'inline'} mt={'5px'} />
+                </Link>
+                <Link to={'/'}>
+                    <Text
+                        fontSize={"40px"}
+                        fontWeight="bold"
+                        color={"#0095DA"}
+                        display="inline"
+                    >
+                        Shop
+                    </Text>
+                    <Text
+                        pl={'0'}
+                        fontSize={"40px"}
+                        fontWeight="bold"
+                        color={"#F7931E"}
+                        display="inline"
+                    >
+                        edia
+                    </Text>
+                </Link>
             </Box>
             <Box display={"flex"} maxW="100%" mt="10px" pt="50px" mx={"auto"} bgColor={'#F9A88C'} height={'590px'} >
                 <Box
