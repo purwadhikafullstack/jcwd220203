@@ -7,7 +7,6 @@ import {
   AlertDialogOverlay,
   Box,
   Button,
-  Flex,
   FormControl,
   FormErrorMessage,
   Image,
@@ -26,7 +25,7 @@ import { axiosInstance } from "../api"
 import * as Yup from "yup"
 import React, { useEffect } from "react"
 import { gapi } from "gapi-script"
-import GoogleLogin, { GoogleLogout } from "react-google-login"
+import GoogleLogin from "react-google-login"
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props"
 
 const clientId =
@@ -82,10 +81,10 @@ const Register = () => {
       })
 
       localStorage.setItem("auth_token", response.data.token)
+      navigate("/")
     } catch (error) {
       console.log(error)
     }
-    navigate("/")
   }
 
   useEffect(() => {
@@ -106,10 +105,10 @@ const Register = () => {
         email: res.profileObj.email,
       })
       localStorage.setItem("auth_token", response.data.token)
+      navigate("/")
     } catch (error) {
       console.log(error)
     }
-    navigate("/")
   }
 
   const onFailure = (err) => {

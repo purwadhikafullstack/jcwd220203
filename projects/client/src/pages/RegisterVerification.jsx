@@ -3,8 +3,6 @@ import {
   Button,
   FormControl,
   FormErrorMessage,
-  Grid,
-  GridItem,
   Image,
   Input,
   InputGroup,
@@ -20,7 +18,7 @@ import { axiosInstance } from "../api"
 import * as Yup from "yup"
 import { useState } from "react"
 
-const RegisterPassword = () => {
+const RegisterVerification = () => {
   const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
   })
@@ -270,4 +268,4 @@ const RegisterPassword = () => {
   )
 }
 
-export default RegisterPassword
+export default RegisterVerification
