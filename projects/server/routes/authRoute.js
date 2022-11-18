@@ -2,7 +2,6 @@ const express = require("express")
 const router = express.Router()
 const { RegisterController } = require("../controllers/RegisterController")
 const { body } = require("express-validator")
-const { verifyToken } = require("../middlewares/authMiddleware")
 
 router.post(
   "/registerEmail",
@@ -11,6 +10,12 @@ router.post(
 )
 router.post(
   "/registerPassword",
+  body(
+    "username",
+    "Username length has to be min 3, and only contain alphanumeric chars"
+  )
+    .isLength({ min: 3 })
+    .isAlphanumeric(),
   body("password", "Password not strong enough").isStrongPassword({
     minLength: 8,
     minNumbers: 1,
