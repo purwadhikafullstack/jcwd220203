@@ -1,4 +1,6 @@
 import axios from "axios"
+import { logout } from "../redux/features/authSlice"
+import { store } from "../redux/store"
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8000",
@@ -22,7 +24,7 @@ axiosInstance.interceptors.response.use(
     if (resError.response.status === 401) {
       console.log("LOGOUT USER")
       localStorage.removeItem("auth_token")
-      // store.dispatch(logout())
+      store.dispatch(logout())
     }
 
     return Promise.reject(resError)

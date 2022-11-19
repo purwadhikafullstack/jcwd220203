@@ -2,6 +2,8 @@ const express = require("express")
 const router = express.Router()
 const { RegisterController } = require("../controllers/RegisterController")
 const { body } = require("express-validator")
+const { authController } = require("../controllers/authController")
+const { verifyToken } = require("../middlewares/authMiddleware")
 
 router.post(
   "/registerEmail",
@@ -31,5 +33,8 @@ router.post(
   body("email").isEmail(),
   RegisterController.loginWithSocialMedia
 )
-// router.get("/verification", RegisterController.verifyUser)
+
+router.post("/login", authController.loginUser)
+router.get("/refresh-token", verifyToken, authController.refreshToken)
+router.post("/loginSocialMedia", authController.loginWithSocialMedia)
 module.exports = router
