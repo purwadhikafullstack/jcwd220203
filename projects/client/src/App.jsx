@@ -1,5 +1,4 @@
 import axios from "axios"
-import "./App.css"
 import { useEffect, useState } from "react"
 import { Route, Routes } from "react-router-dom"
 import LoginPage from "./pages/Login"
@@ -7,12 +6,14 @@ import { useDispatch } from "react-redux"
 import { axiosInstance } from "./api"
 import { login } from "./redux/features/authSlice"
 import GuestRoute from "./component/GuestRoute"
+import Register from "./pages/Register"
+import RegisterVerification from "./pages/RegisterVerification"
 
 function App() {
   const [message, setMessage] = useState("")
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/greetings`
       )
@@ -39,11 +40,9 @@ function App() {
 
       localStorage.setItem("auth_token", response.data.token)
       setAuthCheck(true)
-
     } catch (err) {
       console.log(err)
       setAuthCheck(true)
-
     } finally {
       setAuthCheck(true)
     }
@@ -63,6 +62,11 @@ function App() {
               <LoginPage />
             </GuestRoute>
           }
+        />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/register/verification"
+          element={<RegisterVerification />}
         />
       </Routes>
     </>
