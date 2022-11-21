@@ -17,6 +17,7 @@ import { useFormik } from "formik"
 import { axiosInstance } from "../api"
 import * as Yup from "yup"
 import { useState } from "react"
+import { BiHide, BiShow } from "react-icons/bi"
 
 const RegisterVerification = () => {
   const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -153,7 +154,6 @@ const RegisterVerification = () => {
 
             <form onSubmit={formik.handleSubmit}>
               <Box m="20px 0 8px">
-                {/* borderBottom={"1px solid #e2e8f0"} */}
                 <Box>
                   <Text
                     fontSize={"12px"}
@@ -203,17 +203,16 @@ const RegisterVerification = () => {
                         type={showPassword ? "text" : "password"}
                         onChange={formChangeHandler}
                       />
-                      <InputRightElement width="4.2rem">
+                      <InputRightElement width="3rem">
                         <Button
                           size="sm"
                           _active={false}
-                          // _after={false}
                           _hover={false}
                           onClick={togglePassword}
-                          bgColor={"#0095DA"}
-                          color="white"
+                          color={"#0095DA"}
+                          bgColor="transparent"
                         >
-                          {showPassword ? "Hide" : "Show"}
+                          {showPassword ? <BiShow /> : <BiHide />}
                         </Button>
                       </InputRightElement>
                     </InputGroup>
@@ -222,12 +221,7 @@ const RegisterVerification = () => {
                       {formik.errors.password}
                     </FormErrorMessage>
                   </FormControl>
-                  <Text
-                    fontSize={"12px"}
-                    textAlign="start"
-                    mb="7px"
-                    // fontWeight={"bold"}
-                  >
+                  <Text fontSize={"12px"} textAlign="start" mb="7px">
                     Minimum 8 character
                   </Text>
                 </Box>

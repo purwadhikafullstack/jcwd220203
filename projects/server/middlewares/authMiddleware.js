@@ -23,8 +23,6 @@ const verifyToken = (req, res, next) => {
 
     req.user = verifiedUser
 
-    console.log(verifiedUser)
-
     next()
   } catch (err) {
     console.log(err)

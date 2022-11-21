@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react"
 import { FcGoogle } from "react-icons/fc"
 import { FaFacebook } from "react-icons/fa"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import hero from "../assets/Ecommerce web page-rafiki.svg"
 import logo from "../assets/logo.png"
 import { useFormik } from "formik"
@@ -27,11 +27,15 @@ import React, { useEffect } from "react"
 import { gapi } from "gapi-script"
 import GoogleLogin from "react-google-login"
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props"
+import { useDispatch } from "react-redux"
+import { login } from "../redux/features/authSlice"
 
 const clientId =
   "551516387346-2skc8ac82egk828q4agk7htffth1iiga.apps.googleusercontent.com"
 
 const Register = () => {
+  const location = useLocation()
+  const dispatch = useDispatch()
   const toast = useToast()
   const navigate = useNavigate()
   const { onOpen, isOpen, onClose } = useDisclosure()
@@ -81,10 +85,20 @@ const Register = () => {
       })
 
       localStorage.setItem("auth_token", response.data.token)
+      dispatch(
+        login({
+          id: response.data.data.id,
+          email: response.data.data.email,
+          username: response.data.data.username,
+          phone_number: response.data.data.phone_number,
+          profile_picture: response.data.data.profile_picture,
+        })
+      )
       navigate("/")
     } catch (error) {
       console.log(error)
     }
+    navigate(location.state.from)
   }
 
   useEffect(() => {
@@ -105,10 +119,20 @@ const Register = () => {
         email: res.profileObj.email,
       })
       localStorage.setItem("auth_token", response.data.token)
+      dispatch(
+        login({
+          id: response.data.data.id,
+          email: response.data.data.email,
+          username: response.data.data.username,
+          phone_number: response.data.data.phone_number,
+          profile_picture: response.data.data.profile_picture,
+        })
+      )
       navigate("/")
     } catch (error) {
       console.log(error)
     }
+    navigate(location.state.from)
   }
 
   const onFailure = (err) => {
@@ -209,7 +233,7 @@ const Register = () => {
                 onSuccess={onSuccess}
                 onFailure={onFailure}
                 cookiePolicy={"single_host_origin"}
-                isSignedIn={true}
+                isSignedIn={false}
                 render={(renderProps) => (
                   <Button
                     display={"flex"}
@@ -227,10 +251,9 @@ const Register = () => {
                 )}
               />
 
-              {/* appId="3125096074449200" */}
               <FacebookLogin
                 appId="3125096074449200"
-                autoLoad
+                autoLoad={false}
                 callback={responseFacebook}
                 fields="name,email,picture"
                 render={(renderProps) => (
