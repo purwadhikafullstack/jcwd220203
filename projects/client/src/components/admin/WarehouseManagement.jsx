@@ -264,7 +264,7 @@ const WarehouseManagement = () => {
         </Box>
       )}
       <Modal isOpen={openedEdit} onClose={() => setOpenedEdit(null)}>
-        <ModalContent>
+        <ModalContent bgColor={"#0095DA"}>
           <ModalHeader>Edit Warehouse</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
