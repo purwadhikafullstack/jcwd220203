@@ -8,18 +8,19 @@ const fs = require("fs")
 // Import Routes
 const profileRoute = require("../routes/profileRoute")
 const authRoute = require("../routes/authRoute")
-const warehouseRoute = require("../routes/warehouseRoute.js");
+const warehouseRoute = require("../routes/warehouseRoute.js")
+const userDataRoute = require("../routes/userDataRoute")
 
 const PORT = process.env.PORT || 8000
 const app = express()
 app.use(
-    cors()
-    //     {
-    //     origin: [
-    //         process.env.WHITELISTED_DOMAIN &&
-    //             process.env.WHITELISTED_DOMAIN.split(","),
-    //     ],
-    // }
+  cors()
+  //     {
+  //     origin: [
+  //         process.env.WHITELISTED_DOMAIN &&
+  //             process.env.WHITELISTED_DOMAIN.split(","),
+  //     ],
+  // }
 )
 
 app.use(express.json())
@@ -29,8 +30,8 @@ app.use(express.json())
 // ===========================
 // NOTE : Add your routes here
 
-
-app.use('/warehouse', warehouseRoute)
+app.use("/warehouse", warehouseRoute)
+app.use("/userData", userDataRoute)
 
 app.use("/auth", authRoute)
 app.use("/profile", profileRoute)
@@ -82,13 +83,13 @@ app.get("*", (req, res) => {
 //#endregion
 
 app.listen(PORT, (err) => {
-    if (err) {
-        console.log(`ERROR: ${err}`)
-    } else {
-        db.sequelize.sync({ alter: true })
-        if (!fs.existsSync("public")) {
-            fs.mkdirSync("public")
-        }
-        console.log(`APP RUNNING at ${PORT} ✅`)
+  if (err) {
+    console.log(`ERROR: ${err}`)
+  } else {
+    db.sequelize.sync({ alter: true })
+    if (!fs.existsSync("public")) {
+      fs.mkdirSync("public")
     }
+    console.log(`APP RUNNING at ${PORT} ✅`)
+  }
 })
