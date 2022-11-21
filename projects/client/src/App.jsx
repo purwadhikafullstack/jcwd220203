@@ -15,10 +15,10 @@ import { Box } from "@chakra-ui/react";
 import WarehouseManagement from "./components/admin/WarehouseManagement";
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("")
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/greetings`
       );
@@ -86,4 +86,4 @@ function App() {
   );
 }
 
-export default App;
+export default App
