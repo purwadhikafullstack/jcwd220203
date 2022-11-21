@@ -71,7 +71,9 @@ const LoginPage = () => {
                     login({
                         id: response.data.data.id,
                         email: response.data.data.email,
-                        username: response.data.data.username
+                        username: response.data.data.username,
+                        phone_number: response.data.data.phone_number,
+                        profile_picture: response.data.data.profile_picture
                     })
                 )
                 formik.setFieldValue("email", "")
@@ -117,7 +119,9 @@ const LoginPage = () => {
                 login({
                     id: response.data.data.id,
                     email: response.data.data.email,
-                    username: response.data.data.username
+                    username: response.data.data.username,
+                    phone_number: response.data.data.phone_number,
+                    profile_picture: response.data.data.profile_picture
                 })
             )
         } catch (error) {
@@ -145,7 +149,9 @@ const LoginPage = () => {
                 login({
                     id: response.data.data.id,
                     email: response.data.data.email,
-                    username: response.data.data.username
+                    username: response.data.data.username,
+                    phone_number: response.data.data.phone_number,
+                    profile_picture: response.data.data.profile_picture
                 })
             )
         } catch (error) {
@@ -172,7 +178,6 @@ const LoginPage = () => {
         }
         gapi.load("client:auth2", start)
     }, [])
-
 
     return (
         <Box >
@@ -226,7 +231,9 @@ const LoginPage = () => {
                     </Text>
                 </Link>
             </Box>
-            <Box display={"flex"} maxW="100%" mt="10px" pt="50px" mx={"auto"} bgColor={'#F9A88C'} height={'590px'} >
+
+            {/* background image */}
+            <Box display={"flex"} maxW="100%" mt="10px" pt="50px" mx={"auto"} bgColor={'#E5F9F6'} height={'590px'} >
                 <Box
                     width={"50%"}
                     display={{ lg: "flex", md: "none", base: "none" }}
@@ -256,6 +263,7 @@ const LoginPage = () => {
                     </Box>
                 </Box>
 
+                {/* login box */}
                 <Box fontSize="14px" width={"50%"} mt={'5px'} >
                     <Box
                         w="400px"
@@ -276,6 +284,7 @@ const LoginPage = () => {
                             </Text>
                         </Box>
 
+                        {/* normal login */}
                         <form onSubmit={formik.handleSubmit}>
                             <Box m="20px 0 8px">
                                 <FormControl isInvalid={formik.errors.email}>
@@ -415,6 +424,8 @@ const LoginPage = () => {
                                     )}
                                 />
                             </Box>
+
+                            {/* redirect register */}
                             <Box textAlign={'center'} mt={'30px'}>
                                 <Text
                                     color={'#0095DA'}
