@@ -25,8 +25,8 @@ const authSlice = createSlice({
             state.email = ""
             state.phone_number = 0
             state.profile_picture = ""
-        }
-    }
+        },
+    },
 })
 
 export const { login, logout } = authSlice.actions
