@@ -70,6 +70,7 @@ const LoginPage = () => {
                 dispatch(
                     login({
                         id: response.data.data.id,
+                        role: response.data.data.role,
                         email: response.data.data.email,
                         username: response.data.data.username,
                         phone_number: response.data.data.phone_number,
@@ -118,6 +119,7 @@ const LoginPage = () => {
             dispatch(
                 login({
                     id: response.data.data.id,
+                    role: response.data.data.role,
                     email: response.data.data.email,
                     username: response.data.data.username,
                     phone_number: response.data.data.phone_number,
@@ -148,12 +150,14 @@ const LoginPage = () => {
             dispatch(
                 login({
                     id: response.data.data.id,
+                    role: response.data.data.role,
                     email: response.data.data.email,
                     username: response.data.data.username,
                     phone_number: response.data.data.phone_number,
                     profile_picture: response.data.data.profile_picture
                 })
             )
+
         } catch (error) {
             console.log(error)
         }
