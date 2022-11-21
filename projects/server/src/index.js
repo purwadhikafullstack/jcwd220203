@@ -24,6 +24,9 @@ app.use(express.json())
 // ===========================
 // NOTE : Add your routes here
 
+const warehouseRoute = require("../routes/warehouseRoute.js");
+app.use('/warehouse', warehouseRoute)
+
 app.use("/auth", authRoute)
 
 app.get("/api", (req, res) => {
