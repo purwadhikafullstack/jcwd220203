@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react"
+import { Box, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useState } from "react"
 import { axiosInstance } from "../../api"
@@ -19,7 +19,16 @@ const ManageUserData = () => {
 
   const renderUser = () => {
     return userData.map((val) => {
-      return <Box>{val.username}</Box>
+      return (
+        <Tr>
+          <Td>{val.id}</Td>
+          <Td>{val.profile_picture || "null"}</Td>
+          <Td>{val.username || "null"}</Td>
+          <Td>{val.email}</Td>
+          <Td>{val.phone_number || "null"}</Td>
+          <Td>{val.role || "null"}</Td>
+        </Tr>
+      )
     })
   }
 
@@ -28,8 +37,19 @@ const ManageUserData = () => {
   }, [])
   return (
     <>
-      Halo
-      {renderUser()}
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>ID</Th>
+            <Th>Photo Profile</Th>
+            <Th>Username</Th>
+            <Th>Email</Th>
+            <Th>Phone Number</Th>
+            <Th>Role</Th>
+          </Tr>
+        </Thead>
+        <Tbody>{renderUser()}</Tbody>
+      </Table>
     </>
   )
 }

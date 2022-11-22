@@ -7,6 +7,7 @@ const userDataController = {
         where: {
           is_verify: true,
         },
+        // include: [{ model: db.Role }],
       })
       return res.status(200).json({
         message: "Find All User Data",

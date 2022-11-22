@@ -1,8 +1,8 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes, useLocation } from "react-router-dom"
 import LoginPage from "./pages/Login"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { axiosInstance } from "./api"
 import { login } from "./redux/features/authSlice"
 import GuestRoute from "./component/GuestRoute"
@@ -18,7 +18,9 @@ import Profile from "./pages/profile/Profile"
 import ManageUserData from "./components/admin/ManageUserData"
 
 function App() {
+  const location = useLocation()
   const [message, setMessage] = useState("")
+  const authSelector = useSelector((state) => state.auth)
 
   useEffect(() => {
     ;(async () => {
@@ -62,8 +64,14 @@ function App() {
 
   return (
     <>
-      <SideNavBar />
-      <Box marginLeft="275px" marginTop={"50px"}>
+      {location.pathname === "/admin-dashboard" ||
+      location.pathname === "/manage-user-data" ||
+      location.pathname === "/warehouse-management" ? (
+        <SideNavBar />
+      ) : null}
+
+      {authSelector.role === "admin" ? <SideNavBar /> : null}
+      <Box marginLeft="220px" marginTop={"50px"}>
         <Routes>
           <Route
             path="/login"
