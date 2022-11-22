@@ -2,7 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { Route, Routes, useLocation } from "react-router-dom"
 import LoginPage from "./pages/Login"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { axiosInstance } from "./api"
 import { login } from "./redux/features/authSlice"
 import GuestRoute from "./components/GuestRoute"
@@ -21,9 +21,10 @@ import Profile from "./pages/profile/Profile"
 
 function App() {
   const [message, setMessage] = useState("")
+  const authSelector = useSelector((state) => state.auth)
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/greetings`
       )
@@ -66,50 +67,50 @@ function App() {
 
   return (
     <>
-      {location.pathname === "/login" || location.pathname === "/register" ? null : (
+      {authSelector.RoleId === 3 || authSelector === 2 ? <SideNavBar /> : null}
+
+      {location.pathname === "/login" ||
+      location.pathname === "/register" ||
+      location.pathname === "/reset-password-confirmation" ||
+      location.pathname === "/request-reset-password" ||
+      authSelector.RoleId === 3 ||
+      authSelector.RoleId === 2 ? null : (
         <Box>
           <Navbar />
         </Box>
       )}
 
-      <SideNavBar />
-      <Box marginLeft="275px" marginTop={"50px"}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route
-            path="/login"
-            element={
-              <GuestRoute>
-                <LoginPage />
-              </GuestRoute>
-            }
-          />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/register/verification"
-            element={<RegisterVerification />}
-          />
-          <Route
-            path="/admin-dashboard"
-            element={<AdminDashboard />}
-          />
-          <Route
-            path="/warehouse-management"
-            element={<WarehouseManagement />}
-          />
-          <Route path="/profile" element={<Profile />} />
-          <Route
-            path="/profile/change-password"
-            element={<ChangePassword />}
-          />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
+        />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/register/verification"
+          element={<RegisterVerification />}
+        />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/warehouse-management" element={<WarehouseManagement />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/change-password" element={<ChangePassword />} />
+      </Routes>
 
-        {location.pathname === "/login" || location.pathname === "/register" ? null : (
-          <Box>
-            <Footer />
-          </Box>
-        )}
-      </Box>
+      {location.pathname === "/login" ||
+      location.pathname === "/register" ||
+      location.pathname === "/reset-password-confirmation" ||
+      location.pathname === "/request-reset-password" ||
+      authSelector.RoleId === 3 ||
+      authSelector.RoleId === 2 ? null : (
+        <Box>
+          <Footer />
+        </Box>
+      )}
     </>
   )
 }

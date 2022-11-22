@@ -27,7 +27,15 @@ const RegisterController = {
           message: "Email already registered",
         })
       }
+
+      const findRole = await db.Role.findOne({
+        where: {
+          id: 1,
+        },
+      })
+
       const newUser = await User.create({
+        RoleId: findRole.dataValues.id,
         email,
       })
 
@@ -120,7 +128,20 @@ const RegisterController = {
       })
 
       if (!findUserByEmail) {
+        if (findUserByEmail) {
+          return res.status(400).json({
+            message: "Email already registered",
+          })
+        }
+
+        const findRole = await db.Role.findOne({
+          where: {
+            id: 1,
+          },
+        })
+
         const newUser = await User.create({
+          RoleId: findRole.dataValues.id,
           username,
           email,
           is_verify: true,
