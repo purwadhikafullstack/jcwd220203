@@ -1,12 +1,10 @@
 import { Box, Button, Text, HStack } from "@chakra-ui/react"
-
 import { BiUser } from "react-icons/bi"
-
-import UserInfo from "../../components/profile/UserInfo"
 import { Link } from "react-router-dom"
 import { useSelector } from "react-redux"
+import Address from "../../components/profile/Address"
 
-const Profile = () => {
+const AddressList = () => {
     const authSelector = useSelector((state) => state.auth)
 
     return (
@@ -25,15 +23,14 @@ const Profile = () => {
                     <HStack>
                         {/* Personal Info */}
                         <Box display={"flex"} height="53px" fontWeight={"bold"}>
-                            <Button
-                                p="16px 24px"
-                                color="#0095DA"
-                                borderBottom={"2px solid #0095DA"}
-                                borderRadius="1px"
-                                variant="link"
-                            >
-                                <Text>Personal Data</Text>
-                            </Button>
+                            <Link to="/user/profile">
+                                <Box
+                                    p="16px 24px"
+                                    _hover={{ color: "#0095DA" }}
+                                >
+                                    <Text>Personal Info</Text>
+                                </Box>
+                            </Link>
                         </Box>
 
                         {/* Change Password */}
@@ -50,21 +47,22 @@ const Profile = () => {
 
                         {/* Address List */}
                         <Box display={"flex"} height="53px" fontWeight={"bold"}>
-                            <Link to="/user/profile/address-list">
-                                <Box
-                                    p="16px 24px"
-                                    _hover={{ color: "#0095DA" }}
-                                >
-                                    <Text>Address List</Text>
-                                </Box>
-                            </Link>
+                            <Button
+                                p="16px 24px"
+                                color="#0095DA"
+                                borderBottom={"2px solid #0095DA"}
+                                borderRadius="1px"
+                                variant="link"
+                            >
+                                <Text>Address List</Text>
+                            </Button>
                         </Box>
                     </HStack>
-                    <UserInfo />
                 </Box>
+                <Address />
             </Box>
         </Box>
     )
 }
 
-export default Profile
+export default AddressList

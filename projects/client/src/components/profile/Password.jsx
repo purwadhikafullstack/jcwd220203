@@ -14,11 +14,13 @@ import {
     useToast,
 } from "@chakra-ui/react"
 import { useFormik } from "formik"
+import { useSelector } from "react-redux"
 import * as Yup from "yup"
 import { axiosInstance } from "../../api"
 
-const UserInfo = ({ profile_picture, password }) => {
+const UserInfo = () => {
     const toast = useToast()
+    const authSelector = useSelector((state) => state.auth)
     const formik = useFormik({
         initialValues: {
             password: "",
@@ -26,9 +28,12 @@ const UserInfo = ({ profile_picture, password }) => {
         },
         onSubmit: async ({ password }) => {
             try {
-                const response = await axiosInstance.patch("/profile/3", {
-                    password,
-                })
+                const response = await axiosInstance.patch(
+                    `/profile/${authSelector.id}`,
+                    {
+                        password,
+                    }
+                )
 
                 toast({
                     title: "Updated Success",
@@ -44,7 +49,11 @@ const UserInfo = ({ profile_picture, password }) => {
             }
         },
         validationSchema: Yup.object({
-            password: Yup.string().required().min(3),
+            password: Yup.string().min(3),
+            password_confirmation: Yup.string().oneOf(
+                [Yup.ref("password"), null],
+                "Passwords must match"
+            ),
             // password_confirmaton: Yup.string().when("password", {
             //     is: (val) => (val && val.length > 0 ? true : false),
             //     then: Yup.string().oneOf(
@@ -71,7 +80,7 @@ const UserInfo = ({ profile_picture, password }) => {
                     borderRadius="8px"
                 >
                     <Image
-                        src={profile_picture}
+                        src={authSelector.profile_picture}
                         alt="Jane Doe"
                         w={"258px"}
                         mb="16px"
@@ -97,12 +106,14 @@ const UserInfo = ({ profile_picture, password }) => {
                                 <FormLabel w="300px" mr="16px" align="left">
                                     Password
                                 </FormLabel>
-                                <InputGroup w="100%">
-                                    <Input
-                                        onChange={formChangeHandler}
-                                        name="password"
-                                        defaultValue={password}
-                                    />
+                                <InputGroup w="100%" display="block">
+                                    <Box display="flex" w="70%">
+                                        <Input
+                                            onChange={formChangeHandler}
+                                            name="password"
+                                            defaultValue={authSelector.password}
+                                        />
+                                    </Box>
                                     <FormErrorMessage>
                                         {formik.errors.password}
                                     </FormErrorMessage>
@@ -118,11 +129,13 @@ const UserInfo = ({ profile_picture, password }) => {
                                 <FormLabel w="300px" mr="16px" align="left">
                                     Password Confirmation
                                 </FormLabel>
-                                <InputGroup w="100%">
-                                    <Input
-                                        onChange={formChangeHandler}
-                                        name="password_confirmation"
-                                    />
+                                <InputGroup w="100%" display="block">
+                                    <Box w="70%" display="flex">
+                                        <Input
+                                            onChange={formChangeHandler}
+                                            name="password_confirmation"
+                                        />
+                                    </Box>
                                     <FormErrorMessage>
                                         {formik.errors.password_confirmaton}
                                     </FormErrorMessage>

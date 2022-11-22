@@ -20,7 +20,6 @@ import Profile from "./pages/profile/Profile"
 import AdminRoute from "./components/admin/AdminRoute"
 import GuestRoute from "./components/GuestRoute"
 
-
 function App() {
     const [message, setMessage] = useState("")
     const authSelector = useSelector((state) => state.auth)
@@ -62,65 +61,74 @@ function App() {
             setAuthCheck(true)
         }
     }
-  }
 
-  useEffect(() => {
-    keepUserLoggedIn()
-  }, [])
+    useEffect(() => {
+        keepUserLoggedIn()
+    }, [])
 
-  return (
-    <>
-      {authSelector.RoleId === 3 || authSelector.RoleId === 2 ? <SideNavBar /> : null}
+    return (
+        <>
+            {authSelector.RoleId === 3 || authSelector.RoleId === 2 ? (
+                <SideNavBar />
+            ) : null}
 
-      {location.pathname === "/login" ||
-      location.pathname === "/register" ||
-      location.pathname === "/reset-password-confirmation" ||
-      location.pathname === "/request-reset-password" ||
-      authSelector.RoleId === 3 ||
-      authSelector.RoleId === 2 ? null : (
-        <Box>
-          <Navbar />
-        </Box>
-      )}
+            {location.pathname === "/login" ||
+            location.pathname === "/register" ||
+            location.pathname === "/reset-password-confirmation" ||
+            location.pathname === "/request-reset-password" ||
+            authSelector.RoleId === 3 ||
+            authSelector.RoleId === 2 ? null : (
+                <Box>
+                    <Navbar />
+                </Box>
+            )}
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route
-          path="/login"
-          element={
-            <GuestRoute>
-              <LoginPage />
-            </GuestRoute>
-          }
-        />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/register/verification"
-          element={<RegisterVerification />}
-        />
-        <Route path="/admin-dashboard" element={
-        <AdminRoute>
-          <AdminDashboard />
-        </AdminRoute>
-        
-        } />
-        <Route path="/warehouse-management" element={<WarehouseManagement />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/change-password" element={<ChangePassword />} />
-      </Routes>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route
+                    path="/login"
+                    element={
+                        <GuestRoute>
+                            <LoginPage />
+                        </GuestRoute>
+                    }
+                />
+                <Route path="/register" element={<Register />} />
+                <Route
+                    path="/register/verification"
+                    element={<RegisterVerification />}
+                />
+                <Route
+                    path="/admin-dashboard"
+                    element={
+                        <AdminRoute>
+                            <AdminDashboard />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path="/warehouse-management"
+                    element={<WarehouseManagement />}
+                />
+                <Route path="/profile" element={<Profile />} />
+                <Route
+                    path="/profile/change-password"
+                    element={<ChangePassword />}
+                />
+            </Routes>
 
-      {location.pathname === "/login" ||
-      location.pathname === "/register" ||
-      location.pathname === "/reset-password-confirmation" ||
-      location.pathname === "/request-reset-password" ||
-      authSelector.RoleId === 3 ||
-      authSelector.RoleId === 2 ? null : (
-        <Box>
-          <Footer />
-        </Box>
-      )}
-    </>
-  )
+            {location.pathname === "/login" ||
+            location.pathname === "/register" ||
+            location.pathname === "/reset-password-confirmation" ||
+            location.pathname === "/request-reset-password" ||
+            authSelector.RoleId === 3 ||
+            authSelector.RoleId === 2 ? null : (
+                <Box>
+                    <Footer />
+                </Box>
+            )}
+        </>
+    )
 }
 
 export default App

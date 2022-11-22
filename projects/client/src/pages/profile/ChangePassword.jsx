@@ -1,48 +1,12 @@
 import { Box, Button, Text, HStack } from "@chakra-ui/react"
-import { useEffect } from "react"
-import { useState } from "react"
 import { BiUser } from "react-icons/bi"
-import { axiosInstance } from "../../api"
 import { Link } from "react-router-dom"
 import Password from "../../components/profile/Password"
 import { useSelector } from "react-redux"
-import { useDispatch } from "react-redux"
-import { fillDataProfile } from "../../redux/features/profileSlice"
-import { login } from "../../redux/features/authSlice"
 
 const ChangePassword = () => {
-    const [userProfile, setUserProfile] = useState([])
     const authSelector = useSelector((state) => state.auth)
-    const profileSelector = useSelector((state) => state.profile)
-    const dispatch = useDispatch()
 
-    const fetchUserDataById = async () => {
-        try {
-            const response = await axiosInstance.get("/profile/3")
-
-            setUserProfile([response.data.data])
-            // dispatch(fillDataProfile([response.data.data]))
-            // console.log(response)
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    const renderPassword = () => {
-        return userProfile.map((val) => {
-            return (
-                <Password
-                    key={val.id.toString()}
-                    password={val.password}
-                    profile_picture={val.profile_picture}
-                />
-            )
-        })
-    }
-
-    useEffect(() => {
-        fetchUserDataById()
-    }, [])
     return (
         <Box mt="55px" fontSize={"16px"} color="rgba(0,0,0,.54)">
             <Box w="1208px" marginX={"auto"}>
@@ -57,8 +21,9 @@ const ChangePassword = () => {
 
                 <Box border={"1px solid #dfe1e3"} borderRadius="10px">
                     <HStack>
+                        {/* Personal Info */}
                         <Box display={"flex"} height="53px" fontWeight={"bold"}>
-                            <Link to="/profile">
+                            <Link to="/user/profile">
                                 <Box
                                     p="16px 24px"
                                     _hover={{ color: "#0095DA" }}
@@ -68,6 +33,7 @@ const ChangePassword = () => {
                             </Link>
                         </Box>
 
+                        {/* Change Password */}
                         <Box display={"flex"} height="53px" fontWeight={"bold"}>
                             <Button
                                 p="16px 24px"
@@ -79,8 +45,20 @@ const ChangePassword = () => {
                                 <Text>Change Password</Text>
                             </Button>
                         </Box>
+
+                        {/* Address List */}
+                        <Box display={"flex"} height="53px" fontWeight={"bold"}>
+                            <Link to="/user/profile/address-list">
+                                <Box
+                                    p="16px 24px"
+                                    _hover={{ color: "#0095DA" }}
+                                >
+                                    <Text>Address List</Text>
+                                </Box>
+                            </Link>
+                        </Box>
                     </HStack>
-                    {renderPassword()}
+                    <Password />
                 </Box>
             </Box>
         </Box>

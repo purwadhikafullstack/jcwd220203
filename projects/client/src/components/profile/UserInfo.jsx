@@ -15,15 +15,17 @@ import {
     useToast,
 } from "@chakra-ui/react"
 import { useFormik } from "formik"
-import { useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
 import * as Yup from "yup"
 import { axiosInstance } from "../../api"
-import { addToProfile } from "../../redux/features/profileSlice"
+import { useRef } from "react"
 
-const UserInfo = ({ username, email, phone_number, profile_picture }) => {
+const UserInfo = () => {
     const toast = useToast()
-    // const dispatch = useDispatch()
 
+    const authSelector = useSelector((state) => state.auth)
+
+    const inputFileRef = useRef()
     const formik = useFormik({
         initialValues: {
             username: "",
@@ -44,12 +46,9 @@ const UserInfo = ({ username, email, phone_number, profile_picture }) => {
                     userData.append("profile_picture", profile_picture)
                 }
                 const response = await axiosInstance.patch(
-                    "/profile/3",
+                    `/profile/${authSelector.id}`,
                     userData
                 )
-                // await axiosInstance.post("/profile/3")
-                // fetchUserDataById()
-                // dispatch(addToProfile(response.data.data))
 
                 toast({
                     title: "Updated Success",
@@ -65,8 +64,8 @@ const UserInfo = ({ username, email, phone_number, profile_picture }) => {
             }
         },
         validationSchema: Yup.object({
-            username: Yup.string().required().min(3),
-            phone_number: Yup.number().required().min(3),
+            username: Yup.string().min(3),
+            phone_number: Yup.number().min(3),
         }),
         validateOnChange: false,
     })
@@ -87,12 +86,23 @@ const UserInfo = ({ username, email, phone_number, profile_picture }) => {
                     borderRadius="8px"
                 >
                     <Image
-                        src={profile_picture}
+                        src={authSelector.profile_picture}
                         alt="Jane Doe"
                         w={"258px"}
                         mb="16px"
                         borderRadius={"3px"}
                     />
+                    <Button
+                        w="100%"
+                        _hover={false}
+                        fontWeight="bold"
+                        bgColor={"white"}
+                        border="1px solid #dfe1e3"
+                        borderRadius={"5px"}
+                        onClick={() => inputFileRef.current.click()}
+                    >
+                        Select Photo
+                    </Button>
                     <Input
                         w="100%"
                         _hover={false}
@@ -110,20 +120,9 @@ const UserInfo = ({ username, email, phone_number, profile_picture }) => {
                         name="profile_picture"
                         type="file"
                         color="transparent"
-
-                        // visibility="collapse"
+                        ref={inputFileRef}
+                        display="none"
                     />
-                    {/* <Button
-                        w="100%"
-                        _hover={false}
-                        fontWeight="bold"
-                        bgColor={"white"}
-                        border="1px solid #dfe1e3"
-                        borderRadius={"5px"}
-                        // onClick={handleClick}
-                    >
-                        Select Photo
-                    </Button> */}
 
                     <Text m="12px 0" fontSize={"12px"}>
                         File size: maximum 1,000,000 bytes (1 Megabytes).
@@ -144,18 +143,19 @@ const UserInfo = ({ username, email, phone_number, profile_picture }) => {
                 <Box fontSize="13px" alignItems="flex-start">
                     <Stack spacing="10">
                         {/* Name */}
-
                         <FormControl isInvalid={formik.errors.username}>
                             <HStack>
                                 <FormLabel w="300px" mr="16px" align="left">
                                     Name
                                 </FormLabel>
-                                <InputGroup w="100%">
-                                    <Input
-                                        onChange={formChangeHandler}
-                                        name="username"
-                                        defaultValue={username}
-                                    />
+                                <InputGroup w="100%" display="block">
+                                    <Box display="flex" w="70%">
+                                        <Input
+                                            onChange={formChangeHandler}
+                                            name="username"
+                                            defaultValue={authSelector.username}
+                                        />
+                                    </Box>
 
                                     <FormErrorMessage>
                                         {formik.errors.username}
@@ -170,14 +170,18 @@ const UserInfo = ({ username, email, phone_number, profile_picture }) => {
                                 <FormLabel w="300px" mr="16px" align="left">
                                     Phone Number
                                 </FormLabel>
-                                <InputGroup w="100%">
-                                    <InputLeftAddon children="+62" />
-                                    <Input
-                                        onChange={formChangeHandler}
-                                        name="phone_number"
-                                        defaultValue={phone_number}
-                                        w="100%"
-                                    />
+                                <InputGroup w="100%" display="block">
+                                    <Box display="flex" w="70%">
+                                        <InputLeftAddon children="+62" />
+                                        <Input
+                                            onChange={formChangeHandler}
+                                            name="phone_number"
+                                            defaultValue={
+                                                authSelector.phone_number
+                                            }
+                                            w="100%"
+                                        />
+                                    </Box>
                                     <FormErrorMessage>
                                         {formik.errors.phone_number}
                                     </FormErrorMessage>
@@ -191,13 +195,15 @@ const UserInfo = ({ username, email, phone_number, profile_picture }) => {
                                 <FormLabel w="300px" mr="16px" align="left">
                                     Email
                                 </FormLabel>
-                                <InputGroup w="100%">
-                                    <Input
-                                        onChange={formChangeHandler}
-                                        name="email"
-                                        defaultValue={email}
-                                        isDisabled
-                                    />
+                                <InputGroup w="100%" display="block">
+                                    <Box display="flex" w="70%">
+                                        <Input
+                                            onChange={formChangeHandler}
+                                            name="email"
+                                            defaultValue={authSelector.email}
+                                            isDisabled
+                                        />
+                                    </Box>
                                 </InputGroup>
                             </HStack>
                         </FormControl>
