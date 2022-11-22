@@ -3,6 +3,8 @@ const express = require("express")
 const cors = require("cors")
 const { join } = require("path")
 const db = require("../models")
+const adminRoute = require("../routes/adminRoute")
+
 const fs = require("fs")
 
 // Import Routes
@@ -17,7 +19,7 @@ app.use(
     //     {
     //     origin: [
     //         process.env.WHITELISTED_DOMAIN &&
-    //             process.env.WHITELISTED_DOMAIN.split(","),
+    //         process.env.WHITELISTED_DOMAIN.split(","),
     //     ],
     // }
 )
@@ -28,6 +30,7 @@ app.use(express.json())
 
 // ===========================
 // NOTE : Add your routes here
+app.use("/admin", adminRoute)
 
 
 app.use('/warehouse', warehouseRoute)

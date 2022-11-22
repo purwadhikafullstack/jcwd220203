@@ -18,6 +18,7 @@ import SideNavBar from "./components/SideNavBar"
 import WarehouseManagement from "./components/admin/WarehouseManagement"
 import ChangePassword from "./pages/profile/ChangePassword"
 import Profile from "./pages/profile/Profile"
+import AdminRoute from "./component/admin/AdminRoute"
 
 function App() {
   const [message, setMessage] = useState("")
@@ -67,7 +68,7 @@ function App() {
 
   return (
     <>
-      {authSelector.RoleId === 3 || authSelector === 2 ? <SideNavBar /> : null}
+      {authSelector.RoleId === 3 || authSelector.RoleId === 2 ? <SideNavBar /> : null}
 
       {location.pathname === "/login" ||
       location.pathname === "/register" ||
@@ -95,7 +96,12 @@ function App() {
           path="/register/verification"
           element={<RegisterVerification />}
         />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-dashboard" element={
+        <AdminRoute>
+          <AdminDashboard />
+        </AdminRoute>
+        
+        } />
         <Route path="/warehouse-management" element={<WarehouseManagement />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/change-password" element={<ChangePassword />} />
