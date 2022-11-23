@@ -4,7 +4,10 @@ const { upload } = require("../lib/uploader")
 
 const router = express.Router()
 
+router.get("/", profileController.getUser)
+router.post("/", profileController.addUser)
 router.get("/:id", profileController.getUserProfileById)
+router.delete("/:id", profileController.deleteUser)
 router.patch(
     "/:id",
     upload({

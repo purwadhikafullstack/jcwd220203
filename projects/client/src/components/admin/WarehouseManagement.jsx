@@ -43,6 +43,8 @@ const WarehouseManagement = () => {
       const fetchingWH = await axiosInstance.get(`/warehouse`);
       setData(fetchingWH.data.data);
       setIsLoading(true);
+      // editFormik.setFieldValue("nama_warehouse", openedEdit.nama_warehouse);
+      // editFormik.setFieldValue("address", openedEdit.address);
     } catch (error) {
       console.log(error);
     }
@@ -53,10 +55,10 @@ const WarehouseManagement = () => {
       await axiosInstance.delete(`/warehouse/${id}`);
 
       fetchWarehouse();
-      toast({ title: "Post deleted", status: "info" });
+      toast({ title: "Warehouse deleted", status: "info" });
     } catch (err) {
       console.log(err);
-      toast({ title: "Error deleting data", status: "error" });
+      toast({ title: "Error deleting data warehouse", status: "error" });
     }
   };
 
@@ -96,11 +98,10 @@ const WarehouseManagement = () => {
     formik.setFieldValue(name, value);
   };
 
-
   const editFormik = useFormik({
     initialValues: {
-      nama_warehouse: "",
-      address: "",
+      nama_warehouse: openedEdit ? openedEdit.nama_warehouse : "",
+      address: openedEdit ? openedEdit.address : "",
     },
     onSubmit: async (values) => {
       try {
@@ -162,17 +163,17 @@ const WarehouseManagement = () => {
   };
   useEffect(() => {
     fetchWarehouse();
-  }, [fetchWarehouse, openedEdit]);
+  }, [fetchWarehouse, openedEdit, editFormik]);
 
-  useEffect(() => {
-    if (openedEdit) {
-      editFormik.setFieldValue("nama_warehouse", openedEdit.nama_warehouse);
-      editFormik.setFieldValue("address", openedEdit.address);
-    }
-  }, [openedEdit, editFormik]);
+  // useEffect(() => {
+  //   if (openedEdit) {
+  //     editFormik.setFieldValue("nama_warehouse", openedEdit.nama_warehouse);
+  //     editFormik.setFieldValue("address", openedEdit.address);
+  //   }
+  // });
 
   return (
-    <Box marginBottom={"50px"}>
+    <Box marginBottom={"50px"} marginTop="65px" marginLeft="275px">
       <Text fontSize={"30px"} fontWeight="bold">
         Warehouse Data
       </Text>
@@ -264,30 +265,30 @@ const WarehouseManagement = () => {
         </Box>
       )}
       <Modal isOpen={openedEdit} onClose={() => setOpenedEdit(null)}>
-        <ModalContent bgColor={"#0095DA"}>
+        <ModalContent bgColor="#0095DA" color="white">
           <ModalHeader>Edit Warehouse</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <FormControl isInvalid={editFormik.errors.nama_warehouse}>
-              <FormLabel>Warehouse Name</FormLabel>
-              <Input
-                name="nama_warehouse"
-                type={"text"}
-                onChange={editFormChangeHandler}
-                value={editFormik.values.nama_warehouse}
-              />
-            </FormControl>
-            <FormControl isInvalid={editFormik.errors.address}>
-              <FormLabel>Address</FormLabel>
-              <Input
-                name="address"
-                type={"text"}
-                onChange={editFormChangeHandler}
-                value={editFormik.values.address}
-              />
-            </FormControl>
-          </ModalBody>
-
+            <ModalBody>
+              <FormControl isInvalid={editFormik.errors.nama_warehouse}>
+                <FormLabel>Warehouse Name</FormLabel>
+                <Input
+                  name="nama_warehouse"
+                  type={"text"}
+                  onChange={editFormChangeHandler}
+                  value={editFormik.values.nama_warehouse}
+                  // value={openedEdit.nama_warehouse}
+                />
+              </FormControl>
+              <FormControl isInvalid={editFormik.errors.address}>
+                <FormLabel>Address</FormLabel>
+                <Input
+                  name="address"
+                  type={"text"}
+                  onChange={editFormChangeHandler}
+                  value={editFormik.values.address}
+                />
+              </FormControl>
+            </ModalBody>
           <ModalFooter>
             <Button
               colorScheme="red"

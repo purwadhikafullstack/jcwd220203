@@ -12,7 +12,7 @@ import Logo from "../../assets/Shopedia.png"
 const AdminDashboard = () => {
   return (
     <>
-      <Box marginTop="100px" marginLeft={"20px"} marginRight={"20px"}>
+      <Box marginTop="100px" marginLeft={"275px"} marginRight={"20px"}>
         <Box>
           <Text fontWeight={"bold"} fontSize="30px">
             Content
@@ -31,7 +31,7 @@ const AdminDashboard = () => {
             // alignContent={"center"}
             // textAlign="center"
           />
-          <Text>
+          <Text textAlign="center">
             We are Shopedia, the leading online retailer for all your electronic
             needs. We carry the latest and greatest in electronics, from phones
             and tablets to laptops and gaming consoles. We have the best prices
