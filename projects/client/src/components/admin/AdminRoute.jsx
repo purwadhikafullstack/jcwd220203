@@ -6,7 +6,9 @@ const AdminRoute = ({ children }) => {
 
     const navigate = useNavigate()
 
-    if (!authSelector.id) {
+    if (authSelector.RoleId === 1) {
+        navigate("/")
+    } else {
         navigate("/")
     }
     return children
