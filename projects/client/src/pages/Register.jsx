@@ -89,6 +89,7 @@ const Register = () => {
         login({
           id: response.data.data.id,
           email: response.data.data.email,
+          RoleId: response.data.data.RoleId,
           username: response.data.data.username,
           phone_number: response.data.data.phone_number,
           profile_picture: response.data.data.profile_picture,
@@ -123,6 +124,7 @@ const Register = () => {
         login({
           id: response.data.data.id,
           email: response.data.data.email,
+          RoleId: response.data.data.RoleId,
           username: response.data.data.username,
           phone_number: response.data.data.phone_number,
           profile_picture: response.data.data.profile_picture,
