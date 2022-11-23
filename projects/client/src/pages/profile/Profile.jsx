@@ -50,7 +50,7 @@ const Profile = () => {
 
                         {/* Address List */}
                         <Box display={"flex"} height="53px" fontWeight={"bold"}>
-                            <Link to="/user/profile/address-list">
+                            <Link to="/user/profile/address">
                                 <Box
                                     p="16px 24px"
                                     _hover={{ color: "#0095DA" }}

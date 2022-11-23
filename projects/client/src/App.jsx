@@ -19,6 +19,8 @@ import ChangePassword from "./pages/profile/ChangePassword"
 import Profile from "./pages/profile/Profile"
 import AdminRoute from "./components/admin/AdminRoute"
 import GuestRoute from "./components/GuestRoute"
+import AddressList from "./pages/profile/AddressList"
+
 
 function App() {
     const [message, setMessage] = useState("")
@@ -110,11 +112,15 @@ function App() {
                     path="/warehouse-management"
                     element={<WarehouseManagement />}
                 />
-                <Route path="/profile" element={<Profile />} />
+
+                {/* Profiling Route */}
+                <Route path="/user/profile" element={<Profile />} />
                 <Route
-                    path="/profile/change-password"
+                    path="/user/profile/change-password"
                     element={<ChangePassword />}
                 />
+                <Route path="/user/profile/address" element={<AddressList />} />
+
             </Routes>
 
             {location.pathname === "/login" ||
