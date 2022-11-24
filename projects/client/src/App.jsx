@@ -5,17 +5,18 @@ import LoginPage from "./pages/Login"
 import { useDispatch, useSelector } from "react-redux"
 import { axiosInstance } from "./api"
 import { login } from "./redux/features/authSlice"
-import GuestRoute from "./component/GuestRoute"
+import GuestRoute from "./components/GuestRoute"
 import Register from "./pages/Register"
 import RegisterVerification from "./pages/RegisterVerification"
-import AdminDashboard from "./components/admin/AdminDashboard"
+import AdminDashboard from "./pages/admin/AdminDashboard"
 import "./AdminDashboard.css"
 import SideNavBar from "./components/SideNavBar"
 import { Box } from "@chakra-ui/react"
-import WarehouseManagement from "./components/admin/WarehouseManagement"
+import WarehouseManagement from "./pages/admin/WarehouseManagement"
 import ChangePassword from "./pages/profile/ChangePassword"
 import Profile from "./pages/profile/Profile"
-import ManageUserData from "./components/admin/ManageUserData"
+import ManageUserData from "./pages/admin/ManageUserData"
+import ManageAdminData from "./pages/admin/ManageAdminData"
 
 function App() {
   const location = useLocation()
@@ -66,12 +67,13 @@ function App() {
     <>
       {location.pathname === "/admin-dashboard" ||
       location.pathname === "/manage-user-data" ||
+      location.pathname === "/manage-admin-data" ||
       location.pathname === "/warehouse-management" ? (
         <SideNavBar />
       ) : null}
 
       {authSelector.role === "admin" ? <SideNavBar /> : null}
-      <Box marginLeft="220px" marginTop={"50px"}>
+      <Box>
         <Routes>
           <Route
             path="/login"
@@ -92,6 +94,7 @@ function App() {
             element={<WarehouseManagement />}
           />
           <Route path="/manage-user-data" element={<ManageUserData />} />
+          <Route path="/manage-admin-data" element={<ManageAdminData />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/change-password" element={<ChangePassword />} />
         </Routes>

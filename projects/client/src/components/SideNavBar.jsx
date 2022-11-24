@@ -18,29 +18,34 @@ const SideNavBar = () => {
         {/* Dashboard */}
         <ul>
           <li>
-            <Link href="/admin-dashboard">
+            <Link to="/admin-dashboard">
               <Text>Dashboard Homepage</Text>
             </Link>
           </li>
           <li>
-            <Link href="/warehouse-management">
+            <Link to="/warehouse-management">
               <Text>Warehouse Management</Text>
             </Link>
           </li>
           <li>
-            <a href="#empty">
-              <Text>Change Role Status</Text>
-            </a>
-          </li>
-          <li>
-            <Link to="/manage-user-data">
-              <Text>Manage User Data & Category</Text>
+            <Link to={"/manage-admin-data"}>
+              <Text>Manage Admin Data</Text>
             </Link>
           </li>
           <li>
-            <a href="#empty">
+            <Link to="/manage-user-data">
+              <Text>Manage User Data</Text>
+            </Link>
+          </li>
+          <li>
+            <Link>
               <Text>Manage Product Data</Text>
-            </a>
+            </Link>
+          </li>
+          <li>
+            <Link>
+              <Text>Manage Category</Text>
+            </Link>
           </li>
           <li>
             <a href="#empty">
