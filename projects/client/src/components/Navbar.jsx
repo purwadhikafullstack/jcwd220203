@@ -21,7 +21,7 @@ import {
 
 import { IoMdCart } from "react-icons/io"
 import { BiLogOutCircle } from "react-icons/bi"
-import { Link, Navigate } from "react-router-dom"
+import { Link, Navigate, useLocation } from "react-router-dom"
 import logo from "../assets/logo.png"
 import { BiSearch } from "react-icons/bi"
 import { useDispatch, useSelector } from "react-redux"
@@ -34,6 +34,8 @@ const Navbar = () => {
 
     const dispatch = useDispatch()
     const toast = useToast()
+
+    const location = useLocation()
 
     const logoutBtnHandler = () => {
         localStorage.removeItem("auth_token")
@@ -301,7 +303,7 @@ const Navbar = () => {
                                                     src={authSelector.profile_picture}
                                                 />
                                                 <Text my="auto" padding={"8px"} textTransform={'capitalize'}>
-                                                    {authSelector.username}
+                                                    {authSelector.username.split(" ")[0]}
                                                 </Text>
                                             </Box>
                                         </PopoverTrigger>
@@ -388,7 +390,7 @@ const Navbar = () => {
                             ) : (
                                 // navbar if user not login yet
                                 <Box gap="2" display={{ lg: "flex", md: "flex", base: "none" }}>
-                                    <Link to={"/login"}>
+                                    <Link to={"/login"} replace state={{ from: location }}>
                                         <Box width={"73px"}>
                                             <Button
                                                 _hover={"null"}

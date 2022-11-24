@@ -1,6 +1,6 @@
 const db = require("../models")
 const bcrypt = require("bcrypt")
-const { signToken } = require("../lib/jwt")
+const { signToken, decode } = require("../lib/jwt")
 const fs = require("fs")
 const handlebars = require("handlebars")
 const emailer = require("../Lib/emailer")
@@ -147,6 +147,124 @@ const authController = {
       })
     }
   },
+  requestResetPassword: async (req, res) => {
+    try {
+      const { email } = req.body
+
+      const findUserByEmail = await User.findOne({
+        where: {
+          email: email,
+        },
+      })
+
+      console.log(findUserByEmail)
+
+      if (!findUserByEmail) {
+        return res.status(400).json({
+          message: "Email not found",
+        })
+      }
+
+      const reset_token = signToken({
+        id: findUserByEmail.id,
+      })
+
+      const resetPasswordLink = `http://localhost:3000/reset-password-confirmation?reset_token=${reset_token}`
+
+      const rawHTML = fs.readFileSync("templates/resetPassword.html", "utf-8")
+
+      const compiledHTML = handlebars.compile(rawHTML)
+
+      const htmlResult = compiledHTML({
+        email,
+        resetPasswordLink,
+        username: findUserByEmail.username
+      })
+
+      await emailer({
+        to: email,
+        html: htmlResult,
+        subject: "reset your password",
+        text: "setting new password",
+      })
+
+      return res.status(201).json({
+        message: "Your reset password confirmation has been sent",
+        data: findUserByEmail,
+        token: reset_token,
+      })
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({
+        message: "Server error",
+      })
+    }
+  },
+  inputNewPassword: async (req, res) => {
+    try {
+      const { newPassword, confirmNewPassword, token } = req.body
+
+      if (!token) {
+        return res.status(401).json({
+          message: "User unauthorized",
+        })
+      }
+
+      let decodedToken = decode(token)
+
+      if (!decodedToken) {
+        return res.status(401).json({
+          message: "Unauthorized request",
+        })
+      }
+
+      const findUserByEmail = await User.findOne({
+        where: {
+          id: decodedToken.id,
+        },
+      })
+
+      if (newPassword !== confirmNewPassword) {
+        return res.status(500).json({
+          message: "Password doesn't match"
+        })
+      }
+
+      const passwordUsed = bcrypt.compareSync(
+        newPassword, findUserByEmail.password
+      )
+
+      if (passwordUsed) {
+        return res.status(400).json({
+          message: "the new password must be different from the old password"
+        })
+      }
+
+      const hashedPassword = bcrypt.hashSync(newPassword, 5)
+
+
+      await User.update(
+        {
+          password: hashedPassword,
+        },
+        {
+          where: {
+            id: findUserByEmail.id,
+          },
+        }
+      )
+
+      return res.status(201).json({
+        message: "Password has been reset ",
+      })
+
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({
+        message: "Server error",
+      })
+    }
+  }
 }
 
 module.exports = {

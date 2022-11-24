@@ -34,6 +34,18 @@ router.post(
   RegisterController.loginWithSocialMedia
 )
 
+router.post("/request-reset-password", authController.requestResetPassword)
+router.patch(
+  "/confirm-reset-password",
+  body("newPassword", "Password not strong enough").isStrongPassword({
+    minLength: 8,
+    minNumbers: 1,
+    minUppercase: 1,
+    minSymbols: 1,
+    minLowercase: 1,
+  }),
+  authController.inputNewPassword)
+
 router.post("/login", authController.loginUser)
 router.get("/refresh-token", verifyToken, authController.refreshToken)
 router.post("/loginSocialMedia", authController.loginWithSocialMedia)

@@ -9,7 +9,7 @@ import Register from "./pages/Register"
 import RegisterVerification from "./pages/RegisterVerification"
 import { Box } from "@chakra-ui/react"
 import Navbar from "./components/Navbar"
-import Footer from "./components/Footer"
+import Footer from "./components/Footer/Footer"
 import HomePage from "./pages/Home"
 import AdminDashboard from "./components/admin/AdminDashboard"
 import "./AdminDashboard.css"
@@ -20,6 +20,9 @@ import Profile from "./pages/profile/Profile"
 import AdminRoute from "./components/admin/AdminRoute"
 import GuestRoute from "./components/GuestRoute"
 import AddressList from "./pages/profile/AddressList"
+import { attach } from "./redux/features/resetSlice"
+import ResetPasswordConfirmation from "./pages/ResetPasswordConfirmation"
+import RequestResetPassword from "./pages/RequestResetPassword"
 
 
 function App() {
@@ -27,7 +30,7 @@ function App() {
     const authSelector = useSelector((state) => state.auth)
 
     useEffect(() => {
-        ;(async () => {
+        ; (async () => {
             const { data } = await axios.get(
                 `${process.env.REACT_APP_API_BASE_URL}/greetings`
             )
@@ -64,8 +67,32 @@ function App() {
         }
     }
 
+    const userResetData = async () => {
+        try {
+            const reset_token = localStorage.getItem("reset_token")
+
+            if (!reset_token) {
+                setAuthCheck(true)
+                return
+            }
+
+            const response = await axiosInstance.get("/auth/refresh-token")
+
+            dispatch(attach(response.data.data))
+
+            localStorage.setItem("reset_token", response.data.token)
+            setAuthCheck(true)
+        } catch (err) {
+            console.log(err)
+            setAuthCheck(true)
+        } finally {
+            setAuthCheck(true)
+        }
+    }
+
     useEffect(() => {
         keepUserLoggedIn()
+        userResetData()
     }, [])
 
     return (
@@ -75,11 +102,11 @@ function App() {
             ) : null}
 
             {location.pathname === "/login" ||
-            location.pathname === "/register" ||
-            location.pathname === "/reset-password-confirmation" ||
-            location.pathname === "/request-reset-password" ||
-            authSelector.RoleId === 3 ||
-            authSelector.RoleId === 2 ? null : (
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password-confirmation" ||
+                location.pathname === "/request-reset-password" ||
+                authSelector.RoleId === 3 ||
+                authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Navbar />
                 </Box>
@@ -92,6 +119,20 @@ function App() {
                     element={
                         <GuestRoute>
                             <LoginPage />
+                        </GuestRoute>
+                    }
+                />
+                <Route
+                    path="/reset-password-confirmation"
+                    element={
+                        <ResetPasswordConfirmation />
+                    } />
+
+                <Route
+                    path="/request-reset-password"
+                    element={
+                        <GuestRoute>
+                            <RequestResetPassword />
                         </GuestRoute>
                     }
                 />
@@ -124,11 +165,11 @@ function App() {
             </Routes>
 
             {location.pathname === "/login" ||
-            location.pathname === "/register" ||
-            location.pathname === "/reset-password-confirmation" ||
-            location.pathname === "/request-reset-password" ||
-            authSelector.RoleId === 3 ||
-            authSelector.RoleId === 2 ? null : (
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password-confirmation" ||
+                location.pathname === "/request-reset-password" ||
+                authSelector.RoleId === 3 ||
+                authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Footer />
                 </Box>

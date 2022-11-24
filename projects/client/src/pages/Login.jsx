@@ -32,6 +32,9 @@ const clientId =
     "551516387346-2skc8ac82egk828q4agk7htffth1iiga.apps.googleusercontent.com"
 
 const LoginPage = () => {
+    const authSelector = useSelector((state) => state.auth)
+
+    console.log(authSelector)
     const [showPassword, setShowPassword] = useState(false)
 
     const dispatch = useDispatch()
@@ -74,6 +77,7 @@ const LoginPage = () => {
                         username: response.data.data.username,
                         phone_number: response.data.data.phone_number,
                         profile_picture: response.data.data.profile_picture,
+                        is_verify: response.data.data.is_verify
                     })
                 )
                 formik.setFieldValue("email", "")
@@ -125,6 +129,7 @@ const LoginPage = () => {
                     username: response.data.data.username,
                     phone_number: response.data.data.phone_number,
                     profile_picture: response.data.data.profile_picture,
+                    is_verify: response.data.data.is_verify
                 })
             )
         } catch (error) {
@@ -159,6 +164,7 @@ const LoginPage = () => {
                     username: response.data.data.username,
                     phone_number: response.data.data.phone_number,
                     profile_picture: response.data.data.profile_picture,
+                    is_verify: response.data.data.is_verify
                 })
             )
         } catch (error) {
@@ -391,7 +397,7 @@ const LoginPage = () => {
                                         </FormErrorMessage>
                                     </FormControl>
                                     <Box>
-                                        <Link to="/login/reset-password">
+                                        <Link to="/request-reset-password">
                                             <Text
                                                 cursor={"pointer"}
                                                 textAlign={"right"}

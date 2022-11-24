@@ -16,6 +16,16 @@ axiosInstance.interceptors.request.use((req) => {
     return req
 })
 
+axiosInstance.interceptors.request.use((req) => {
+    const reset_token = localStorage.getItem("reset_token")
+
+    if (reset_token) {
+        req.headers.authorization = `Bearer ${reset_token}`
+    }
+
+    return req
+})
+
 axiosInstance.interceptors.response.use(
     (resSuccess) => {
         return resSuccess

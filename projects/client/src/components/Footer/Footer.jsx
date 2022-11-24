@@ -1,10 +1,10 @@
 import { Box, Grid, GridItem, HStack, Image, Stack, Text } from "@chakra-ui/react"
-import footer from "../assets/footer.png"
+import footer from "../../assets/footer.png"
 import { BsFacebook, BsInstagram, BsPinterest, BsTwitter } from "react-icons/bs"
-import AppStoreBadge from '../components/AppStoreBadge'
-import PlayStoreBadge from '../components/PlayStoreBadge'
-import shopediaImg from "../assets/shopedia-image.svg"
-import logo from "../assets/logo.png"
+import AppStoreBadge from './AppStoreBadge'
+import PlayStoreBadge from './PlayStoreBadge'
+import shopediaImg from "../../assets/shopedia-image.svg"
+import logo from "../../assets/logo.png"
 
 const Footer = () => {
     return (
