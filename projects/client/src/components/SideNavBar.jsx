@@ -1,11 +1,25 @@
-import { Text } from "@chakra-ui/react"
-import { Link } from "react-router-dom"
+import { Button, Text, useToast } from "@chakra-ui/react"
+import { Link, Navigate, useNavigate } from "react-router-dom"
 import "../AdminDashboard.css"
 import Logo from "../assets/Shopedia.png"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { logout } from "../redux/features/authSlice"
 
 const SideNavBar = () => {
   const authSelector = useSelector((state) => state.auth)
+
+  const dispatch = useDispatch()
+  const toast = useToast()
+
+  const logoutBtnHandler = () => {
+    localStorage.removeItem("auth_token")
+    dispatch(logout())
+    toast({
+      title: "User Logout",
+      status: "info",
+    })
+    Navigate("/")
+  }
 
   return (
     <div className="wrapper">
@@ -14,7 +28,7 @@ const SideNavBar = () => {
         {/* ID data from authselector */}
         <div className="profile">
           <img
-            src= { Logo }
+            src={Logo}
             alt="profile_picture"
           />
           <h3>Hello, {authSelector.username}!</h3>
@@ -49,7 +63,7 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li>
-            <Link>
+            <Link to="/admin/category">
               <Text>Manage Category</Text>
             </Link>
           </li>
@@ -68,9 +82,12 @@ const SideNavBar = () => {
               <Text>Sales Report</Text>
             </a>
           </li>
+          <li>
+            <Button ml={'75px'} size={'sm'} mt={'10px'} onClick={logoutBtnHandler}>Logout</Button>
+          </li>
         </ul>
       </div>
-    </div>
+    </div >
   )
 }
 

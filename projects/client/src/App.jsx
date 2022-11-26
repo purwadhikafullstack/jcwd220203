@@ -19,13 +19,13 @@ import WarehouseManagement from "./components/admin/WarehouseManagement"
 import ChangePassword from "./pages/profile/ChangePassword"
 import Profile from "./pages/profile/Profile"
 import AdminRoute from "./components/admin/AdminRoute"
-import GuestRoute from "./components/GuestRoute"
 import AddressList from "./pages/profile/AddressList"
 import { attach } from "./redux/features/resetSlice"
 import ResetPasswordConfirmation from "./pages/ResetPasswordConfirmation"
 import RequestResetPassword from "./pages/RequestResetPassword"
 import ManageUserData from "./components/admin/ManageUserData"
 import ManageAdminData from "./components/admin/ManageAdminData"
+import AdminCategory from "./pages/AdminCategory"
 
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
   const authSelector = useSelector((state) => state.auth)
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/greetings`
       )
@@ -105,11 +105,11 @@ function App() {
       ) : null}
 
       {location.pathname === "/login" ||
-      location.pathname === "/register" ||
-      location.pathname === "/reset-password-confirmation" ||
-      location.pathname === "/request-reset-password" ||
-      authSelector.RoleId === 3 ||
-      authSelector.RoleId === 2 ? null : (
+        location.pathname === "/register" ||
+        location.pathname === "/reset-password-confirmation" ||
+        location.pathname === "/request-reset-password" ||
+        authSelector.RoleId === 3 ||
+        authSelector.RoleId === 2 ? null : (
         <Box>
           <Navbar />
         </Box>
@@ -151,6 +151,16 @@ function App() {
             </AdminRoute>
           }
         />
+
+        <Route
+          path="/admin/category"
+          element={
+            <AdminRoute>
+              <AdminCategory />
+            </AdminRoute>
+          }
+        />
+
         <Route path="/warehouse-management" element={<WarehouseManagement />} />
 
         {/* Profiling Route */}
@@ -162,16 +172,18 @@ function App() {
         <Route path="/user/profile/address" element={<AddressList />} />
       </Routes>
 
-      {location.pathname === "/login" ||
-      location.pathname === "/register" ||
-      location.pathname === "/reset-password-confirmation" ||
-      location.pathname === "/request-reset-password" ||
-      authSelector.RoleId === 3 ||
-      authSelector.RoleId === 2 ? null : (
-        <Box>
-          <Footer />
-        </Box>
-      )}
+      {
+        location.pathname === "/login" ||
+          location.pathname === "/register" ||
+          location.pathname === "/reset-password-confirmation" ||
+          location.pathname === "/request-reset-password" ||
+          authSelector.RoleId === 3 ||
+          authSelector.RoleId === 2 ? null : (
+          <Box>
+            <Footer />
+          </Box>
+        )
+      }
     </>
   )
 }
