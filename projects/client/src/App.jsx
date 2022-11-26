@@ -24,7 +24,6 @@ import { attach } from "./redux/features/resetSlice"
 import ResetPasswordConfirmation from "./pages/ResetPasswordConfirmation"
 import RequestResetPassword from "./pages/RequestResetPassword"
 
-
 function App() {
     const [message, setMessage] = useState("")
     const authSelector = useSelector((state) => state.auth)

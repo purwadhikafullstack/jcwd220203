@@ -1,11 +1,7 @@
 import {
   Box,
-  Button,
-  Grid,
-  GridItem,
   Image,
   Text,
-  VStack,
 } from "@chakra-ui/react";
 import Logo from "../../assets/Shopedia.png"
 

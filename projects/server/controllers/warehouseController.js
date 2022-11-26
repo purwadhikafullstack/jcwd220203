@@ -1,13 +1,48 @@
+// const { axiosInstance } = require("../../client/src/api");
+// const { axiosInstance } = require("../../client/src/api/index");
 const db = require("../models");
+// import axios from "axios"
+const axios = require("axios")
+const { Op } = require("sequelize");
+
 
 const warehouseController = {
   getAllWarehouseData: async (req, res) => {
     try {
-      const findWarehouse = await db.Warehouse.findAll();
-      // console.log(findWarehouse)
+      const page = parseInt(req.query._page) || 0
+      const limit = parseInt(req.query._limit) || 20
+      const search = req.query._keywordHandler || ""
+      const offset = limit * page
+      
+      const totalRows = await db.Warehouse.count({
+        where: {
+          [Op.or]: [
+            { nama_warehouse: { [Op.like]: "%" + search + "%" } },
+            { address: { [Op.like]: "%" + search + "%" } },
+          ],
+        },
+      });
+      // console.log(totalRows)
+      
+      const totalPage = Math.ceil(totalRows / limit);
+      // console.log(offset)
+      const findWarehouse = await db.Warehouse.findAll(
+        {
+        where: {
+          [Op.or]: [
+            { nama_warehouse: { [Op.like]: "%" + search + "%" } },
+            { address: { [Op.like]: "%" + search + "%" } },
+          ],
+        },
+        offset: offset,
+        limit: limit,
+      });
       return res.status(200).json({
         message: "Warehouse data found!",
         data: findWarehouse,
+        limit: limit,
+        totalRows: totalRows,
+        totalPage: totalPage,
       });
     } catch (err) {
       return res.status(500).json({
@@ -18,11 +53,22 @@ const warehouseController = {
   addWarehouseData: async (req, res) => {
     try {
       const { nama_warehouse, address } = req.body;
-
+      const key = "90eb0535a1c742b89d44eee5c92b7909";
+      const location = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${address}&key=${key}`
+      );
+      const locationResult = location.data.results[0].formatted
+      const state = location.data.results[0].components.state
+      const lat = location.data.results[0].geometry.lat
+      const lng = location.data.results[0].geometry.lng
+      // console.log(location.data.results[0])
       await db.Warehouse.create(
         {
           nama_warehouse,
-          address,
+          address: locationResult,
+          state,
+          latitude: lat,
+          longitude: lng,
         },
       );
       return res.status(200).json({
@@ -74,6 +120,18 @@ const warehouseController = {
       });
     }
   },
+  getLocation: async (req, res) => {
+    try {
+      
+
+
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        message: "Server error on getting location"
+      })
+    }
+  }
 };
 
 module.exports = warehouseController;

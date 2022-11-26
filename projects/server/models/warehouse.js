@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
         {
             nama_warehouse: DataTypes.STRING,
             address: DataTypes.STRING,
+            state: DataTypes.STRING,
+            latitude: DataTypes.STRING,
+            longitude: DataTypes.STRING
         },
         {
             sequelize,
