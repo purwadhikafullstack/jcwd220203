@@ -26,6 +26,8 @@ import RequestResetPassword from "./pages/RequestResetPassword"
 import ManageUserData from "./components/admin/ManageUserData"
 import ManageAdminData from "./components/admin/ManageAdminData"
 import AdminCategory from "./pages/AdminCategory"
+import Cart from "./pages/Cart"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 
 function App() {
@@ -143,6 +145,15 @@ function App() {
           path="/register/verification"
           element={<RegisterVerification />}
         />
+
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin-dashboard"
           element={
@@ -164,12 +175,31 @@ function App() {
         <Route path="/warehouse-management" element={<WarehouseManagement />} />
 
         {/* Profiling Route */}
-        <Route path="/user/profile" element={<Profile />} />
+        <Route
+          path="/user/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/user/profile/change-password"
-          element={<ChangePassword />}
+          element=
+          {
+            <ProtectedRoute>
+              <ChangePassword />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/user/profile/address" element={<AddressList />} />
+        <Route
+          path="/user/profile/address"
+          element={
+            <ProtectedRoute>
+              <AddressList />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
       {

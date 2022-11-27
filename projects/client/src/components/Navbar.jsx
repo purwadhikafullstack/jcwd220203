@@ -21,8 +21,9 @@ import {
 
 import { IoMdCart } from "react-icons/io"
 import { BiLogOutCircle } from "react-icons/bi"
-import { Link, Navigate, useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import logo from "../assets/logo.png"
+import emptyCart from "../assets/emptyCart.png"
 import { BiSearch } from "react-icons/bi"
 import { useDispatch, useSelector } from "react-redux"
 import { logout } from "../redux/features/authSlice"
@@ -44,7 +45,6 @@ const Navbar = () => {
             title: "User Logout",
             status: "info",
         })
-        Navigate("/")
     }
 
     return (
@@ -257,17 +257,49 @@ const Navbar = () => {
                                             </Link>
                                         </PopoverTrigger>
                                         <PopoverContent bgColor={'#E5F9F6'}>
-                                            <PopoverHeader
-                                                display={"flex"}
-                                                justifyContent="space-between"
-                                            >
-                                                <Text>Cart(0)</Text>
-                                                <Link to="/cart">
-                                                    <Text color="#F7931E"> See Now</Text>
-                                                </Link>
-                                            </PopoverHeader>
-                                            <PopoverBody>
-                                            </PopoverBody>
+                                            {authSelector.id ? (
+                                                <>
+                                                    <PopoverHeader
+                                                        display={"flex"}
+                                                        justifyContent="space-between"
+                                                    >
+                                                        <Text>Cart(0)</Text>
+                                                        <Link to="/cart">
+                                                            <Text color="#F7931E"> See Now</Text>
+                                                        </Link>
+                                                    </PopoverHeader>
+                                                    <PopoverBody>
+                                                    </PopoverBody>
+                                                </>
+                                            ) :
+                                                <>
+                                                    <PopoverBody>
+                                                        <Box>
+                                                            <Image
+                                                                p="10px"
+                                                                margin={'0 auto'}
+                                                                width={'200px'}
+                                                                src={emptyCart} />
+                                                            <Text
+                                                                color={'#393d43'}
+                                                                textAlign="center"
+                                                                fontWeight={'bold'}
+                                                            >
+                                                                Hey your shopping cart is empty!
+                                                            </Text>
+                                                            <Text
+                                                                mt={'5px'}
+                                                                color={'#919396'}
+                                                                textAlign="center"
+                                                                fontSize={'12px'}
+                                                                mb={'5px'}
+                                                            >
+                                                                Being idle is no fun. Let's fill it with your dream items!
+                                                            </Text>
+                                                        </Box>
+                                                    </PopoverBody>
+                                                </>
+                                            }
                                         </PopoverContent>
                                     </Popover>
                                 </Box>
@@ -366,21 +398,45 @@ const Navbar = () => {
                                                             </Box>
                                                         </Link>
 
-                                                        <Box
-                                                            display={"flex"}
-                                                            _hover={{
-                                                                bgColor: "#A5D8F8",
-                                                                borderRadius: "7px",
-                                                            }}
-                                                            p={"5px 4px"}
-                                                            b="0"
-                                                            onClick={logoutBtnHandler}
-                                                        >
-                                                            <Text>Logout</Text>
-                                                            <Box my="auto" ml="1">
-                                                                <BiLogOutCircle />
+                                                        {location.pathname === "/cart" ||
+                                                            location.pathname === "/transaction" ||
+                                                            location.pathname === "/user/profile" ||
+                                                            location.pathname === "/user/profile/change-password" ||
+                                                            location.pathname === "/user/profile/address" ? (
+                                                            <Link to={"/login"} replace state={{ from: location }}>
+                                                                <Box
+                                                                    display={"flex"}
+                                                                    _hover={{
+                                                                        bgColor: "#A5D8F8",
+                                                                        borderRadius: "7px",
+                                                                    }}
+                                                                    p={"5px 4px"}
+                                                                    b="0"
+                                                                    onClick={logoutBtnHandler}
+                                                                >
+                                                                    <Text>Logout</Text>
+                                                                    <Box my="auto" ml="1">
+                                                                        <BiLogOutCircle />
+                                                                    </Box>
+                                                                </Box>
+                                                            </Link>
+                                                        ) : (
+                                                            <Box
+                                                                display={"flex"}
+                                                                _hover={{
+                                                                    bgColor: "#A5D8F8",
+                                                                    borderRadius: "7px",
+                                                                }}
+                                                                p={"5px 4px"}
+                                                                b="0"
+                                                                onClick={logoutBtnHandler}
+                                                            >
+                                                                <Text>Logout</Text>
+                                                                <Box my="auto" ml="1">
+                                                                    <BiLogOutCircle />
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
+                                                        )}
                                                     </Box>
                                                 </Box>
                                             </PopoverBody>
