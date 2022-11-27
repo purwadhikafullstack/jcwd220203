@@ -13,6 +13,7 @@ import {
   FormLabel,
   Grid,
   GridItem,
+  Image,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -598,7 +599,7 @@ const ManageAdminData = () => {
                 <GridItem>
                   <FormLabel>Profile Picture</FormLabel>
                   <FormControl isInvalid={editFormik.errors.profile_picture}>
-                    <Avatar w={"100%"} h="auto" borderRadius={"0"} />
+                    <Image w={"150px"} h="150px" borderRadius={"0"} />
                     <Input
                       w="100%"
                       _hover={false}

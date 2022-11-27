@@ -30,12 +30,13 @@ import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 
 
+
 function App() {
   const [message, setMessage] = useState("")
   const authSelector = useSelector((state) => state.auth)
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/greetings`
       )
@@ -132,6 +133,9 @@ function App() {
           element={<ResetPasswordConfirmation />}
         />
 
+        <Route path="/manage-admin-data" element={<ManageAdminData />} />
+
+
         <Route
           path="/request-reset-password"
           element={
@@ -154,6 +158,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        
         <Route
           path="/admin-dashboard"
           element={
@@ -214,6 +219,7 @@ function App() {
           </Box>
         )
       }
+
     </>
   )
 }
