@@ -4,26 +4,7 @@ import {
   Text,
   HStack,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  FormLabel,
-  FormControl,
-  Input,
-  FormErrorMessage,
-  Select,
-  ModalCloseButton,
-  Grid,
   useToast,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  Textarea,
 } from "@chakra-ui/react"
 import { BiUser } from "react-icons/bi"
 import { Link } from "react-router-dom"
@@ -35,20 +16,17 @@ import { useEffect } from "react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import FormAddress from "../../components/profile/FormAddress"
+import Alert from "../../components/profile/Alert"
+import EditForm from "../../components/profile/EditForm"
 
 const AddressList = () => {
- const authSelector = useSelector((state) => state.auth)
-  const [province, setProvince] = useState([])
-  const [city, setCity] = useState([])
-  const [districts, setDistricts] = useState([])
-  const [ward, setWard] = useState([])
-  const [selectedProvince, setSelectedProvince] = useState(0)
-  const [selectedCity, setSelectedCity] = useState(0)
-  const [selectedDistricts, setSelectedDistricts] = useState(0)
-  const [openedEdit, setOpenedEdit] = useState(null)
   const authSelector = useSelector((state) => state.auth)
+  const [openedEdit, setOpenedEdit] = useState(null)
   const [address, setAddress] = useState([])
   const [deleteAlert, setDeleteAlert] = useState(null)
+  const [defaultAlert, setDefaultAlert] = useState(null)
+  const [selectedProvince, setSelectedProvince] = useState(0)
+  const [selectedCity, setSelectedCity] = useState(0)
   const {
     onOpen: onOpenAlert,
     isOpen: isOpenAlert,
@@ -68,6 +46,11 @@ const AddressList = () => {
   const doubleOnClick2 = () => {
     setDeleteAlert(null)
     deleteHandler(deleteAlert.id)
+  }
+
+  const doubleOnClick3 = () => {
+    setDefaultAlert(null)
+    setAsDefault(defaultAlert.id)
   }
 
   const toast = useToast()
@@ -102,6 +85,8 @@ const AddressList = () => {
           id={val.id}
           on_delete={() => setDeleteAlert(val)}
           on_edit={() => setOpenedEdit(val)}
+          on_default={() => setDefaultAlert(val)}
+          is_default={val.is_default}
         />
       )
     })
@@ -112,18 +97,16 @@ const AddressList = () => {
       recipients_name: "",
       phone_number: "",
       address_labels: "",
-      // province: "",
-      // city: "",
-      // districts: "",
+      province: "",
+      city: "",
+      districts: "",
       full_address: "",
     },
     onSubmit: async ({
       recipients_name,
       phone_number,
       address_labels,
-      // province,
-      // city,
-      // districts,
+      districts,
       full_address,
     }) => {
       try {
@@ -131,9 +114,9 @@ const AddressList = () => {
           recipients_name,
           phone_number,
           address_labels,
-          // province,
-          // city,
-          // districts,
+          province: selectedProvince,
+          city: selectedCity,
+          districts,
           full_address,
         })
         toast({
@@ -175,8 +158,6 @@ const AddressList = () => {
       recipients_name: "",
       phone_number: "",
       address_labels: "",
-      // province: "",
-      // city: "",
       districts: "",
       full_address: "",
     },
@@ -184,21 +165,21 @@ const AddressList = () => {
       recipients_name,
       phone_number,
       address_labels,
-      // province,
-      // city,
-      // districts,
+      province,
+      city,
+      districts,
       full_address,
     }) => {
       try {
         const response = await axiosInstance.patch(
-          `/userData/editAdmin/${openedEdit.id}`,
+          `/address/updateAddress/${openedEdit.id}`,
           {
             recipients_name,
             phone_number,
             address_labels,
-            // province,
-            // city,
-            // districts,
+            province: selectedProvince,
+            city: selectedCity,
+            districts,
             full_address,
           }
         )
@@ -211,10 +192,8 @@ const AddressList = () => {
         editFormik.setFieldValue("recipients_name", "")
         editFormik.setFieldValue("phone_number", "")
         editFormik.setFieldValue("address_labels", "")
-        // editFormik.setFieldValue("province", "")
-        // editFormik.setFieldValue("city", "")
-        // editFormik.setFieldValue("districts", "")
         editFormik.setFieldValue("full_address", "")
+        editFormik.setFieldValue("districts", "")
         fetchAddres()
         setOpenedEdit(null)
       } catch (error) {
@@ -230,6 +209,7 @@ const AddressList = () => {
       recipients_name: Yup.string(),
       phone_number: Yup.number(),
       address_labels: Yup.string(),
+      districts: Yup.string(),
       full_address: Yup.string(),
     }),
     validateOnChange: false,
@@ -238,110 +218,6 @@ const AddressList = () => {
   const editFormChangeHandler = ({ target }) => {
     const { name, value } = target
     editFormik.setFieldValue(name, value)
-  }
-
-  const fetchProvince = async () => {
-    try {
-      const response = await axiosInstance.get("/address/province")
-
-      setProvince(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const renderProvince = () => {
-    return province.map((val) => {
-      return (
-        <option value={val.id} key={val.id.toString()}>
-          {val.name}
-        </option>
-      )
-    })
-  }
-
-  const fetchCity = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/address/city/${selectedProvince}`
-      )
-
-      setCity(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const renderCity = () => {
-    return city.map((val) => {
-      return (
-        <option value={val.id} key={val.id.toString()}>
-          {val.name}
-        </option>
-      )
-    })
-  }
-
-  const fetchDistricts = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/address/districts/${selectedCity}`
-      )
-
-      setDistricts(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const renderDistricts = () => {
-    return districts.map((val) => {
-      return (
-        <option value={val.id} key={val.id.toString()}>
-          {val.name}
-        </option>
-      )
-    })
-  }
-
-  const fetchWard = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/address/ward/${selectedDistricts}`
-      )
-
-      setWard(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const renderWard = () => {
-    return ward.map((val) => {
-      return (
-        <option value={val.id} key={val.id.toString()}>
-          {val.name}
-        </option>
-      )
-    })
-  }
-
-  const provinceHandler = ({ target }) => {
-    const { value } = target
-    console.log(value)
-    setSelectedProvince(value)
-  }
-
-  const cityHandler = ({ target }) => {
-    const { value } = target
-    console.log(value)
-    setSelectedCity(value)
-  }
-
-  const districtsHandler = ({ target }) => {
-    const { value } = target
-    console.log(value)
-    setSelectedDistricts(value)
   }
 
   const deleteHandler = async (id) => {
@@ -365,6 +241,26 @@ const AddressList = () => {
     }
   }
 
+  const setAsDefault = async (id) => {
+    try {
+      const response = await axiosInstance.patch(`/address/setDefault/${id}`)
+
+      toast({
+        message: "Address set as default",
+        description: response.data.message,
+        status: "success",
+      })
+      fetchAddres()
+    } catch (error) {
+      console.log(error.response)
+      toast({
+        message: "Fail to set default",
+        description: error.response.data.message,
+        status: "error",
+      })
+    }
+  }
+
   useEffect(() => {
     fetchAddres()
   }, [openedEdit, deleteAlert])
@@ -374,20 +270,10 @@ const AddressList = () => {
       editFormik.setFieldValue("full_address", openedEdit.full_address)
       editFormik.setFieldValue("recipients_name", openedEdit.recipients_name)
       editFormik.setFieldValue("phone_number", openedEdit.phone_number)
+      editFormik.setFieldValue("districts", openedEdit.districts)
     }
   }, [openedEdit])
-  useEffect(() => {
-    fetchProvince()
-  }, [])
-  useEffect(() => {
-    fetchCity()
-  }, [selectedProvince])
-  useEffect(() => {
-    fetchDistricts()
-  }, [selectedCity])
-  useEffect(() => {
-    fetchWard()
-  }, [selectedDistricts])
+
   return (
     <Box mt="55px" fontSize={"16px"} color="rgba(0,0,0,.54)">
       <Box w="1208px" marginX={"auto"}>
@@ -451,372 +337,74 @@ const AddressList = () => {
 
       {/* add new address modal */}
       <FormAddress
-        isOpenAddNewAddress={isOpenAddNewAddress}
-        onCloseAddNewAddress={onCloseAddNewAddress}
+        isOpen={isOpenAddNewAddress}
+        onClose={onCloseAddNewAddress}
         onOpen={onOpen}
         formChangeHandler={formChangeHandler}
         formik={formikAddNewAddress}
+        header={"Add Address"}
+        selectProvince={setSelectedProvince}
+        selectCity={setSelectedCity}
       />
 
       {/* Alert Add New Address */}
-      <AlertDialog
+      <Alert
+        header={"Add New Address"}
+        body={"Is the address you entered correct?"}
+        cancelRef={cancelRef}
         isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
         onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent
-            p={"32px 32px 24px"}
-            my="auto"
-            boxSize={"-moz-fit-content"}
-            maxW="600px"
-          >
-            <AlertDialogHeader p="0"></AlertDialogHeader>
-            <AlertDialogBody textAlign={"center"} p="0">
-              <Text fontSize={"16px"} m="0px 16px 16px">
-                Is the data you entered correct?
-              </Text>
-            </AlertDialogBody>
-
-            <AlertDialogFooter p="0" alignSelf="center">
-              <Button
-                ref={cancelRef}
-                onClick={onClose}
-                w="164px"
-                h="48px"
-                mr={"6px"}
-                borderRadius="8px"
-                fontWeight={"bold"}
-                bgColor="white"
-                border="1px solid #F7931E"
-                color={" #F7931E"}
-                _hover={false}
-              >
-                Change
-              </Button>
-              <Button
-                fontWeight={"bold"}
-                bgColor="#F7931E"
-                color={"white"}
-                type="submit"
-                onClick={() => doubleOnClick()}
-                w="164px"
-                h="48px"
-                borderRadius="8px"
-                _hover={false}
-              >
-                Yes, right
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+        onSubmit={() => doubleOnClick()}
+        rightButton={"Add Address"}
+        leftButton={"Change Address"}
+      />
 
       {/* modal edit address */}
-      <Modal
-        isOpen={openedEdit}
-        // onClose={setOpenedEdit(null)}
-        motionPreset="slideInBottom"
-        size={"3xl"}
-      >
-        <form>
-          <ModalOverlay />
-          <ModalContent mt={"90px"} borderRadius="8px" overflow={false}>
-            <ModalHeader
-              fontSize={"24px"}
-              fontWeight="bold"
-              textAlign={"center"}
-              borderBottom="1px solid #dfe1e3"
-              p="0"
-              h="36px"
-            >
-              <Text m="24px 0 16px">Change Address</Text>
-            </ModalHeader>
-            <ModalCloseButton _hover={false} mt="10px" />
-
-            <ModalBody
-              overflowY={"scroll"}
-              maxH="529px"
-              p="24px 40px"
-              fontSize={"14px"}
-            >
-              <Text
-                mb={"24px"}
-                fontSize={"20px"}
-                fontWeight="bold"
-                color={"black"}
-              >
-                Complete the address details
-              </Text>
-              <Box mt="34px" mb="4px">
-                <FormLabel mb="8px">Address Labels</FormLabel>
-                <FormControl isInvalid={editFormik.errors.address_labels}>
-                  <Input
-                    value={editFormik.values.address_labels}
-                    name="address_labels"
-                    type="text"
-                    onChange={editFormChangeHandler}
-                  />
-                  <FormErrorMessage>
-                    {editFormik.errors.address_labels}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-
-              <Box mt="12px">
-                <FormLabel mb={"8px"}>Full Address</FormLabel>
-                <FormControl isInvalid={editFormik.errors.full_address}>
-                  <Textarea
-                    value={editFormik.values.full_address}
-                    name="full_address"
-                    size={"md"}
-                    resize="none"
-                    maxLength={200}
-                    p="12px 8px"
-                    h={"119px"}
-                    onChange={editFormChangeHandler}
-                  />
-
-                  <FormErrorMessage>
-                    {editFormik.errors.full_address}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-
-              <Box mt="34px" mb="4px">
-                <FormLabel mb="8px">Recipient's Name</FormLabel>
-                <FormControl isInvalid={editFormik.errors.recipients_name}>
-                  <Input
-                    value={editFormik.values.recipients_name}
-                    name="recipients_name"
-                    type={"text"}
-                    onChange={editFormChangeHandler}
-                  />
-
-                  <FormErrorMessage>
-                    {editFormik.errors.recipients_name}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-
-              <Box mt="12px">
-                <Grid templateColumns={"repeat(2, 1fr)"} gap="4">
-                  <Box>
-                    <FormLabel mb="8px">Province</FormLabel>
-                    <FormControl
-                    // isInvalid={editFormik.errors.province}
-                    >
-                      <Select
-                        onChange={provinceHandler}
-                        placeholder="Select Province"
-                        // value={editFormik.values.province}
-                      >
-                        {renderProvince()}
-                      </Select>
-                      <FormErrorMessage>
-                        {/* {editFormik.errors.province} */}
-                      </FormErrorMessage>
-                    </FormControl>
-                  </Box>
-                  <Box>
-                    <FormLabel mb={"8px"}>City</FormLabel>
-                    <FormControl
-                    // isInvalid={editFormik.errors.city}
-                    >
-                      <Select onChange={cityHandler} placeholder="Select City">
-                        {/* {renderCity()} */}
-                      </Select>
-                      <FormErrorMessage>
-                        {/* {editFormik.errors.city} */}
-                      </FormErrorMessage>
-                    </FormControl>
-                  </Box>
-                  <Box>
-                    <FormLabel mb="8px">Districts</FormLabel>
-                    <FormControl
-                      onChange={districtsHandler}
-                      // isInvalid={editFormik.errors.province}
-                    >
-                      <Select
-                        onChange={districtsHandler}
-                        placeholder="Select Districs"
-                        // value={editFormik.values.province}
-                      >
-                        {/* {renderDistricts()} */}
-                      </Select>
-                      <FormErrorMessage>
-                        {/* {editFormik.errors.province} */}
-                      </FormErrorMessage>
-                    </FormControl>
-                  </Box>
-                  <Box>
-                    <FormLabel mb={"8px"}>Ward</FormLabel>
-                    <FormControl
-                    // isInvalid={editFormik.errors.city}
-                    >
-                      <Select placeholder="Select Ward">
-                        {/* {renderWard()} */}
-                      </Select>
-                      <FormErrorMessage>
-                        {/* {editFormik.errors.city} */}
-                      </FormErrorMessage>
-                    </FormControl>
-                  </Box>
-                </Grid>
-              </Box>
-
-              <Box mt="34px" mb="4px">
-                <FormLabel mb="8px">Phone Number</FormLabel>
-                <FormControl isInvalid={editFormik.errors.phone_number}>
-                  <Input
-                    value={editFormik.values.phone_number}
-                    name="phone_number"
-                    type="number"
-                    onChange={editFormChangeHandler}
-                  />
-                  <FormErrorMessage>
-                    {editFormik.errors.phone_number}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-
-              <Text m="10px 12px" textAlign={"center"}>
-                By clicking "Save", you agree to the
-                <Text
-                  color={"#F7931E"}
-                  ml="2px"
-                  display="inline"
-                  fontWeight="bold"
-                >
-                  Terms & Conditions
-                </Text>
-              </Text>
-              <Box m="16px 0px" textAlign={"center"}>
-                <Button
-                  p="0px 16px"
-                  fontSize={"16px"}
-                  color="white"
-                  fontWeight={"bold"}
-                  w="80px"
-                  _hover={false}
-                  bgColor="#F7931E"
-                  onClick={onOpenAlert}
-                >
-                  Save
-                </Button>
-              </Box>
-            </ModalBody>
-          </ModalContent>
-        </form>
-      </Modal>
+      <EditForm
+        editFormChangeHandler={editFormChangeHandler}
+        formik={editFormik}
+        isOpenMod={openedEdit}
+        onSubmit={onOpenAlert}
+        onCloseMod={() => setOpenedEdit(null)}
+        selectProvince={setSelectedProvince}
+        selectCity={setSelectedCity}
+      />
 
       {/* Alert Edit address */}
-      <AlertDialog
+      <Alert
+        header={"Edit Address"}
+        body={"Is the address you entered correct?"}
+        cancelRef={cancelRef}
         isOpen={isOpenAlert}
-        leastDestructiveRef={cancelRef}
         onClose={onCloseAlert}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent
-            p={"32px 32px 24px"}
-            my="auto"
-            boxSize={"-moz-fit-content"}
-            maxW="600px"
-          >
-            <AlertDialogHeader p="0"></AlertDialogHeader>
-            <AlertDialogBody textAlign={"center"} p="0">
-              <Text fontSize={"16px"} m="0px 16px 16px">
-                Is the data you entered correct?
-              </Text>
-            </AlertDialogBody>
+        onSubmit={() => doubleOnClick1()}
+        rightButton={"Edit Address"}
+        leftButton={"Change Address"}
+      />
 
-            <AlertDialogFooter p="0" alignSelf="center">
-              <Button
-                ref={cancelRef}
-                onClick={onCloseAlert}
-                w="164px"
-                h="48px"
-                mr={"6px"}
-                borderRadius="8px"
-                fontWeight={"bold"}
-                bgColor="white"
-                border="1px solid #F7931E"
-                color={" #F7931E"}
-                _hover={false}
-              >
-                Change
-              </Button>
-              <Button
-                fontWeight={"bold"}
-                bgColor="#F7931E"
-                color={"white"}
-                type="submit"
-                onClick={doubleOnClick1}
-                w="164px"
-                h="48px"
-                borderRadius="8px"
-                _hover={false}
-              >
-                Yes, right
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+      {/* set as default alert */}
+      <Alert
+        header={"Make Primary Address"}
+        body={`Are you sure you want to make "${defaultAlert?.address_labels}" your primary address? You can only select one primary address.`}
+        cancelRef={cancelRef}
+        isOpen={defaultAlert}
+        onClose={() => setDefaultAlert(null)}
+        onSubmit={() => doubleOnClick3()}
+        leftButton={"Cancel"}
+        rightButton={"Make Primary Address"}
+      />
 
       {/* Alert Delete */}
-      <AlertDialog
+      <Alert
+        header={"Delete Address"}
+        body={`Are you sure you want to delete "${deleteAlert?.address_labels}"? You cannot restore an address that has been deleted.`}
+        cancelRef={cancelRef}
         isOpen={deleteAlert}
-        leastDestructiveRef={cancelRef}
         onClose={() => setDeleteAlert(null)}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent
-            p={"32px 32px 24px"}
-            my="auto"
-            boxSize={"-moz-fit-content"}
-            maxW="600px"
-          >
-            <AlertDialogHeader p="0"></AlertDialogHeader>
-            <AlertDialogBody textAlign={"center"} p="0">
-              <Text fontSize={"16px"} m="0px 16px 16px">
-                Is the data you entered correct??
-              </Text>
-            </AlertDialogBody>
-
-            <AlertDialogFooter p="0" alignSelf="center">
-              <Button
-                ref={cancelRef}
-                onClick={() => setDeleteAlert(null)}
-                w="164px"
-                h="48px"
-                mr={"6px"}
-                borderRadius="8px"
-                fontWeight={"bold"}
-                bgColor="white"
-                border="1px solid #F7931E"
-                color={" #F7931E"}
-                _hover={false}
-              >
-                Change
-              </Button>
-              <Button
-                fontWeight={"bold"}
-                bgColor="#F7931E"
-                color={"white"}
-                type="submit"
-                onClick={() => doubleOnClick2()}
-                w="164px"
-                h="48px"
-                borderRadius="8px"
-                _hover={false}
-              >
-                Sure
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+        onSubmit={() => doubleOnClick2()}
+        leftButton={"Cancel"}
+        rightButton={"Delete"}
+      />
     </Box>
   )
 }

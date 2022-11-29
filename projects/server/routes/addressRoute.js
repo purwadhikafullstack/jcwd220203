@@ -12,16 +12,18 @@ router.delete(
   verifyToken,
   addressController.deleteAddress
 )
+router.patch("/setDefault/:id", verifyToken, addressController.setAsDefault)
 
 // Config Defaults Axios dengan Detail Akun Rajaongkir
-axios.defaults.baseURL = "https://emsifa.github.io/api-wilayah-indonesia/api"
+axios.defaults.baseURL = "https://api.rajaongkir.com/starter"
+axios.defaults.headers.common["key"] = "e216ad3d4659076abbc64528fa8a712d"
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded"
 
 //   Provinsi
 router.get("/province", (req, res) => {
   axios
-    .get("/provinces.json")
+    .get("/province")
     .then((response) => res.json(response.data))
     .catch((err) => res.send(err))
 })
@@ -30,25 +32,7 @@ router.get("/province", (req, res) => {
 router.get("/city/:provinceId", (req, res) => {
   const id = req.params.provinceId
   axios
-    .get(`/regencies/${id}.json`)
-    .then((response) => res.json(response.data))
-    .catch((err) => res.send(err))
-})
-
-// Kecamatan
-router.get("/districts/:cityId", (req, res) => {
-  const id = req.params.cityId
-  axios
-    .get(`/districts/${id}.json`)
-    .then((response) => res.json(response.data))
-    .catch((err) => res.send(err))
-})
-
-// Kelurahan
-router.get("/ward/:districtsId", (req, res) => {
-  const id = req.params.districtsId
-  axios
-    .get(`/villages/${id}.json`)
+    .get(`/city?province=${id}`)
     .then((response) => res.json(response.data))
     .catch((err) => res.send(err))
 })

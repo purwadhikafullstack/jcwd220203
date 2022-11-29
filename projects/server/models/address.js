@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   Address.init(
     {
       recipients_name: DataTypes.STRING,
+      latitude: DataTypes.STRING,
+      longitude: DataTypes.STRING,
       phone_number: DataTypes.STRING,
       address_labels: DataTypes.STRING,
       province: DataTypes.STRING,

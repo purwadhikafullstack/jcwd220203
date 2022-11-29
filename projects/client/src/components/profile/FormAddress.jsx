@@ -4,6 +4,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Grid,
   Input,
   Modal,
   ModalBody,
@@ -11,9 +12,12 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Select,
   Text,
   Textarea,
 } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
+import { axiosInstance } from "../../api"
 
 const FormAddress = ({
   isOpen,
@@ -21,7 +25,75 @@ const FormAddress = ({
   onOpen,
   formik,
   formChangeHandler,
+  header,
+  selectProvince,
+  selectCity,
 }) => {
+  const [province, setProvince] = useState([])
+  const [city, setCity] = useState([])
+  const [selectedProvince, setSelectedProvince] = useState(0)
+  const [selectedCity, setSelectedCity] = useState(0)
+  selectProvince(selectedProvince)
+  selectCity(selectedCity)
+
+  const fetchProvince = async () => {
+    try {
+      const response = await axiosInstance.get("/address/province")
+      setProvince(response.data.rajaongkir.results)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const renderProvince = () => {
+    return province.map((val) => {
+      return (
+        <option value={val.province_id} key={val.province_id.toString()}>
+          {val.province}
+        </option>
+      )
+    })
+  }
+
+  const fetchCity = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/address/city/${selectedProvince}`
+      )
+      setCity(response.data.rajaongkir.results)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const renderCity = () => {
+    return Array.from(city).map((val, i) => {
+      return (
+        <option value={val.city_id} key={i}>
+          {val.type + " "} {val.city_name}
+        </option>
+      )
+    })
+  }
+
+  const provinceHandler = ({ target }) => {
+    const { value } = target
+
+    setSelectedProvince(value)
+  }
+
+  const cityHandler = ({ target }) => {
+    const { value } = target
+
+    setSelectedCity(value)
+  }
+
+  useEffect(() => {
+    fetchProvince()
+  }, [])
+  useEffect(() => {
+    fetchCity()
+  }, [selectedProvince])
   return (
     <Modal
       isOpen={isOpen}
@@ -40,7 +112,7 @@ const FormAddress = ({
             p="0"
             h="36px"
           >
-            <Text m="24px 0 16px">Add Address</Text>
+            <Text m="24px 0 16px">{header}</Text>
           </ModalHeader>
           <ModalCloseButton _hover={false} mt="10px" />
 
@@ -58,6 +130,7 @@ const FormAddress = ({
             >
               Complete the address details
             </Text>
+
             <Box mt="34px" mb="4px">
               <FormLabel mb="8px">Recipient's Name</FormLabel>
               <FormControl isInvalid={formik.errors.recipients_name}>
@@ -106,7 +179,46 @@ const FormAddress = ({
               </FormControl>
             </Box>
 
+            <Box mt="12px">
+              <Grid templateColumns={"repeat(2, 1fr)"} gap="4">
+                <Box>
+                  <FormLabel mb="8px">Province</FormLabel>
+                  <FormControl isInvalid={formik.errors.province}>
+                    <Select
+                      placeholder="--Select Province--"
+                      onChange={provinceHandler}
+                    >
+                      {renderProvince()}
+                    </Select>
+                    <FormErrorMessage>
+                      {formik.errors.province}
+                    </FormErrorMessage>
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormLabel mb="8px">City</FormLabel>
+                  <Select placeholder="--Select City--" onChange={cityHandler}>
+                    {renderCity()}
+                  </Select>
+                </Box>
+              </Grid>
+            </Box>
+
             <Box mt="34px" mb="4px">
+              <FormLabel mb="8px">Districts</FormLabel>
+              <FormControl isInvalid={formik.errors.districts}>
+                <Input
+                  value={formik.values.districts}
+                  name="districts"
+                  type={"text"}
+                  onChange={formChangeHandler}
+                />
+
+                <FormErrorMessage>{formik.errors.districts}</FormErrorMessage>
+              </FormControl>
+            </Box>
+
+            <Box mt="12px">
               <FormLabel mb={"8px"}>Full Address</FormLabel>
               <FormControl isInvalid={formik.errors.full_address}>
                 <Textarea
@@ -147,6 +259,15 @@ const FormAddress = ({
                 _hover={false}
                 bgColor="#F7931E"
                 onClick={onOpen}
+                disabled={
+                  !formik.values.recipients_name ||
+                  !formik.values.phone_number ||
+                  !formik.values.address_labels ||
+                  !formik.values.full_address ||
+                  !formik.values.districts ||
+                  selectedCity === 0 ||
+                  selectedProvince === 0
+                }
               >
                 Save
               </Button>
