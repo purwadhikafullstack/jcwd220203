@@ -136,8 +136,8 @@ const ManageAdminData = () => {
       email,
       password,
       phone_number,
-
       username,
+      WarehouseId,
     }) => {
       try {
         const response = await axiosInstance.post("/userData/addNewAdmin", {
@@ -145,6 +145,7 @@ const ManageAdminData = () => {
           password,
           phone_number,
           username,
+          WarehouseId,
         })
         toast({
           title: "Registration Success",
@@ -194,7 +195,7 @@ const ManageAdminData = () => {
       profile_picture: "",
       username: "",
     },
-    onSubmit: async ({ email, phone_number, profile_picture, username }) => {
+    onSubmit: async ({ email, phone_number, profile_picture, username, WarehouseId }) => {
       try {
         const adminData = new FormData()
 
@@ -212,6 +213,10 @@ const ManageAdminData = () => {
 
         if (username) {
           adminData.append("username", username)
+        }
+        
+        if (WarehouseId) {
+          adminData.append("WarehouseId", WarehouseId)
         }
 
         const response = await axiosInstance.patch(
@@ -287,7 +292,7 @@ const ManageAdminData = () => {
   const renderWarehouse = () => {
     return warehouseData.map((val) => {
       return (
-        <option key={val.id.toString()} value={val.id}>
+        <option key={val.id.toString()} value={val.id.toString()}>
           {val.nama_warehouse}
         </option>
       )
@@ -486,9 +491,10 @@ const ManageAdminData = () => {
               // isInvalid={formikAddNewAdmin.errors.WarehouseId}
               >
                 <Select
-                  isDisabled
-                  // onChange={formChangeHandler}
+                  // isDisabled
+                  onChange={formChangeHandler}
                   placeholder="Select warehouse"
+                  name="WarehouseId"
                 >
                   {renderWarehouse()}
                 </Select>
@@ -661,10 +667,12 @@ const ManageAdminData = () => {
                   // isInvalid={editFormik.errors.WarehouseId}
                   >
                     <Select
-                      isDisabled
+                      // isDisabled
                       // value={editFormik.values.WarehouseId}
                       onChange={editFormChangeHandler}
                       placeholder="Select Warehouse"
+                      name="WarehouseId"
+                      // onChange={(event) => setValue(event.target.value)}
                     >
                       {renderWarehouse()}
                     </Select>

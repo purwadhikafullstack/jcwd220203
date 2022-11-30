@@ -70,6 +70,7 @@ const WarehouseManagement = () => {
       setIsLoading(true);
       setRows(fetchingWH.data.totalRows - maxItemsPage)
       setMaxPage(Math.ceil((fetchingWH.data.totalRows) / maxItemsPage))
+
       // console.log(fetchingWH.data.totalRows)
       setAdmin(fetchingWH.data.data)
     } catch (error) {
@@ -192,6 +193,7 @@ const WarehouseManagement = () => {
           nama_warehouse={val.nama_warehouse}
           address={val.address}
           state={val.state}
+          username={val?.User?.username}
           latitude={val.latitude}
           longitude={val.longitude}
           onDelete={() => deleteBtnHandler(val.id)}
@@ -252,6 +254,7 @@ const WarehouseManagement = () => {
             <Th>Nama</Th>
             <Th>Address</Th>
             <Th>State</Th>
+            <Th>User</Th>
             {/* <Th>Latitude</Th>
             <Th>Longitude</Th> */}
             <Th>Action</Th>

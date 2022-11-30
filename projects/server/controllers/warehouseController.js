@@ -34,6 +34,7 @@ const warehouseController = {
             { address: { [Op.like]: "%" + search + "%" } },
           ],
         },
+        include: [{model: db.User}],
         offset: offset,
         limit: limit,
       });
@@ -62,7 +63,7 @@ const warehouseController = {
       const lat = location.data.results[0].geometry.lat
       const lng = location.data.results[0].geometry.lng
       // console.log(location.data.results[0])
-      await db.Warehouse.create(
+      const data = await db.Warehouse.create(
         {
           nama_warehouse,
           address: locationResult,
@@ -73,6 +74,7 @@ const warehouseController = {
       );
       return res.status(200).json({
         message: "Created new warehouse",
+        data: data,
       });
     } catch (error) {
       return res.status(500).json({

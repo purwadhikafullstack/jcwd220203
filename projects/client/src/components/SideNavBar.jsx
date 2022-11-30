@@ -75,6 +75,11 @@ const SideNavBar = () => {
             </a>
           </li>
           <li>
+            <a href="/user-data">
+              <Text>Change Role Status</Text>
+            </a>
+          </li>
+          <li>
             <a href="#empty">
               <Text>Sales Report</Text>
             </a>

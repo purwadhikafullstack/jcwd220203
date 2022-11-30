@@ -47,7 +47,7 @@ const userDataController = {
   },
   addNewAdmin: async (req, res) => {
     try {
-      const { email, password, phone_number, username } = req.body
+      const { email, password, phone_number, username, WarehouseId } = req.body
 
       const findEmail = await db.User.findOne({
         where: {
@@ -74,12 +74,13 @@ const userDataController = {
 
       const hashedPassword = bcrypt.hashSync(password, 5)
 
+      
       const newUser = await db.User.create({
         email,
         password: hashedPassword,
         username,
         phone_number,
-
+        WarehouseId,
         is_verify: true,
         RoleId: 2,
       })
@@ -101,7 +102,7 @@ const userDataController = {
         req.body.profile_picture = `http://localhost:8000/public/${req.file.filename}`
       }
 
-      const { branch, phone_number, profile_picture, username } = req.body
+      const { branch, phone_number, profile_picture, username, WarehouseId } = req.body
 
       const { id } = req.params
 
@@ -111,6 +112,7 @@ const userDataController = {
           phone_number,
           profile_picture,
           username,
+          WarehouseId
         },
         {
           where: {
