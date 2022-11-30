@@ -20,13 +20,20 @@ import Alert from "../../components/profile/Alert"
 import EditForm from "../../components/profile/EditForm"
 
 const AddressList = () => {
-  const authSelector = useSelector((state) => state.auth)
+ const authSelector = useSelector((state) => state.auth)
+  const [province, setProvince] = useState([])
+  const [city, setCity] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [ward, setWard] = useState([])
+  const [selectedProvince, setSelectedProvince] = useState(0)
+  const [selectedCity, setSelectedCity] = useState(0)
+  const [selectedDistricts, setSelectedDistricts] = useState(0)
+
   const [openedEdit, setOpenedEdit] = useState(null)
   const [address, setAddress] = useState([])
   const [deleteAlert, setDeleteAlert] = useState(null)
   const [defaultAlert, setDefaultAlert] = useState(null)
-  const [selectedProvince, setSelectedProvince] = useState(0)
-  const [selectedCity, setSelectedCity] = useState(0)
+
   const {
     onOpen: onOpenAlert,
     isOpen: isOpenAlert,

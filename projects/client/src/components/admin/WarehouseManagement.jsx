@@ -28,7 +28,7 @@ import {
 } from "@chakra-ui/react";
 // import { useSelector } from "react-redux";
 import { axiosInstance } from "../../api";
-import Warehouse from "./Warehouse";
+import Warehouse from "../../components/admin/Warehouse";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useCallback } from "react";
@@ -44,10 +44,10 @@ const WarehouseManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openedEdit, setOpenedEdit] = useState(null);
   const [openedAdd, setOpenedAdd] = useState(null);
+  
+  
   const [rows, setRows] = useState(0)
-
-
-  const [book, setBook] = useState([])
+  const [admin, setAdmin] = useState([])
   const [pages, setPages] = useState(0)
   const [maxPage, setMaxPage] = useState(0)
   const [page, setPage] = useState(1)
@@ -71,7 +71,7 @@ const WarehouseManagement = () => {
       setRows(fetchingWH.data.totalRows - maxItemsPage)
       setMaxPage(Math.ceil((fetchingWH.data.totalRows) / maxItemsPage))
       // console.log(fetchingWH.data.totalRows)
-      setBook(fetchingWH.data.data)
+      setAdmin(fetchingWH.data.data)
     } catch (error) {
       console.log(error);
     }
@@ -213,7 +213,7 @@ const WarehouseManagement = () => {
   console.warn({pages})
   useEffect(() => {
     fetchWarehouse();
-  }, [fetchWarehouse, openedEdit, page, setPages, pages, keyword, setBook]);
+  }, [fetchWarehouse, openedEdit, page, setPages, pages, keyword, setAdmin]);
 
   useEffect(() => {
     if (openedEdit) {
@@ -266,7 +266,7 @@ const WarehouseManagement = () => {
         <GridItem />
         <GridItem />
         <GridItem>
-          {!book.length ? (
+          {!admin.length ? (
             <Alert status="warning">
               <AlertIcon />
               <AlertTitle>No post found</AlertTitle>
@@ -293,6 +293,7 @@ const WarehouseManagement = () => {
           marginLeft="64%"
           marginTop={"5%"}
           onClick={() => addWarehouse()}
+          w="100px"
         >
           Add
         </Button>
@@ -333,7 +334,7 @@ const WarehouseManagement = () => {
                   <Button
                     onClick={backWarehouse}
                     colorScheme="orange"
-                    width="15%"
+                    w="100px"
                     mr="5px"
                   >
                     Back
@@ -341,7 +342,7 @@ const WarehouseManagement = () => {
                   <Button
                     onClick={formik.handleSubmit}
                     colorScheme="green"
-                    width="15%"
+                    w="100px"
                     type="submit"
                   >
                     Save
@@ -381,6 +382,7 @@ const WarehouseManagement = () => {
           <ModalFooter>
             <Button
               colorScheme="red"
+              w="100px"
               mr={3}
               onClick={() => setOpenedEdit(null)}
             >
@@ -388,6 +390,7 @@ const WarehouseManagement = () => {
             </Button>
             <Button
               colorScheme="green"
+              w="100px"
               mr={3}
               onClick={() => editFormik.handleSubmit()}
               type="submit"

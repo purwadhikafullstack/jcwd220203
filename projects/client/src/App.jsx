@@ -18,7 +18,6 @@ import SideNavBar from "./components/SideNavBar"
 import WarehouseManagement from "./components/admin/WarehouseManagement"
 import ChangePassword from "./pages/profile/ChangePassword"
 import Profile from "./pages/profile/Profile"
-import AdminRoute from "./components/admin/AdminRoute"
 import AddressList from "./pages/profile/AddressList"
 import { attach } from "./redux/features/resetSlice"
 import ResetPasswordConfirmation from "./pages/ResetPasswordConfirmation"
@@ -28,7 +27,9 @@ import ManageAdminData from "./components/admin/ManageAdminData"
 import AdminCategory from "./pages/AdminCategory"
 import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
-
+import AdminRoute from "./components/admin/AdminRoute"
+import ProductData from "./pages/admin/ProductData"
+import ProductDataDetail from "./pages/admin/ProductDataDetail"
 
 
 function App() {
@@ -205,6 +206,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/product-data" element={<ProductData />} />
+        <Route path="/product/detail/:id" element={<ProductDataDetail />} />
       </Routes>
 
       {
