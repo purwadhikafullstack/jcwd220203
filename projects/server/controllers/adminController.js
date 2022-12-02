@@ -81,7 +81,7 @@ const adminController = {
                 })
             }
 
-            const category_image = `${req.file.filename}`
+            const category_image = `http://localhost:8000/public/${req.file.filename}`
 
             // console.log(req.file)
 
@@ -158,11 +158,13 @@ const adminController = {
                 })
             }
 
+            if (req.file) {
+                req.body.profile_picture = `http://localhost:8000/public/${req.file.filename}`
+            }
+
             const { id } = req.params
 
-            const { category_name } = req.body
-
-            const category_image = `${req.file.filename}`
+            const { category_name, category_image } = req.body
 
             const updatedCategory = await Category.update(
                 {

@@ -1,5 +1,5 @@
 import { Button, Text, useToast } from "@chakra-ui/react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../AdminDashboard.css";
 import Logo from "../assets/Shopedia.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,8 @@ import { logout } from "../redux/features/authSlice";
 
 const SideNavBar = () => {
   const authSelector = useSelector((state) => state.auth);
+
+  const navigate = useNavigate()
 
   const dispatch = useDispatch();
   const toast = useToast();
@@ -18,7 +20,7 @@ const SideNavBar = () => {
       title: "User Logout",
       status: "info",
     });
-    Navigate("/");
+    navigate("/");
   };
 
   return (
@@ -30,10 +32,10 @@ const SideNavBar = () => {
           <img src={Logo} alt="profile_picture" />
           <h3>Hello, {authSelector.username}!</h3>
           <p>Admin : {authSelector.RoleId}</p>
-        </div>
+        </div >
 
         {/* Dashboard */}
-        <ul>
+        < ul >
           <li>
             <Link to="/admin-dashboard">
               <Text>Dashboard Homepage</Text>

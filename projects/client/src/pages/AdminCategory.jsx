@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, GridItem, HStack, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, RadioGroup, Select, StatHelpText, Table, Tbody, Td, Text, Tfoot, Th, Thead, Tr, useDisclosure, useToast, VStack } from "@chakra-ui/react"
+import { Box, Button, FormControl, FormErrorMessage, FormLabel, GridItem, HStack, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Table, Tbody, Text, Tfoot, Th, Thead, Tr, useDisclosure, useToast, VStack } from "@chakra-ui/react"
 import { useFormik } from "formik"
 import React, { useEffect, useRef, useState } from "react"
 import { axiosInstance } from "../api"
@@ -8,13 +8,11 @@ import { MdAddCircle } from "react-icons/md"
 import { BsFillArrowLeftSquareFill, BsFillArrowRightSquareFill } from "react-icons/bs";
 import { useSelector } from "react-redux"
 
-
 const AdminCategory = () => {
 
     const authSelector = useSelector((state) => state.auth)
 
     const [showCategory, setShowCategory] = useState([])
-    const [editCategory, setEditCategory] = useState(false)
     const [page, setPage] = useState(1)
     const [maxPage, setMaxPage] = useState(1)
     const [currentSearch, setCurrentSearch] = useState("")
@@ -220,7 +218,7 @@ const AdminCategory = () => {
 
     useEffect(() => {
         fetchCategory()
-    }, [page, currentSearch, sortBy, sortDir])
+    }, [page, currentSearch, sortBy, sortDir, openedEdit])
 
     useEffect(() => {
         if (openedEdit) {
@@ -231,140 +229,162 @@ const AdminCategory = () => {
 
     return (
         <>
-            <Box ml={'400px'} mt={'40px'} width="720px" h={'750px'}>
+            <Box mt={'40px'} width="750px" h={'750px'} ml={'500px'}>
                 <Box p="" display={"flex"} justifyContent="space-between">
                     <VStack>
-                        <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"} mb={'10px'}>
+                        <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"} mb={'10px'} mr={'330px'}>
                             Admin Product Category
                         </Text>
 
                         {/* Search Category */}
-                        <GridItem display={"flex"} >
-                            <Box display={"flex"} mr={'80px'}>
-                                <Box display={"flex"} my={"auto"}>
-                                    <form onSubmit={formik.handleSubmit}>
-                                        <FormControl>
-                                            <InputGroup>
-                                                <Input
-                                                    size={'md'}
-                                                    type={'text'}
-                                                    placeholder="Search category"
-                                                    width={"200px"}
-                                                    onChange={searchBookHandler}
-                                                    name="search"
-                                                    value={formik.values.search}
-                                                />
-                                                <InputRightElement width='5rem' >
-                                                    <Button
-                                                        h='2rem'
-                                                        ml={"30px"}
-                                                        bgColor="#fff"
-                                                        color={"#0095DA"}
-                                                        type="submit"
-                                                        _hover={'none'}
-                                                    >
-                                                        <BiSearchAlt2 fontSize={'15px'} />
-                                                    </Button>
-                                                </InputRightElement>
-                                            </InputGroup>
-                                        </FormControl>
-                                    </form>
-                                </Box>
-                            </Box>
-                        </GridItem>
-                    </VStack>
-
-                    {/* Sort Category Data */}
-                    <Box mt={'54px'} ml={'-120px'}>
                         <HStack>
-                            <Text
-                                fontSize={"15px"}
-                                fontWeight="semibold"
-                                mr="3px"
-                            >
-                                Sort :
-                            </Text>
-                            <Select
-                                onChange={sortCategoryHandler}
-                                fontSize={'15px'}
-                                fontWeight="normal"
-                                fontFamily="serif"
-                                width={'137px'}
-                                color={'#6D6D6F'}
-                            >
-                                <option value="id" > ❮ Sort By ❯</option>
-                                <option value="category_name">Name</option>
-                                <option value="updatedAt">Date modified</option>
-                            </Select>
+                            <GridItem display={"flex"} >
+                                <Box display={"flex"} mr={'80px'}>
+                                    <Box display={"flex"} my={"auto"}>
+                                        <form onSubmit={formik.handleSubmit}>
+                                            <FormControl>
+                                                <InputGroup>
+                                                    <Input
+                                                        size={'md'}
+                                                        type={'text'}
+                                                        placeholder="Search category"
+                                                        width={"200px"}
+                                                        onChange={searchBookHandler}
+                                                        name="search"
+                                                        value={formik.values.search}
+                                                    />
+                                                    <InputRightElement width='5rem' >
+                                                        <Button
+                                                            h='2rem'
+                                                            ml={"30px"}
+                                                            bgColor="#fff"
+                                                            color={"#0095DA"}
+                                                            type="submit"
+                                                            _hover={'none'}
+                                                        >
+                                                            <BiSearchAlt2 fontSize={'15px'} />
+                                                        </Button>
+                                                    </InputRightElement>
+                                                </InputGroup>
+                                            </FormControl>
+                                        </form>
+                                    </Box>
+                                </Box>
+                            </GridItem>
+                            {/* sort category data */}
+                            <Box mt={'54px'} mr={'70px'}>
+                                <HStack>
+                                    <Text
+                                        fontSize={"15px"}
+                                        fontWeight="semibold"
+                                        mr="3px"
+                                        color={'#212121'}
+                                    >
+                                        Sort :
+                                    </Text>
+                                    <Select
+                                        onChange={sortCategoryHandler}
+                                        fontSize={'15px'}
+                                        fontWeight="normal"
+                                        fontFamily="serif"
+                                        width={'137px'}
+                                        color={'#6D6D6F'}
+                                    >
+                                        <option value="id" > ❮ Sort By ❯</option>
+                                        <option value="category_name">Name</option>
+                                        <option value="updatedAt">Date modified</option>
+                                    </Select>
 
-                            <Select
-                                onChange={sortDateHandler}
-                                fontWeight="normal"
-                                fontSize={'15px'}
-                                fontFamily="serif"
-                                width={'130px'}
-                                color={'#6D6D6F'}
-                            >
-                                <option value="ASC"> ❮ Sort Dir ❯</option>
-                                <option value="ASC">Asc</option>
-                                <option value="DESC">Desc</option>
-                            </Select>
+                                    <Select
+                                        onChange={sortDateHandler}
+                                        fontWeight="normal"
+                                        fontSize={'15px'}
+                                        fontFamily="serif"
+                                        width={'130px'}
+                                        color={'#6D6D6F'}
+                                    >
+                                        <option value="ASC"> ❮ Sort Dir ❯</option>
+                                        <option value="ASC">Asc</option>
+                                        <option value="DESC">Desc</option>
+                                    </Select>
+                                </HStack>
+                            </Box>
                         </HStack>
-                    </Box>
-
-                    {/* Add New Category */}
-                    <Button
-                        boxShadow={"rgba(0.24, 0.24, 0.24, 0.24) 0px 3px 8px"}
-                        bgColor={"#fff"}
-                        borderRadius={'50%'}
-                        color={authSelector.RoleId !== 3 ? "red" : "green"}
-                        _hover={false}
-                        onClick={onOpenAddNewCategory}
-                        mt={'52px'}
-                        mr={'23px'}
-                        p={'0px 0px 0px 0px'}
-                        isDisabled={authSelector.RoleId !== 3 ? true : false}
-                    >
-                        <MdAddCircle fontSize={'40px'} />
-                    </Button>
+                    </VStack>
                 </Box>
 
                 {/* Table Category Data */}
-                <Table mt={'25px'}>
-                    <Thead bgColor={"#0095DA"} border={"1px solid #0095DA"} >
-                        <Tr>
-                            <Th width={'200px'} color={"#fff"}>Category Name</Th>
-                            <Th width={'425px'} textAlign={'center'} color={"#fff"}>Category Image</Th>
-                            <Th></Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody bgColor={"#fff"} >
-                        {renderCategory()}
-                    </Tbody>
-                </Table>
+                <Box
+                    mt={"25px"}
+                    pt={"0px"}
+                    borderTop={'10px solid #0095DA'}
+                    boxShadow={"rgba(0, 0, 0, 0.15) 0px 0.5rem 1rem"}
+                    borderRadius={'10px'}
+                    h={'650px'}
+                    width={'610px'}
+                >
+                    <Table mt={'-5px'} variant={'striped'}>
+                        <Thead bgColor={"#0095DA"} border={"1px solid #0095DA"} borderRadius={'10px'} >
+                            <Tr h={"25px"}>
+                                <Th width={'200px'} color={"#fff"} fontSize={"14px"}>Category Name</Th>
+                                <Th width={'425px'} textAlign={'center'} color={"#fff"} fontSize={"14px"}>Category Image</Th>
+                                <Th>
+                                    <Button
+                                        boxShadow={"rgba(0.24, 0.24, 0.24, 0.24) 0px 3px 8px"}
+                                        bgColor={"#fff"}
+                                        borderRadius={'50%'}
+                                        color={authSelector.RoleId !== 3 ? "red" : "green"}
+                                        _hover={false}
+                                        onClick={onOpenAddNewCategory}
+                                        pb={"-5px"}
+                                        p={'0px 0px 0px 0px'}
+                                        isDisabled={authSelector.RoleId !== 3 ? true : false}
+                                        ml={'0px'}
+                                    >
+                                        <MdAddCircle fontSize={'40px'} />
+                                    </Button>
+                                </Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody bgColor={"#fff"} >
+                            {renderCategory()}
+                        </Tbody>
+                        <Tfoot>
+                            <Tr></Tr>
+                        </Tfoot>
+                    </Table>
+                </Box>
             </Box>
 
             {/* Change Page */}
             <GridItem >
-                <HStack justifyContent={"center"} mt={'-15px'} mb={'50px'}>
+                <HStack justifyContent={"center"} mt={'50px'} mb={'50px'} ml={'50px'}>
                     <Button
                         bgColor={"white"}
                         color={"#0095DA"}
                         onClick={previousPage}
                         w={'50px'}
-                        // width={'3.5rem'}
                         isDisabled={page === 1 ? true : null}
                     >
                         <BsFillArrowLeftSquareFill fontSize={'30px'} />
                     </Button>
-
+                    <Button
+                        w={"10px"}
+                        p={"10px"}
+                        bgColor={'#0095DA'}
+                        color={'white'}
+                        fontSize={"14px"}
+                        _hover={'none'}
+                        onClick={'none'}
+                    >
+                        {page}
+                    </Button>
                     <Button
                         bgColor={"white"}
                         color="#0095DA"
                         onClick={nextPage}
                         w={'50px'}
                         isDisabled={page >= maxPage ? true : null}
-                    // width={'3.5rem'}
                     >
                         <BsFillArrowRightSquareFill fontSize={'30px'} />
                     </Button>
@@ -377,6 +397,7 @@ const AdminCategory = () => {
                 onClose={onCloseAddNewCategory}
                 motionPreset="slideInBottom"
                 size={"md"}
+                closeOnEsc={false}
             >
                 <form onSubmit={formikAddNewCategory.handleSubmit}>
                     <ModalOverlay bg="blackAlpha.400" />
@@ -386,7 +407,7 @@ const AdminCategory = () => {
                         </ModalHeader>
 
                         <ModalBody>
-                            <FormLabel>Category Name</FormLabel>
+                            <FormLabel fontSize={'25px'}>Category Name</FormLabel>
                             <FormControl isInvalid={formikAddNewCategory.errors.category_name}>
                                 <Input
                                     type="text"
@@ -413,6 +434,7 @@ const AdminCategory = () => {
                                 />
                                 <Button
                                     colorScheme={'teal'}
+                                    color={'#212121'}
                                     onClick={() => {
                                         inputFileRef.current.click()
                                     }}
@@ -430,7 +452,7 @@ const AdminCategory = () => {
                             <Button bgColor="white" color={'green'} border={"1px solid green"} mr={3} onClick={onCloseAddNewCategory}>
                                 Cancel
                             </Button>
-                            <Button colorScheme="green" mr={3} onClick={doubleOnClick}>
+                            <Button colorScheme="green" mr={3} onClick={doubleOnClick} isDisabled={!formikAddNewCategory.values.category_name || !formikAddNewCategory.values.category_image}>
                                 Create
                             </Button>
                         </ModalFooter>
@@ -445,6 +467,7 @@ const AdminCategory = () => {
                 onClose={() => setOpenedEdit(null)}
                 motionPreset="slideInBottom"
                 size={"md"}
+                closeOnEsc={false}
             >
                 <form onSubmit={editFormik.handleSubmit}>
                     <ModalOverlay bg="blackAlpha.400" />
@@ -480,7 +503,8 @@ const AdminCategory = () => {
                                     }}
                                 />
                                 <Button
-                                    colorScheme={'teal'}
+                                    bgColor={'#E2A85A'}
+                                    _hover={'none'}
                                     onClick={() => {
                                         inputFileRef.current.click()
                                     }}
@@ -505,15 +529,32 @@ const AdminCategory = () => {
                             >
                                 Cancel
                             </Button>
-                            <Button
-                                bgColor="#F7931E"
-                                color={"white"}
-                                _hover={false}
-                                mr={3}
-                                type="submit"
-                            >
-                                Save
-                            </Button>
+                            {!openedEdit ? (
+                                <Button
+                                    bgColor="#F7931E"
+                                    color={"white"}
+                                    _hover={false}
+                                    mr={3}
+                                    type="submit"
+                                >
+                                    Save
+                                </Button>
+                            ) : (
+                                <Button
+                                    bgColor="#F7931E"
+                                    color={"white"}
+                                    _hover={false}
+                                    mr={3}
+                                    type="submit"
+                                    isDisabled={
+                                        editFormik.values.category_image !== openedEdit.category_image ||
+                                            editFormik.values.category_name !== openedEdit.category_name
+                                            ? false : true
+                                    }
+                                >
+                                    Save
+                                </Button>
+                            )}
                         </ModalFooter>
                     </ModalContent>
                 </form>

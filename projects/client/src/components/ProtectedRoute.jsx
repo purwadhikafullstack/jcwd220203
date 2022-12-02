@@ -31,7 +31,7 @@ const ProtectedRoute = ({ children }) => {
         return (
             <>
                 <AlertDialog isCentered closeOnOverlayClick={false} isOpen={isOpen} onClose={backToLogin} size={"sm"}
-                    onKeyPress={(e) => console.log(e.nativeEvent.key)}
+                    closeOnEsc={false}
                 >
                     <AlertDialogOverlay
                         bg="blackAlpha.400"

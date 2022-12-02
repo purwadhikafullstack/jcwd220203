@@ -8,8 +8,6 @@ const AdminRoute = ({ children }) => {
 
     if (authSelector.RoleId === 1) {
         navigate("/")
-    } else {
-        navigate("/")
     }
     return children
 }

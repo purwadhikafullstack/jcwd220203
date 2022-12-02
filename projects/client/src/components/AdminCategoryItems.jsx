@@ -1,4 +1,4 @@
-import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Avatar, Box, Button, FormControl, FormErrorMessage, FormLabel, Grid, GridItem, HStack, Image, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Td, Text, Tr, useDisclosure, useToast } from "@chakra-ui/react"
+import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, Image, Td, Text, Tr, useDisclosure, useToast } from "@chakra-ui/react"
 import { BiEdit } from "react-icons/bi"
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { useSelector } from "react-redux";
@@ -23,36 +23,36 @@ const AdminCategoryItems = ({ category_name, category_image, onDelete, fetchCate
     return (
         <>
             {/* tabel isi category data */}
-            <Tr>
+            <Tr >
                 <Td>
-                    {category_name || "null"}
+                    <Text fontWeight={'700'}>
+                        {category_name || "null"}
+                    </Text>
                 </Td>
-                <Td textAlign={'center'}>
-                    {category_image || "null"}
+                <Td>
+                    <Image mx={'auto'} src={category_image} width={'80px'} height={'80px'} />
                 </Td>
-                {/* <Td>
-                    <Image src={category_image} />
-                    </Td> */}
-
                 {/* Edit and Delete Button */}
                 <Td>
                     <Button
-                        bgColor={"#fff"}
+                        bgColor={"#F8F7F7"}
                         _hover={false}
                         _active={false}
                         color="#F7931E"
                         onClick={editButton}
                         width={'cover'}
-                        pr={'px'}
+                        pr={'1px'}
+                        pl={'1px'}
                         isDisabled={authSelector.RoleId !== 3 ? true : false}
                     >
                         <BiEdit fontSize={'25px'} />
                     </Button>
                     <Button
                         _active={false}
-                        pr={'0px'}
+                        pr={'1px'}
+                        pl={'1px'}
                         width={"cover"}
-                        bgColor={"#fff"}
+                        bgColor={"#F8F7F7"}
                         _hover={false}
                         color="red"
                         onClick={() => onOpen()}
@@ -64,7 +64,7 @@ const AdminCategoryItems = ({ category_name, category_image, onDelete, fetchCate
             </Tr>
 
             {/* Alert Dialog For Delete Category */}
-            <AlertDialog isCentered isOpen={isOpen} onClose={onClose}>
+            <AlertDialog isCentered isOpen={isOpen} onClose={onClose} closeOnEsc={false}>
                 <AlertDialogOverlay
                     bg="blackAlpha.400"
                 >
@@ -93,6 +93,5 @@ const AdminCategoryItems = ({ category_name, category_image, onDelete, fetchCate
         </>
     )
 }
-
 
 export default AdminCategoryItems
