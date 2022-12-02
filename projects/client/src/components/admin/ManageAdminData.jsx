@@ -331,37 +331,16 @@ const ManageAdminData = () => {
       setPage(1)
     },
   })
-
+  
   const searchAdminHandler = ({ target }) => {
     const { name, value } = target
     formikSearch.setFieldValue(name, value)
   }
   const sortCategoryHandler = ({ target }) => {
     const { value } = target
-
     setSortBy(value.split(" ")[0])
     setSortDir(value.split(" ")[1])
-
-  const fetchAllWarehouse = async () => {
-    try {
-      const response = await axiosInstance.get("/userData/findAllWarehouse")
-
-      setWarehouseData(response.data.data)
-    } catch (error) {
-      console.log(error)
-    }
   }
-
-  const renderWarehouse = () => {
-    return warehouseData.map((val) => {
-      return (
-        <option key={val.id.toString()} value={val.id.toString()}>
-          {val.nama_warehouse}
-        </option>
-      )
-    })
-  }
-
   const doubleOnClick = () => {
     onClose()
     onCloseAddNewAdmin()
