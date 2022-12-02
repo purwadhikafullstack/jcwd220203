@@ -16,7 +16,7 @@ router.patch("/setDefault/:id", verifyToken, addressController.setAsDefault)
 
 // Config Defaults Axios dengan Detail Akun Rajaongkir
 axios.defaults.baseURL = "https://api.rajaongkir.com/starter"
-axios.defaults.headers.common["key"] = "e216ad3d4659076abbc64528fa8a712d"
+axios.defaults.headers.common["key"] = "219e2276d40a703824dea05e2ebfb639"
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded"
 

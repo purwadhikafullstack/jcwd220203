@@ -27,7 +27,7 @@ import CarouselProductSlider from "../../components/CarouselProduct";
 
 const DetailBookAdmin = () => {
   const authSelector = useSelector((state) => state.auth);
-  const [dataImages, setDataImages] = useState({});
+  const [dataDetail, setDataDetail] = useState({});
   const toast = useToast();
   const params = useParams();
   const [adminUpdate, setAdminUpdate] = useState(false)
@@ -39,9 +39,9 @@ const DetailBookAdmin = () => {
     try {
       const response = await axiosInstance.get(`/product/detail/${params.id}`);
 
-      setDataImages(response.data.data);
-      // console.warn(dataImages.ImageURLs)
-      setFullImages(response.data.data.ImageURLs)
+      setDataDetail(response.data.data);
+      console.warn(dataDetail.Image_Urls)
+      setFullImages(response.data.data.Image_Urls)
       // console.log(fullImages)
       editDetailFormik.setFieldValue("nama", response.data.data.nama)
       editDetailFormik.setFieldValue("deskripsi", response.data.data.deskripsi)
@@ -114,7 +114,7 @@ const DetailBookAdmin = () => {
 
 
   return (
-    <Box p={"40px"} pt={"5px"} bgColor="#0095DA">
+    <Box ml="250px" p={"40px"} pt={"5px"}>
       <Grid templateColumns="repeat(2, 1fr)">
         <GridItem w="100%">
           <Heading p={5}>PRODUCT DETAILS</Heading>
@@ -129,7 +129,7 @@ const DetailBookAdmin = () => {
           <Box flex={"1"}>
           <CarouselProductSlider />
                     {/* {isLoading && renderImages()} */}
-            {/* <Image h={"100%"} src={dataImages.ImageURLs[1].img_url || ""} alt="book image" /> */}
+            {/* <Image h={"100%"} src={dataDetail.ImageURLs[1].image_url || ""} alt="book image" /> */}
           </Box>
           <Box
             flex={"1"}
@@ -140,14 +140,17 @@ const DetailBookAdmin = () => {
             alignItems={"flex-start"}
           >
             <Heading size={"lg"}>Name</Heading>
-            <Text fontSize={"2xl"}>{dataImages.nama}</Text>
+            <Text fontSize={"2xl"}>{dataDetail.nama}</Text>
             <br />
             <Heading size={"lg"}>Description</Heading>
-            <Text fontSize={"2xl"}>{dataImages.deskripsi}</Text>
+            <Text fontSize={"2xl"}>{dataDetail.deskripsi}</Text>
             <br />
+            {/* <Heading size={"lg"}>Image</Heading>
+            <Image src={dataDetail.Image_Urls[0].image_url} />
+            <br /> */}
             <Heading size={"lg"}>Price</Heading>
-            <Text fontSize={"2xl"}>{dataImages.harga
-            // .toLocaleString("in-ID", {style: "currency", currency: "IDR"})
+            <Text fontSize={"2xl"}>{(dataDetail?.harga) ? 
+            dataDetail.harga.toLocaleString("in-ID", {style: "currency", currency: "IDR"}) : ""
             }</Text>
             
           </Box>

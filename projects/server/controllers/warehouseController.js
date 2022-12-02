@@ -18,7 +18,7 @@ const warehouseController = {
         where: {
           [Op.or]: [
             { nama_warehouse: { [Op.like]: "%" + search + "%" } },
-            { address: { [Op.like]: "%" + search + "%" } },
+            { address_labels: { [Op.like]: "%" + search + "%" } },
           ],
         },
       });
@@ -31,7 +31,7 @@ const warehouseController = {
         where: {
           [Op.or]: [
             { nama_warehouse: { [Op.like]: "%" + search + "%" } },
-            { address: { [Op.like]: "%" + search + "%" } },
+            { address_labels: { [Op.like]: "%" + search + "%" } },
           ],
         },
         include: [{model: db.User}],
@@ -80,6 +80,57 @@ const warehouseController = {
       return res.status(500).json({
         message: "Server error adding new warehouse",
       });
+    }
+  },
+  addNewWarehouse: async (req, res) => {
+    try {
+      const {
+        nama_warehouse,
+        address_labels,
+        province,
+        city,
+        districts,
+        full_address,
+      } = req.body
+
+      const RajaOngkirKey = "219e2276d40a703824dea05e2ebfb639"
+      const provinceAndCity = await axios.get(
+        `https://api.rajaongkir.com/starter/city?id=${city}&province=${province}&key=${RajaOngkirKey}`
+      )
+
+      const provinceName = provinceAndCity.data.rajaongkir.results.province
+      const cityName = provinceAndCity.data.rajaongkir.results.city_name
+      const cityType = provinceAndCity.data.rajaongkir.results.type
+      const cityNameAndType = `${cityType} ${cityName}`
+
+      const key = "6833b88f6e234551a37c6dcb7f4de083"
+      const location = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?key=${key}&q=${districts},${cityNameAndType},${provinceName}`
+      )
+      
+      const latitude = location.data.results[0].geometry.lat
+      const longitude = location.data.results[0].geometry.lng
+
+      const response = await db.Warehouse.create({
+        nama_warehouse,
+        address_labels,
+        province: provinceName,
+        city: cityNameAndType,
+        districts,
+        full_address,
+        longitude,
+        latitude,
+      })
+
+      return res.status(200).json({
+        message: "Successfully Added New Address",
+        data: response,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        message: "Server Error Adding New Address",
+      })
     }
   },
   editWarehouseData: async (req, res) => {

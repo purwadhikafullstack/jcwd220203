@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             Product.belongsTo(models.Category)
-            Product.hasMany(models.ImageURL)
+            Product.hasMany(models.Image_Url)
         }
     }
     Product.init(

@@ -15,10 +15,13 @@ module.exports = (sequelize, DataTypes) => {
   Warehouse.init(
     {
       nama_warehouse: DataTypes.STRING,
-      address: DataTypes.STRING,
-      state: DataTypes.STRING,
+      address_labels: DataTypes.STRING,
+      province: DataTypes.STRING,
+      city: DataTypes.STRING,
+      districts: DataTypes.STRING,
       latitude: DataTypes.STRING,
-      longitude: DataTypes.STRING
+      longitude: DataTypes.STRING,
+      full_address: DataTypes.STRING,
     },
     {
       sequelize,

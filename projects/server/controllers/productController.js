@@ -74,7 +74,7 @@ const productController = {
         where: {
           id: req.params.id
         },
-        include: [{model: db.ImageURL}]
+        include: [{model: db.Image_Url}]
       });
 
       return res.status(200).json({

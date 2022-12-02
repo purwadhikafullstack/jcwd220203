@@ -8,24 +8,24 @@ import { axiosInstance } from "../api";
 import { useParams } from "react-router-dom";
 
 const CarouselProductSlider = () => {
-  const [fullImages, setFullImages] = useState([]);
+  const [images, setImages] = useState([]);
   const params = useParams()
 
   const fetchProductData = async () => {
     try {
       const response = await axiosInstance.get(`/product/detail/${params.id}`);
 
-      setFullImages(response.data.data.ImageURLs);
-      // console.log(fullImages)
+      setImages(response.data.data.Image_Urls);
+      console.log(images)
     } catch (err) {
       console.log(err);
     }
   };
 
   const renderImages = () => {
-    console.warn(fullImages);
-    return fullImages.map((val) => {
-      return <Box><Image src={val.img_url || ""} alt="Product images" /></Box>
+    console.warn(images);
+    return images.map((val) => {
+      return <Box><Image src={val.image_url || ""} alt="Product images" /></Box>
     });
   };
 

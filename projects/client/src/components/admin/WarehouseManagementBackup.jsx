@@ -25,7 +25,6 @@ import {
   AlertIcon,
   AlertTitle,
   HStack,
-  useDisclosure,
 } from "@chakra-ui/react";
 // import { useSelector } from "react-redux";
 import { axiosInstance } from "../../api";
@@ -35,7 +34,6 @@ import * as Yup from "yup";
 import { useCallback } from "react";
 import React, { useEffect, useState } from 'react';
 import { CgChevronLeft, CgChevronRight } from "react-icons/cg"
-import WarehouseAddress from "./WarehouseAddress"
 
 
 const WarehouseManagement = () => {
@@ -57,17 +55,7 @@ const WarehouseManagement = () => {
   const [keywordHandler, setKeywordHandler] = useState("")
   const maxItemsPage = 5
 
-  const [selectedProvince, setSelectedProvince] = useState(0)
-  const [selectedCity, setSelectedCity] = useState(0)
 
-  const { onOpen, isOpen, onClose } = useDisclosure()
-
-  const {
-    isOpen: isOpenAddNewWarehouseAddress,
-    onOpen: onOpenAddNewWarehouseAddress,
-    onClose: onCloseAddNewWarehouseAddress,
-  } = useDisclosure()
-  
   const fetchWarehouse = useCallback(async () => {
     try {
       const fetchingWH = await axiosInstance.get(`/warehouse`, {
@@ -115,40 +103,27 @@ const WarehouseManagement = () => {
     }
   };
 
-  const addFormik = useFormik({
+  const formik = useFormik({
     initialValues: {
       nama_warehouse: "",
-      address_labels: "",
-      province: "",
-      city: "",
-      districts: "",
-      full_address: "",
+      address: "",
     },
     onSubmit: async (values) => {
       try {
         let addWarehouse = {
           nama_warehouse: values.nama_warehouse,
-          address_labels: values.address_labels,
-          province: values.province,
-          city: values.city,
-          districts: values.districts,
-          full_address: values.full_address,
+          address: values.address,
           // UserId: values.UserId,
         };
 
-        const response = await axiosInstance.post(`/warehouse`, addWarehouse);
-        console.log(response)
+        await axiosInstance.post(`/warehouse`, addWarehouse);
 
-        // setAdminUpdate(false);
+        setAdminUpdate(false);
         toast({ title: "Warehouse added", status: "success" });
         fetchWarehouse();
-        // setOpenedAdd(null);
-        // addFormik.setFieldValue("nama_warehouse", "");
-        // addFormik.setFieldValue("address_labels", "");
-        // addFormik.setFieldValue("province", "");
-        // addFormik.setFieldValue("city", "");
-        // addFormik.setFieldValue("districts", "");
-        // addFormik.setFieldValue("full_address", "");
+        setOpenedAdd(null);
+        formik.setFieldValue("nama_warehouse", "");
+        formik.setFieldValue("address", "");
 
       } catch (err) {
         console.log(err);
@@ -157,11 +132,7 @@ const WarehouseManagement = () => {
     },
     validationSchema: Yup.object({
       nama_warehouse: Yup.string().required().min(1),
-      // address_labels: Yup.string().required(),
-      // province: Yup.string().required(),
-      // city: Yup.string().required(),
-      // districts: Yup.string().required(),
-      // full_address: Yup.string().required(),
+      address: Yup.string().required(),
       // UserId: Yup.number().required(),
     }),
     validateOnChange: false,
@@ -169,14 +140,8 @@ const WarehouseManagement = () => {
 
   const formChangeHandler = ({ target }) => {
     const { name, value } = target;
-    addFormik.setFieldValue(name, value);
+    formik.setFieldValue(name, value);
   };
-
-  const onSubmitAddForm = () => {
-    addFormik.handleSubmit()
-    onCloseAddNewWarehouseAddress()
-  }
-
   const editFormik = useFormik({
     initialValues: {
       nama_warehouse: openedEdit ? openedEdit.nama_warehouse : "",
@@ -207,8 +172,7 @@ const WarehouseManagement = () => {
     },
     validationSchema: Yup.object({
       nama_warehouse: Yup.string().required().min(3),
-      address: Yup.string()
-      // .required(),
+      address: Yup.string().required(),
       // UserId: Yup.number().required(),
     }),
     validateOnChange: false,
@@ -227,10 +191,8 @@ const WarehouseManagement = () => {
           key={val.id.toString()}
           id={val.id.toString()}
           nama_warehouse={val.nama_warehouse}
-          address_labels={val.address_labels}
-          province={val.province}
-          city={val.city}
-          districts={val.districts}
+          address={val.address}
+          state={val.state}
           username={val?.User?.username}
           latitude={val.latitude}
           longitude={val.longitude}
@@ -250,10 +212,10 @@ const WarehouseManagement = () => {
     setAdminUpdate(false);
   };
 
-  // console.warn({pages})
+  console.warn({pages})
   useEffect(() => {
     fetchWarehouse();
-  }, [openedEdit, page, pages, setAdmin]);
+  }, [fetchWarehouse, openedEdit, page, setPages, pages, keyword, setAdmin]);
 
   useEffect(() => {
     if (openedEdit) {
@@ -290,10 +252,8 @@ const WarehouseManagement = () => {
           <Tr>
             <Th>ID</Th>
             <Th>Nama</Th>
-            <Th>Full Address</Th>
-            <Th>Province</Th>
-            <Th>City</Th>
-            <Th>District</Th>
+            <Th>Address</Th>
+            <Th>State</Th>
             <Th>User</Th>
             {/* <Th>Latitude</Th>
             <Th>Longitude</Th> */}
@@ -335,34 +295,22 @@ const WarehouseManagement = () => {
           colorScheme={"green"}
           marginLeft="64%"
           marginTop={"5%"}
-          // onClick={() => addWarehouse()}
-          onClick={() => onOpenAddNewWarehouseAddress()}
+          onClick={() => addWarehouse()}
           w="100px"
         >
           Add
         </Button>
 
       {/* Modal nambah data */}
-      <WarehouseAddress
-        isOpen={isOpenAddNewWarehouseAddress}
-        onClose={onCloseAddNewWarehouseAddress}
-        // onSubmit={() => onSubmitAddForm()}
-        onSubmit={(e) => addFormik.handleSubmit(e.target.value)}
-        formChangeHandler={formChangeHandler}
-        formik={addFormik}
-        header={"Add Address"}
-        selectProvince={setSelectedProvince}
-        selectCity={setSelectedCity}
-      />
-      {/* <Modal isOpen={openedAdd} onClose={() => setOpenedAdd(null)}>
+      <Modal isOpen={openedAdd} onClose={() => setOpenedAdd(null)}>
         <ModalContent bgColor={"#0095DA"} color="white">
           <ModalHeader>Edit Warehouse</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-          <FormControl isInvalid={addFormik.errors.nama_warehouse} />
+          <FormControl isInvalid={formik.errors.nama_warehouse} />
                 <FormLabel>Nama Warehouse</FormLabel>
                 <Input
-                  value={addFormik.values.nama_warehouse}
+                  value={formik.values.nama_warehouse}
                   placeholder={"Input warehouse name"}
                   name="nama_warehouse"
                   onChange={formChangeHandler}
@@ -370,21 +318,22 @@ const WarehouseManagement = () => {
                   border="1px solid black"
                 />
                 <FormErrorMessage>
-                  {addFormik.errors.nama_warehouse}
+                  {formik.errors.nama_warehouse}
                 </FormErrorMessage>
-                <FormControl isInvalid={addFormik.errors.address} />
+                <FormControl isInvalid={formik.errors.address} />
                 <FormLabel>Address Format: Kota, Provinsi, Negara</FormLabel>
                 <Input
-                  value={addFormik.values.address}
+                  value={formik.values.address}
                   placeholder={"Input address"}
                   name="address"
                   onChange={formChangeHandler}
                   width="80%"
                 />
-                <FormErrorMessage>{addFormik.errors.address}</FormErrorMessage>
+                <FormErrorMessage>{formik.errors.address}</FormErrorMessage>
           </ModalBody>
 
           <ModalFooter>
+          {/* <HStack justifyContent={"right"}> */}
                   <Button
                     onClick={backWarehouse}
                     colorScheme="orange"
@@ -394,16 +343,17 @@ const WarehouseManagement = () => {
                     Back
                   </Button>
                   <Button
-                    onClick={addFormik.handleSubmit}
+                    onClick={formik.handleSubmit}
                     colorScheme="green"
                     w="100px"
                     type="submit"
                   >
                     Save
                   </Button>
+                {/* </HStack> */}
           </ModalFooter>
         </ModalContent>
-      </Modal> */}
+      </Modal>
 
       {/* Modal untuk Editing data */}
       <Modal isOpen={openedEdit} onClose={() => setOpenedEdit(null)}>
