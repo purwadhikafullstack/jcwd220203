@@ -1,19 +1,80 @@
 const db = require("../models")
 const User = db.User
 const bcrypt = require("bcrypt")
+const { Op } = require("sequelize")
 const userDataController = {
   getAllUser: async (req, res) => {
     try {
-      const findUser = await User.findAll({
+      const findAdminById = await User.findByPk(req.user.id)
+
+      if (findAdminById.RoleId !== 3) {
+        return res.status(400).json({
+          message: "User unauthorized",
+        })
+      }
+
+      const {
+        username = "",
+        _sortBy = "id",
+        _sortDir = "ASC",
+        _limit = 6,
+        _page = 1,
+      } = req.query
+
+      if (_sortBy === "username" || _sortBy === "createdAt" || username) {
+        const findUser = await User.findAndCountAll({
+          limit: Number(_limit),
+          offset: (_page - 1) * _limit,
+          order: [[_sortBy, _sortDir]],
+          where: {
+            is_verify: 1,
+            RoleId: 1,
+            username: {
+              [Op.like]: `%${username}%`,
+            },
+          },
+          include: [
+            { model: db.Role },
+            {
+              model: db.Address,
+              // where: {
+              //   is_default: 1,
+              // },
+            },
+          ],
+        })
+        return res.status(200).json({
+          message: "Find User by Name",
+          data: findUser.rows,
+          dataCount: findUser.count,
+        })
+      }
+
+      const findUser = await User.findAndCountAll({
+        limit: Number(_limit),
+        offset: (_page - 1) * _limit,
+        order: [[_sortBy, _sortDir]],
         where: {
-          is_verify: true,
+          is_verify: 1,
           RoleId: 1,
+          username: {
+            [Op.like]: `%${username}%`,
+          },
         },
-        include: [{ model: db.Role }, { model: db.Address }, ,],
+        include: [
+          { model: db.Role },
+          {
+            model: db.Address,
+            // where: {
+            //   is_default: 1,
+            // },
+          },
+        ],
       })
       return res.status(200).json({
         message: "Find All User Data",
-        data: findUser,
+        data: findUser.rows,
+        dataCount: findUser.count,
       })
     } catch (error) {
       console.log(error)
@@ -24,19 +85,55 @@ const userDataController = {
   },
   getAllWarehouseAdmin: async (req, res) => {
     try {
-      const findUser = await User.findAll({
+      const findAdminById = await User.findByPk(req.user.id)
+
+      if (findAdminById.RoleId !== 3) {
+        return res.status(400).json({
+          message: "User unauthorized",
+        })
+      }
+
+      const {
+        username = "",
+        _sortBy = "id",
+        _sortDir = "ASC",
+        _limit = 6,
+        _page = 1,
+      } = req.query
+
+      if (_sortBy === "username" || _sortBy === "createdAt" || username) {
+        const findUser = await User.findAndCountAll({
+          limit: Number(_limit),
+          offset: (_page - 1) * _limit,
+          order: [[_sortBy, _sortDir]],
+          where: {
+            RoleId: 2,
+            username: {
+              [Op.like]: `%${username}%`,
+            },
+          },
+          include: [{ model: db.Role }, { model: db.Warehouse }],
+        })
+        return res.status(200).json({
+          message: "Find Admin by Name",
+          data: findUser.rows,
+          dataCount: findUser.count,
+        })
+      }
+
+      const findUser = await User.findAndCountAll({
+        offset: (_page - 1) * _limit,
+        limit: Number(_limit),
+        order: [[_sortBy, _sortDir]],
         where: {
           RoleId: 2,
         },
-        include: [
-          { model: db.Role },
-          { model: db.Address },
-          { model: db.Warehouse },
-        ],
+        include: [{ model: db.Role }, { model: db.Warehouse }],
       })
       return res.status(200).json({
-        message: "Find All User Data",
-        data: findUser,
+        message: "Find All Admin Data",
+        data: findUser.rows,
+        dataCount: findUser.count,
       })
     } catch (error) {
       console.log(error)
@@ -47,6 +144,15 @@ const userDataController = {
   },
   addNewAdmin: async (req, res) => {
     try {
+      const findAdminById = await User.findByPk(req.user.id)
+
+      if (findAdminById.RoleId !== 3) {
+        return res.status(400).json({
+          message: "User unauthorized",
+        })
+      }
+
+      const profile_picture = `http://localhost:8000/public/${req.file.filename}`
       const { email, password, phone_number, username, WarehouseId } = req.body
 
       const findEmail = await db.User.findOne({
@@ -79,10 +185,12 @@ const userDataController = {
         email,
         password: hashedPassword,
         username,
+        profile_picture,
         phone_number,
         WarehouseId,
         is_verify: true,
         RoleId: 2,
+        WarehouseId,
       })
 
       return res.status(200).json({
@@ -98,11 +206,20 @@ const userDataController = {
   },
   updateAdmin: async (req, res) => {
     try {
+      const findAdminById = await User.findByPk(req.user.id)
+
+      if (findAdminById.RoleId !== 3) {
+        return res.status(400).json({
+          message: "User unauthorized",
+        })
+      }
+
       if (req.file) {
         req.body.profile_picture = `http://localhost:8000/public/${req.file.filename}`
       }
 
-      const { branch, phone_number, profile_picture, username, WarehouseId } = req.body
+      const { branch, phone_number, profile_picture, username, WarehouseId } =
+        req.body
 
       const { id } = req.params
 
@@ -112,7 +229,7 @@ const userDataController = {
           phone_number,
           profile_picture,
           username,
-          WarehouseId
+          WarehouseId,
         },
         {
           where: {
@@ -134,6 +251,14 @@ const userDataController = {
   },
   deleteAdmin: async (req, res) => {
     try {
+      const findAdminById = await User.findByPk(req.user.id)
+
+      if (findAdminById.RoleId !== 3) {
+        return res.status(400).json({
+          message: "User unauthorized",
+        })
+      }
+
       const { id } = req.params
 
       await db.User.destroy({
@@ -154,6 +279,14 @@ const userDataController = {
   },
   findAllWarehouse: async (req, res) => {
     try {
+      const findAdminById = await User.findByPk(req.user.id)
+
+      if (findAdminById.RoleId !== 3) {
+        return res.status(400).json({
+          message: "User unauthorized",
+        })
+      }
+
       const response = await db.Warehouse.findAll()
 
       return res.status(200).json({

@@ -303,6 +303,7 @@ const EditForm = ({
         onSubmit={doubleOnClick}
         rightButton={"Exit"}
         leftButton={"Cancel"}
+        color={"#F7931E"}
       />
     </>
   )

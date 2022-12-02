@@ -35,7 +35,7 @@ const addressController = {
         full_address,
       } = req.body
 
-      const RajaOngkirKey = "e216ad3d4659076abbc64528fa8a712d"
+      const RajaOngkirKey = "8caa8e1b87eb967bf57f446ae05b1f61"
       const provinceAndCity = await axios.get(
         `https://api.rajaongkir.com/starter/city?id=${city}&province=${province}&key=${RajaOngkirKey}`
       )

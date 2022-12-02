@@ -18,6 +18,7 @@ const Alert = ({
   header,
   rightButton,
   leftButton,
+  color,
 }) => {
   return (
     <AlertDialog
@@ -57,15 +58,15 @@ const Alert = ({
               borderRadius="8px"
               fontWeight={"bold"}
               bgColor="white"
-              border="1px solid #F7931E"
-              color={" #F7931E"}
+              border="1px solid"
+              color={color}
               _hover={false}
             >
               {leftButton}
             </Button>
             <Button
               fontWeight={"bold"}
-              bgColor="#F7931E"
+              bgColor={color}
               color={"white"}
               type="submit"
               onClick={onSubmit}
