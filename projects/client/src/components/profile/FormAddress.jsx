@@ -32,13 +32,16 @@ const FormAddress = ({
   const [province, setProvince] = useState([])
   const [city, setCity] = useState([])
   const [selectedProvince, setSelectedProvince] = useState(0)
+  console.log(selectedProvince)
   const [selectedCity, setSelectedCity] = useState(0)
+  console.log(selectedCity)
   selectProvince(selectedProvince)
   selectCity(selectedCity)
 
   const fetchProvince = async () => {
     try {
       const response = await axiosInstance.get("/address/province")
+      console.log("add address", response.data)
       setProvince(response.data.rajaongkir.results)
     } catch (error) {
       console.log(error)

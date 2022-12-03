@@ -17,6 +17,7 @@ import {
 import { useFormik } from "formik"
 import { useEffect } from "react"
 import { useState } from "react"
+import { IoIosAlert } from "react-icons/io"
 import { TbSearch } from "react-icons/tb"
 import { axiosInstance } from "../../api"
 import AddressModal from "./AddressModal"
@@ -30,7 +31,7 @@ const ManageUserData = () => {
   const [page, setPage] = useState(1)
   const [maxPage, setMaxPage] = useState(1)
   const [openedAddress, setOpenedAddress] = useState(false)
-  console.log(openedAddress)
+
   const nextPage = () => {
     setPage(page + 1)
   }
@@ -177,6 +178,18 @@ const ManageUserData = () => {
         </Thead>
         <Tbody>{renderUser()}</Tbody>
       </Table>
+      {!userData.length ? (
+        <Box p="10px" bgColor={"#E5F9F6"}>
+          <Box mx="auto">
+            <Box display={"flex"} mx="auto" w="170px">
+              <IoIosAlert fontSize={"25px"} color="#0095DA" />
+              <Text fontWeight="medium" ml="2">
+                No user found
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+      ) : null}
       <Box p="20px">
         <Box>
           {page === 1 ? null : (

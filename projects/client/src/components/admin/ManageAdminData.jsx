@@ -1,4 +1,6 @@
 import {
+  AlertIcon,
+  AlertTitle,
   Avatar,
   Box,
   Button,
@@ -25,6 +27,7 @@ import AddNewAdmin from "./AddNewAdmin"
 import Alert from "../profile/Alert"
 import EditAdmin from "./EditAdmin"
 import { TbSearch } from "react-icons/tb"
+import { IoIosAlert } from "react-icons/io"
 
 const ManageAdminData = () => {
   const [userData, setUserData] = useState([])
@@ -331,7 +334,7 @@ const ManageAdminData = () => {
       setPage(1)
     },
   })
-  
+
   const searchAdminHandler = ({ target }) => {
     const { name, value } = target
     formikSearch.setFieldValue(name, value)
@@ -456,6 +459,18 @@ const ManageAdminData = () => {
         </Thead>
         <Tbody>{renderUser()}</Tbody>
       </Table>
+      {!userData.length ? (
+        <Box p="10px" bgColor={"#E5F9F6"}>
+          <Box mx="auto">
+            <Box display={"flex"} mx="auto" w="170px">
+              <IoIosAlert fontSize={"25px"} color="#0095DA" />
+              <Text fontWeight="medium" ml="2">
+                No admin found
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+      ) : null}
 
       {/* Alert Delete */}
       <Alert

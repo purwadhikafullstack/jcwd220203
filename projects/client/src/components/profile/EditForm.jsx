@@ -100,7 +100,7 @@ const EditForm = ({
 
   useEffect(() => {
     fetchProvince()
-  })
+  }, [])
   useEffect(() => {
     fetchCity()
   }, [selectedProvince])

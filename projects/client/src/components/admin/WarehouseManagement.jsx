@@ -26,50 +26,41 @@ import {
   AlertTitle,
   HStack,
   useDisclosure,
-} from "@chakra-ui/react";
+} from "@chakra-ui/react"
 // import { useSelector } from "react-redux";
-import { axiosInstance } from "../../api";
-import Warehouse from "../../components/admin/Warehouse";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useCallback } from "react";
-import React, { useEffect, useState } from "react";
-import { CgChevronLeft, CgChevronRight } from "react-icons/cg";
-import WarehouseAddress from "./WarehouseAddress";
-import WarehouseAddressEdit from "./WarehouseAddressEdit";
-
+import { axiosInstance } from "../../api"
+import Warehouse from "../../components/admin/Warehouse"
+import { useFormik } from "formik"
+import * as Yup from "yup"
+import { useCallback } from "react"
+import React, { useEffect, useState } from "react"
+import { CgChevronLeft, CgChevronRight } from "react-icons/cg"
+import WarehouseAddress from "./WarehouseAddress"
+import WarehouseAddressEdit from "./WarehouseAddressEdit"
 
 const WarehouseManagement = () => {
-  const [data, setData] = useState([]);
-  const toast = useToast();
+  const [data, setData] = useState([])
+  const toast = useToast()
   // const authSelector = useSelector((state) => state.auth);
-  const [isLoading, setIsLoading] = useState(false);
-  const [openedEdit, setOpenedEdit] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [openedEdit, setOpenedEdit] = useState(null)
 
-  const [rows, setRows] = useState(0);
-  const [pages, setPages] = useState(0);
-  const [maxPage, setMaxPage] = useState(0);
-  const [page, setPage] = useState(1);
-  const [keyword, setKeyword] = useState("");
-  const [keywordHandler, setKeywordHandler] = useState("");
-  const maxItemsPage = 5;
+  const [rows, setRows] = useState(0)
+  const [pages, setPages] = useState(0)
+  const [maxPage, setMaxPage] = useState(0)
+  const [page, setPage] = useState(1)
+  const [keyword, setKeyword] = useState("")
+  const [keywordHandler, setKeywordHandler] = useState("")
+  const maxItemsPage = 5
 
-  const [selectedProvince, setSelectedProvince] = useState(0);
-  const [selectedCity, setSelectedCity] = useState(0);
+  const [selectedProvince, setSelectedProvince] = useState(0)
+  const [selectedCity, setSelectedCity] = useState(0)
 
-  const { onOpen, isOpen, onClose } = useDisclosure();
-
-  const {
-    isOpen: isOpenAddNewWarehouseAddress,
-    onOpen: onOpenAddNewWarehouseAddress,
-    onClose: onCloseAddNewWarehouseAddress,
-  } = useDisclosure();
   const {
     isOpen: isOpenEditWarehouseAddress,
     onOpen: onOpenEditWarehouseAddress,
     onClose: onCloseEditWarehouseAddress,
-  } = useDisclosure();
-
+  } = useDisclosure()
 
   const { onOpen, isOpen, onClose } = useDisclosure()
 
@@ -78,7 +69,7 @@ const WarehouseManagement = () => {
     onOpen: onOpenAddNewWarehouseAddress,
     onClose: onCloseAddNewWarehouseAddress,
   } = useDisclosure()
-  
+
   const fetchWarehouse = useCallback(async () => {
     try {
       const fetchingWH = await axiosInstance.get(`/warehouse`, {
@@ -87,46 +78,46 @@ const WarehouseManagement = () => {
           _page: pages,
           _limit: maxItemsPage,
         },
-      });
-      setData(fetchingWH.data.data);
-      setIsLoading(true);
-      setRows(fetchingWH.data.totalRows - maxItemsPage);
-      setMaxPage(Math.ceil(fetchingWH.data.totalRows / maxItemsPage));
-      editFormik.setFieldValue("nama_warehouse", openedEdit.nama_warehouse);
-      editFormik.setFieldValue("address_labels", openedEdit.address_labels);
-      editFormik.setFieldValue("province", openedEdit.province);
-      editFormik.setFieldValue("city", openedEdit.city);
-      editFormik.setFieldValue("districts", openedEdit.districts);
-      editFormik.setFieldValue("full_address", openedEdit.full_address);
+      })
+      setData(fetchingWH.data.data)
+      setIsLoading(true)
+      setRows(fetchingWH.data.totalRows - maxItemsPage)
+      setMaxPage(Math.ceil(fetchingWH.data.totalRows / maxItemsPage))
+      editFormik.setFieldValue("nama_warehouse", openedEdit.nama_warehouse)
+      editFormik.setFieldValue("address_labels", openedEdit.address_labels)
+      editFormik.setFieldValue("province", openedEdit.province)
+      editFormik.setFieldValue("city", openedEdit.city)
+      editFormik.setFieldValue("districts", openedEdit.districts)
+      editFormik.setFieldValue("full_address", openedEdit.full_address)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  }, [pages, keyword]);
+  }, [pages, keyword])
 
   const nextPage = () => {
-    setPages(pages + 1);
-  };
+    setPages(pages + 1)
+  }
 
   const prevPage = () => {
-    setPages(pages - 1);
-  };
+    setPages(pages - 1)
+  }
 
   const searchKey = () => {
-    setPages(0);
-    setKeyword(keywordHandler);
-  };
+    setPages(0)
+    setKeyword(keywordHandler)
+  }
 
   const deleteBtnHandler = async (id) => {
     try {
-      await axiosInstance.delete(`/warehouse/${id}`);
+      await axiosInstance.delete(`/warehouse/${id}`)
 
-      fetchWarehouse();
-      toast({ title: "Warehouse deleted", status: "info" });
+      fetchWarehouse()
+      toast({ title: "Warehouse deleted", status: "info" })
     } catch (err) {
-      console.log(err);
-      toast({ title: "Error deleting data warehouse", status: "error" });
+      console.log(err)
+      toast({ title: "Error deleting data warehouse", status: "error" })
     }
-  };
+  }
 
   const addFormik = useFormik({
     initialValues: {
@@ -146,23 +137,22 @@ const WarehouseManagement = () => {
           city: selectedCity,
           districts: values.districts,
           full_address: values.full_address,
-        };
+        }
 
-        const response = await axiosInstance.post(`/warehouse`, addWarehouse);
-        console.log(response);
+        const response = await axiosInstance.post(`/warehouse`, addWarehouse)
+        console.log(response)
 
-        toast({ title: "Warehouse added", status: "success" });
-        fetchWarehouse();
-        addFormik.setFieldValue("nama_warehouse", "");
-        addFormik.setFieldValue("address_labels", "");
-        addFormik.setFieldValue("province", "");
-        addFormik.setFieldValue("city", "");
-        addFormik.setFieldValue("districts", "");
-        addFormik.setFieldValue("full_address", "");
-
+        toast({ title: "Warehouse added", status: "success" })
+        fetchWarehouse()
+        addFormik.setFieldValue("nama_warehouse", "")
+        addFormik.setFieldValue("address_labels", "")
+        addFormik.setFieldValue("province", "")
+        addFormik.setFieldValue("city", "")
+        addFormik.setFieldValue("districts", "")
+        addFormik.setFieldValue("full_address", "")
       } catch (err) {
-        console.log(err);
-        toast({ title: "Server error while adding", status: "error" });
+        console.log(err)
+        toast({ title: "Server error while adding", status: "error" })
       }
     },
     validationSchema: Yup.object({
@@ -172,26 +162,26 @@ const WarehouseManagement = () => {
       full_address: Yup.string().required(),
     }),
     validateOnChange: false,
-  });
+  })
 
   const formChangeHandler = ({ target }) => {
-    const { name, value } = target;
-    addFormik.setFieldValue(name, value);
-  };
+    const { name, value } = target
+    addFormik.setFieldValue(name, value)
+  }
 
   const onOpenedEditHandler = (val) => {
     onOpenEditWarehouseAddress()
     setOpenedEdit(val)
   }
   const onSubmitAddForm = () => {
-    addFormik.handleSubmit();
-    onCloseAddNewWarehouseAddress();
-  };
+    addFormik.handleSubmit()
+    onCloseAddNewWarehouseAddress()
+  }
   const onSubmitEditForm = () => {
-    editFormik.handleSubmit();
-    onCloseEditWarehouseAddress();
-  };
-  
+    editFormik.handleSubmit()
+    onCloseEditWarehouseAddress()
+  }
+
   const editFormik = useFormik({
     initialValues: {
       nama_warehouse: openedEdit ? openedEdit.nama_warehouse : "",
@@ -210,25 +200,25 @@ const WarehouseManagement = () => {
           city: values.city,
           districts: values.districts,
           full_address: values.full_address,
-        };
+        }
 
         await axiosInstance.patch(
           `/warehouse/${openedEdit.id}`,
           editedWarehouse
-        );
+        )
 
-        toast({ title: "Warehouse edited", status: "success" });
-        editFormik.setFieldValue("nama_warehouse", "");
-        editFormik.setFieldValue("address_labels", "");
-        editFormik.setFieldValue("province", "");
-        editFormik.setFieldValue("city", "");
-        editFormik.setFieldValue("districts", "");
-        editFormik.setFieldValue("full_address", "");
-        fetchWarehouse();
-        setOpenedEdit(null);
+        toast({ title: "Warehouse edited", status: "success" })
+        editFormik.setFieldValue("nama_warehouse", "")
+        editFormik.setFieldValue("address_labels", "")
+        editFormik.setFieldValue("province", "")
+        editFormik.setFieldValue("city", "")
+        editFormik.setFieldValue("districts", "")
+        editFormik.setFieldValue("full_address", "")
+        fetchWarehouse()
+        setOpenedEdit(null)
       } catch (err) {
-        console.log(err);
-        toast({ title: "Server error while editing", status: "error" });
+        console.log(err)
+        toast({ title: "Server error while editing", status: "error" })
       }
     },
     validationSchema: Yup.object({
@@ -238,12 +228,12 @@ const WarehouseManagement = () => {
       full_address: Yup.string().required(),
     }),
     validateOnChange: false,
-  });
+  })
 
   const editFormChangeHandler = ({ target }) => {
-    const { name, value } = target;
-    editFormik.setFieldValue(name, value);
-  };
+    const { name, value } = target
+    editFormik.setFieldValue(name, value)
+  }
 
   const renderWarehouse = () => {
     return data.map((val) => {
@@ -263,15 +253,15 @@ const WarehouseManagement = () => {
           onDelete={() => deleteBtnHandler(val.id)}
           onEdit={() => onOpenedEditHandler(val)}
         />
-      );
-    });
-  };
+      )
+    })
+  }
 
   useEffect(() => {
-    fetchWarehouse();
-  }, [openedEdit, page, pages]);
+    fetchWarehouse()
+  }, [openedEdit, page, pages])
 
-  useEffect(() => {}, [pages]);
+  useEffect(() => {}, [pages])
 
   return (
     <Box marginBottom={"50px"} ml="275px" mt="65px">
@@ -337,17 +327,17 @@ const WarehouseManagement = () => {
       </Grid>
       <Divider />
 
-      <HStack justifyContent={"space-between"}>     
-      <Box></Box>
-      <Button
-        colorScheme={"green"}
-        marginLeft="64%"
-        marginTop={"5%"}
-        onClick={() => onOpenAddNewWarehouseAddress()}
-        w="100px"
-      >
-        Add
-      </Button>
+      <HStack justifyContent={"space-between"}>
+        <Box></Box>
+        <Button
+          colorScheme={"green"}
+          marginLeft="64%"
+          marginTop={"5%"}
+          onClick={() => onOpenAddNewWarehouseAddress()}
+          w="100px"
+        >
+          Add
+        </Button>
       </HStack>
 
       {/* Modal nambah data */}
@@ -362,7 +352,6 @@ const WarehouseManagement = () => {
         selectCity={setSelectedCity}
       />
 
-
       {/* Modal untuk Editing data */}
       <WarehouseAddressEdit
         isOpen={isOpenEditWarehouseAddress}
@@ -374,10 +363,8 @@ const WarehouseManagement = () => {
         selectProvince={setSelectedProvince}
         selectCity={setSelectedCity}
       />
-
-
     </Box>
-  );
-};
+  )
+}
 
-export default WarehouseManagement;
+export default WarehouseManagement

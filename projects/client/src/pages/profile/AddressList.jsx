@@ -21,8 +21,6 @@ import EditForm from "../../components/profile/EditForm"
 
 const AddressList = () => {
   const authSelector = useSelector((state) => state.auth)
-  const [province, setProvince] = useState([])
-  const [city, setCity] = useState([])
   const [selectedProvince, setSelectedProvince] = useState(0)
   const [selectedCity, setSelectedCity] = useState(0)
   const [openedEdit, setOpenedEdit] = useState(null)
@@ -126,6 +124,14 @@ const AddressList = () => {
           description: response.data.message,
           status: "success",
         })
+
+        formikAddNewAddress.setFieldValue("recipients_name", "")
+        formikAddNewAddress.setFieldValue("phone_number", "")
+        formikAddNewAddress.setFieldValue("address_labels", "")
+        formikAddNewAddress.setFieldValue("province", "")
+        formikAddNewAddress.setFieldValue("city", "")
+        formikAddNewAddress.setFieldValue("districts", "")
+        formikAddNewAddress.setFieldValue("full_address", "")
         fetchAddres()
       } catch (error) {
         console.log(error.response)
@@ -332,7 +338,23 @@ const AddressList = () => {
                 Add A New Address
               </Button>
             </Box>
-            {renderAddress()}
+            {address.length ? (
+              renderAddress()
+            ) : (
+              <Box
+                fontSize={"22px"}
+                fontWeight="semibold"
+                textAlign={"center"}
+                p="40px"
+                color={"#F7931E"}
+              >
+                <Link>
+                  <Text onClick={onOpenAddNewAddress}>
+                    Click Here To Add Your First Address
+                  </Text>
+                </Link>
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>
@@ -369,8 +391,8 @@ const AddressList = () => {
         isOpenMod={openedEdit}
         onSubmit={onOpenAlert}
         onCloseMod={() => setOpenedEdit(null)}
-        selectProvince={setSelectedProvince}
-        selectCity={setSelectedCity}
+        selectProvince={() => setSelectedProvince}
+        selectCity={() => setSelectedCity}
       />
 
       {/* Alert Edit address */}

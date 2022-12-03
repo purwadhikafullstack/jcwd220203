@@ -26,6 +26,7 @@ import RequestResetPassword from "./pages/RequestResetPassword"
 import ManageUserData from "./components/admin/ManageUserData"
 import ManageAdminData from "./components/admin/ManageAdminData"
 import AdminCategory from "./pages/AdminCategory"
+import NotFound from "./components/404Page"
 import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import ProductData from "./pages/admin/ProductData"
@@ -36,7 +37,7 @@ function App() {
   const authSelector = useSelector((state) => state.auth)
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/greetings`
       )
@@ -119,6 +120,7 @@ function App() {
       )}
 
       <Routes>
+        <Route path="/*" element={<NotFound />} />
         <Route path="/" element={<HomePage />} />
         <Route
           path="/login"
@@ -222,20 +224,18 @@ function App() {
         <Route path="/product/detail/:id" element={<ProductDataDetail />} />
       </Routes>
 
-      {
-        location.pathname === "/login" ||
-          location.pathname === "/register" ||
-          location.pathname === "/reset-password-confirmation" ||
-          location.pathname === "/request-reset-password" ||
-          authSelector.RoleId === 3 ||
-          authSelector.RoleId === 2 ? null : (
-          <Box>
-            <Footer />
-          </Box>
-        )
-      }
+      {location.pathname === "/login" ||
+      location.pathname === "/register" ||
+      location.pathname === "/reset-password-confirmation" ||
+      location.pathname === "/request-reset-password" ||
+      authSelector.RoleId === 3 ||
+      authSelector.RoleId === 2 ? null : (
+        <Box>
+          <Footer />
+        </Box>
+      )}
     </>
   )
 }
 
-export default App;
+export default App
