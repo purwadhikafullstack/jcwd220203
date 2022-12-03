@@ -45,7 +45,7 @@ const addressController = {
       const cityType = provinceAndCity.data.rajaongkir.results.type
       const cityNameAndType = `${cityType} ${cityName}`
 
-      const key = "6833b88f6e234551a37c6dcb7f4de083"
+      const key = "219e2276d40a703824dea05e2ebfb639"
       const location = await axios.get(
         `https://api.opencagedata.com/geocode/v1/json?key=${key}&q=${districts},${cityNameAndType},${provinceName}`
       )

@@ -62,7 +62,6 @@ const warehouseController = {
       const state = location.data.results[0].components.state
       const lat = location.data.results[0].geometry.lat
       const lng = location.data.results[0].geometry.lng
-      // console.log(location.data.results[0])
       const data = await db.Warehouse.create(
         {
           nama_warehouse,
@@ -97,17 +96,16 @@ const warehouseController = {
       const provinceAndCity = await axios.get(
         `https://api.rajaongkir.com/starter/city?id=${city}&province=${province}&key=${RajaOngkirKey}`
       )
-
       const provinceName = provinceAndCity.data.rajaongkir.results.province
       const cityName = provinceAndCity.data.rajaongkir.results.city_name
       const cityType = provinceAndCity.data.rajaongkir.results.type
       const cityNameAndType = `${cityType} ${cityName}`
-
-      const key = "6833b88f6e234551a37c6dcb7f4de083"
+      
+      const key = "90eb0535a1c742b89d44eee5c92b7909"
       const location = await axios.get(
         `https://api.opencagedata.com/geocode/v1/json?key=${key}&q=${districts},${cityNameAndType},${provinceName}`
-      )
-      
+        )
+
       const latitude = location.data.results[0].geometry.lat
       const longitude = location.data.results[0].geometry.lng
 

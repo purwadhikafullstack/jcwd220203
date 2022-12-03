@@ -19,7 +19,7 @@ import {
 import { useEffect, useState } from "react"
 import { axiosInstance } from "../../api"
 
-const WarehouseAddress = ({
+const WarehouseAddressEdit = ({
   isOpen,
   onClose,
   onSubmit,
@@ -128,7 +128,7 @@ const WarehouseAddress = ({
               fontWeight="bold"
               color={"black"}
             >
-              Add warehouse details
+              Change warehouse details
             </Text>
 
             <Box 
@@ -252,5 +252,4 @@ const WarehouseAddress = ({
   )
 }
 
-export default WarehouseAddress
-
+export default WarehouseAddressEdit

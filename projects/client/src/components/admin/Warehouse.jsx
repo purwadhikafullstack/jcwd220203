@@ -13,7 +13,7 @@ const Warehouse = ({ id, nama_warehouse, full_address, address_labels, province,
       <Tr>
         <Td>{id}</Td>
         <Td>{nama_warehouse}</Td>
-        <Td>{address_labels}</Td>
+        <Td>{full_address}</Td>
         <Td>{province}</Td>
         <Td>{city}</Td>
         <Td>{districts}</Td>
