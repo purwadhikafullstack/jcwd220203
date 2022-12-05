@@ -36,7 +36,6 @@ const Product = () => {
 
     const fetchProduct = async () => {
         const maxItemsPerPage = 10
-
         try {
             const response = await axiosInstance.get(`/product`, {
                 params: {
@@ -71,7 +70,6 @@ const Product = () => {
                 },
             })
             setCatTotalCount(response.data.dataCount)
-
             if (catPage === 1) {
                 setCategory(response.data.data)
             } else {
@@ -111,7 +109,6 @@ const Product = () => {
         const { value } = target
         setFilter(value)
     }
-
     const nextPageBtnHandler = () => {
         setPage(page + 1)
     }
@@ -122,7 +119,6 @@ const Product = () => {
 
     const searchBtnHandler = () => {
         setSearchValue(searchProduct)
-
         const params = {}
         params["name"] = searchProduct
         setSearchParam(params)
@@ -229,7 +225,6 @@ const Product = () => {
                                 </Text>
                             </Button>
                         </Flex>
-
                         <Box mt="20px" display="grid" h="auto">
                             <Text fontWeight="bold" fontSize="14px" mb="10px">
                                 Categories

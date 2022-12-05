@@ -4,6 +4,7 @@ const db = require("../models")
 const Product = db.Product
 const Image_Url = db.Image_Url
 const Category = db.Category
+const Total_Stock = db.Total_Stock
 
 const productController = {
     getAllProduct: async (req, res) => {
@@ -34,7 +35,7 @@ const productController = {
                     const getAllProducts1 = await Product.findAndCountAll({
                         limit: Number(_limit),
                         offset: (_page - 1) * _limit,
-                        include: [{ model: Category }],
+                        include: [{ model: Category }, { model: Image_Url }],
                         order: [[_sortBy, _sortDir]],
                         where: {
                             product_name: {
@@ -52,7 +53,7 @@ const productController = {
                 const getAllProducts2 = await Product.findAndCountAll({
                     limit: Number(_limit),
                     offset: (_page - 1) * _limit,
-                    include: [{ model: Category }],
+                    include: [{ model: Category }, { model: Image_Url }],
                     order: [[_sortBy, _sortDir]],
                     where: {
                         product_name: {
@@ -72,7 +73,7 @@ const productController = {
             const getAllProducts3 = await Product.findAndCountAll({
                 limit: Number(_limit),
                 offset: (_page - 1) * _limit,
-                include: [{ model: Category }],
+                include: [{ model: Category }, { model: Image_Url }],
                 order: [
                     [_sortBy, _sortDir],
                     ["price", "DESC"],
@@ -95,7 +96,11 @@ const productController = {
         try {
             const { id } = req.params
             const findProductByPk = await Product.findByPk(id, {
-                include: [{ model: db.Category }],
+                include: [
+                    { model: Category },
+                    { model: Image_Url },
+                    { model: Total_Stock },
+                ],
             })
 
             return res.status(200).json({

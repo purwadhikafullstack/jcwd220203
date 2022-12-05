@@ -25,7 +25,7 @@ import {
     useNavigate,
     createSearchParams,
     useSearchParams,
-    useLocation
+    useLocation,
 } from "react-router-dom"
 import logo from "../assets/logo.png"
 import emptyCart from "../assets/emptyCart.png"
@@ -321,7 +321,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                 </Box>
                                             </Link>
                                         </PopoverTrigger>
-                                        <PopoverContent bgColor={'#E5F9F6'}>
+                                        <PopoverContent bgColor={"#E5F9F6"}>
                                             {authSelector.id ? (
                                                 <>
                                                     <PopoverHeader
@@ -330,46 +330,63 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                     >
                                                         <Text>Cart(0)</Text>
                                                         <Link to="/cart">
-                                                            <Text color="#F7931E"> See Now</Text>
+                                                            <Text color="#F7931E">
+                                                                {" "}
+                                                                See Now
+                                                            </Text>
                                                         </Link>
                                                     </PopoverHeader>
-                                                    <PopoverBody>
-                                                    </PopoverBody>
+                                                    <PopoverBody></PopoverBody>
                                                 </>
-                                            ) :
+                                            ) : (
                                                 <>
                                                     <PopoverBody>
                                                         <Box>
                                                             <Image
                                                                 p="10px"
-                                                                margin={'0 auto'}
-                                                                width={'200px'}
-                                                                src={emptyCart} />
+                                                                margin={
+                                                                    "0 auto"
+                                                                }
+                                                                width={"200px"}
+                                                                src={emptyCart}
+                                                            />
                                                             <Text
-                                                                color={'#393d43'}
+                                                                color={
+                                                                    "#393d43"
+                                                                }
                                                                 textAlign="center"
-                                                                fontWeight={'bold'}
+                                                                fontWeight={
+                                                                    "bold"
+                                                                }
                                                             >
-                                                                Hey your shopping cart is empty!
+                                                                Hey your
+                                                                shopping cart is
+                                                                empty!
                                                             </Text>
                                                             <Text
-                                                                mt={'5px'}
-                                                                color={'#919396'}
+                                                                mt={"5px"}
+                                                                color={
+                                                                    "#919396"
+                                                                }
                                                                 textAlign="center"
-                                                                fontSize={'12px'}
-                                                                mb={'5px'}
+                                                                fontSize={
+                                                                    "12px"
+                                                                }
+                                                                mb={"5px"}
                                                             >
-                                                                Being idle is no fun. Let's fill it with your dream items!
+                                                                Being idle is no
+                                                                fun. Let's fill
+                                                                it with your
+                                                                dream items!
                                                             </Text>
                                                         </Box>
                                                     </PopoverBody>
                                                 </>
-                                            }
+                                            )}
                                         </PopoverContent>
                                     </Popover>
                                 </Box>
                             </Link>
-
                             {/* navbar user login */}
                             {authSelector.username ? (
                                 <Box
@@ -405,8 +422,16 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         authSelector.profile_picture
                                                     }
                                                 />
-                                                <Text my="auto" padding={"8px"} textTransform={'capitalize'}>
-                                                    {authSelector.username.split(" ")[0]}
+                                                <Text
+                                                    my="auto"
+                                                    padding={"8px"}
+                                                    textTransform={"capitalize"}
+                                                >
+                                                    {
+                                                        authSelector.username.split(
+                                                            " "
+                                                        )[0]
+                                                    }
                                                 </Text>
                                             </Box>
                                         </PopoverTrigger>
@@ -498,24 +523,48 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                                 </Text>
                                                             </Box>
                                                         </Link>
-                                                        {location.pathname === "/cart" ||
-                                                            location.pathname === "/transaction" ||
-                                                            location.pathname === "/user/profile" ||
-                                                            location.pathname === "/user/profile/change-password" ||
-                                                            location.pathname === "/user/profile/address" ? (
-                                                            <Link to={"/login"} replace state={{ from: location }}>
+                                                        {location.pathname ===
+                                                            "/cart" ||
+                                                        location.pathname ===
+                                                            "/transaction" ||
+                                                        location.pathname ===
+                                                            "/user/profile" ||
+                                                        location.pathname ===
+                                                            "/user/profile/change-password" ||
+                                                        location.pathname ===
+                                                            "/user/profile/address" ? (
+                                                            <Link
+                                                                to={"/login"}
+                                                                replace
+                                                                state={{
+                                                                    from: location,
+                                                                }}
+                                                            >
                                                                 <Box
-                                                                    display={"flex"}
+                                                                    display={
+                                                                        "flex"
+                                                                    }
                                                                     _hover={{
-                                                                        bgColor: "#A5D8F8",
-                                                                        borderRadius: "7px",
+                                                                        bgColor:
+                                                                            "#A5D8F8",
+                                                                        borderRadius:
+                                                                            "7px",
                                                                     }}
-                                                                    p={"5px 4px"}
+                                                                    p={
+                                                                        "5px 4px"
+                                                                    }
                                                                     b="0"
-                                                                    onClick={logoutBtnHandler}
+                                                                    onClick={
+                                                                        logoutBtnHandler
+                                                                    }
                                                                 >
-                                                                    <Text>Logout</Text>
-                                                                    <Box my="auto" ml="1">
+                                                                    <Text>
+                                                                        Logout
+                                                                    </Text>
+                                                                    <Box
+                                                                        my="auto"
+                                                                        ml="1"
+                                                                    >
                                                                         <BiLogOutCircle />
                                                                     </Box>
                                                                 </Box>
@@ -524,15 +573,24 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                             <Box
                                                                 display={"flex"}
                                                                 _hover={{
-                                                                    bgColor: "#A5D8F8",
-                                                                    borderRadius: "7px",
+                                                                    bgColor:
+                                                                        "#A5D8F8",
+                                                                    borderRadius:
+                                                                        "7px",
                                                                 }}
                                                                 p={"5px 4px"}
                                                                 b="0"
-                                                                onClick={logoutBtnHandler}
+                                                                onClick={
+                                                                    logoutBtnHandler
+                                                                }
                                                             >
-                                                                <Text>Logout</Text>
-                                                                <Box my="auto" ml="1">
+                                                                <Text>
+                                                                    Logout
+                                                                </Text>
+                                                                <Box
+                                                                    my="auto"
+                                                                    ml="1"
+                                                                >
                                                                     <BiLogOutCircle />
                                                                 </Box>
                                                             </Box>
@@ -545,8 +603,19 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                 </Box>
                             ) : (
                                 // navbar if user not login yet
-                                <Box gap="2" display={{ lg: "flex", md: "flex", base: "none" }}>
-                                    <Link to={"/login"} replace state={{ from: location }}>
+                                <Box
+                                    gap="2"
+                                    display={{
+                                        lg: "flex",
+                                        md: "flex",
+                                        base: "none",
+                                    }}
+                                >
+                                    <Link
+                                        to={"/login"}
+                                        replace
+                                        state={{ from: location }}
+                                    >
                                         <Box width={"73px"}>
                                             <Button
                                                 _hover={"null"}
