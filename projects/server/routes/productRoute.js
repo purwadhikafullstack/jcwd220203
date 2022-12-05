@@ -1,11 +1,13 @@
+const productController = require("../controllers/productController")
 const express = require("express")
+
 const router = express.Router()
 
-const { productController } = require("../controllers/productController")
+router.get("/", productController.getAllProduct)
+router.get("/category", productController.getCategory)
 
-router.get("/", productController.getProduct)
-router.post("/", productController.addProduct)
-router.get("/detail/:id", productController.getProductDetail)
-router.get("/detail/images/:id", productController.getPictures)
+router.get("/:id", productController.getProductById)
+router.get("/image/:id", productController.getImage)
+router.get("/category/:id", productController.getCategoryId)
 
 module.exports = router

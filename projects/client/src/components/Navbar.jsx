@@ -18,10 +18,15 @@ import {
     Text,
     useToast,
 } from "@chakra-ui/react"
-
 import { IoMdCart } from "react-icons/io"
 import { BiLogOutCircle } from "react-icons/bi"
-import { Link, useLocation } from "react-router-dom"
+import {
+    Link,
+    useNavigate,
+    createSearchParams,
+    useSearchParams,
+    useLocation
+} from "react-router-dom"
 import logo from "../assets/logo.png"
 import emptyCart from "../assets/emptyCart.png"
 import { BiSearch } from "react-icons/bi"
@@ -29,10 +34,14 @@ import { useDispatch, useSelector } from "react-redux"
 import { logout } from "../redux/features/authSlice"
 import { IoIosNotifications } from "react-icons/io"
 import { IoIosAlert } from "react-icons/io"
+import { useState } from "react"
+import { useEffect } from "react"
 
-const Navbar = () => {
+const Navbar = ({ onChange, onClick, onKeyDown }) => {
     const authSelector = useSelector((state) => state.auth)
-
+    const [searchValue, setSearchValue] = useState("")
+    const [searchParam, setSearchParam] = useSearchParams()
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const toast = useToast()
 
@@ -45,8 +54,26 @@ const Navbar = () => {
             title: "User Logout",
             status: "info",
         })
+        navigate("/")
     }
-
+    const changeBtnHandler = (e) => {
+        setSearchValue(e.target.value)
+        onChange(e)
+    }
+    const keyDownBtnHandler = (e) => {
+        if (e.key === "Enter") {
+            navigate({
+                pathname: "/product",
+                search: createSearchParams({
+                    name: searchValue,
+                }).toString(),
+            })
+            onKeyDown(e)
+        }
+    }
+    useEffect(() => {
+        setSearchValue(searchParam.get("name"))
+    }, [])
     return (
         <>
             <Box
@@ -59,26 +86,27 @@ const Navbar = () => {
                 zIndex="9998"
             >
                 <Box backgroundColor="#E5F9F6">
-                    <HStack
-                        height={"65px"}
-                        width="96%"
-                        mx={"auto"}
-                    >
+                    <HStack height={"65px"} width="96%" mx={"auto"}>
                         {/* Brand */}
-                        <Link to={'/'}>
-                            <Image src={logo} width={'65px'} display={'inline'} mt={'4px'} />
+                        <Link to={"/"}>
+                            <Image
+                                src={logo}
+                                width={"65px"}
+                                display={"inline"}
+                                mt={"4px"}
+                            />
                         </Link>
-                        <Link to={'/'}>
+                        <Link to={"/"}>
                             <Text
                                 fontSize={"30px"}
                                 fontWeight="bold"
                                 color={"#0095DA"}
                                 display="inline"
-                                ml={'-3px'}
+                                ml={"-3px"}
                             >
                                 Shop
                                 <Text
-                                    pl={'0'}
+                                    pl={"0"}
                                     fontSize={"30px"}
                                     fontWeight="bold"
                                     color={"#F7931E"}
@@ -89,33 +117,40 @@ const Navbar = () => {
                             </Text>
                         </Link>
                         {/* Category */}
-                        <Popover trigger="hover" >
+                        <Popover trigger="hover">
                             <PopoverTrigger>
-                                <Box
-                                    pr={'1px'}
-                                    pl={'18px'}
-                                    cursor={'pointer'}
-                                >
+                                <Box pr={"1px"} pl={"18px"} cursor={"pointer"}>
                                     <Text
                                         my={"auto"}
                                         fontSize="14px"
                                         fontWeight="semibold"
                                         p="8px"
-                                        pt={'8x'}
-                                        color={'#878787'}
+                                        pt={"8x"}
+                                        color={"#878787"}
                                         _hover={{
-                                            bgColor: '#A5D8F8',
+                                            bgColor: "#A5D8F8",
                                             color: "orange",
-                                            borderRadius: '5px'
+                                            borderRadius: "5px",
                                         }}
                                     >
                                         Category
                                     </Text>
                                 </Box>
                             </PopoverTrigger>
-                            <PopoverContent w={"100%"} mt="1px" bgColor={'#E5F9F6'} borderRadius={'5px'}>
-                                <PopoverBody fontWeight={"bold"} fontSize="14px">
-                                    <Grid templateColumns="repeat(5, 1fr)" gap="6">
+                            <PopoverContent
+                                w={"100%"}
+                                mt="1px"
+                                bgColor={"#E5F9F6"}
+                                borderRadius={"5px"}
+                            >
+                                <PopoverBody
+                                    fontWeight={"bold"}
+                                    fontSize="14px"
+                                >
+                                    <Grid
+                                        templateColumns="repeat(5, 1fr)"
+                                        gap="6"
+                                    >
                                         <GridItem>
                                             <Text
                                                 _hover={{
@@ -165,13 +200,25 @@ const Navbar = () => {
                                 <Input
                                     placeholder="Find in Warehouse"
                                     _placeholder={{ fontSize: "14px" }}
-                                    bgColor={'#fff'}
+                                    bgColor={"#fff"}
                                     border={"2px solid #FFD7B1"}
-                                    borderRadius={'8px'}
+                                    borderRadius={"8px"}
+                                    onChange={changeBtnHandler}
+                                    onKeyDown={keyDownBtnHandler}
+                                    value={searchValue}
                                 />
-                                <InputRightElement >
-                                    <Button borderLeftRadius="0" _hover={{ bgColor: "#E38566" }} size={'md'} h={'36px'} bgColor={'#FFD7B1'} mr={'4px'}>
-                                        <BiSearch color={'#0095DA'} />
+                                <InputRightElement>
+                                    <Button
+                                        borderLeftRadius="0"
+                                        _hover={{ bgColor: "#E38566" }}
+                                        size={"md"}
+                                        h={"36px"}
+                                        bgColor={"#FFD7B1"}
+                                        mr={"4px"}
+                                        type="submit"
+                                        onClick={onClick}
+                                    >
+                                        <BiSearch color={"#0095DA"} />
                                     </Button>
                                 </InputRightElement>
                             </InputGroup>
@@ -195,32 +242,44 @@ const Navbar = () => {
                                 >
                                     <Popover trigger="hover">
                                         <PopoverTrigger>
-                                            <Box
-                                                pl={3} mr={'-5px'}
-                                            >
+                                            <Box pl={3} mr={"-5px"}>
                                                 <Stack
                                                     p={2}
-                                                    _hover={{ bgColor: "#A5D8F8", borderRadius: "3px", color: 'orange' }}
+                                                    _hover={{
+                                                        bgColor: "#A5D8F8",
+                                                        borderRadius: "3px",
+                                                        color: "orange",
+                                                    }}
                                                 >
-                                                    < IoIosNotifications fontSize={"22px"} />
+                                                    <IoIosNotifications
+                                                        fontSize={"22px"}
+                                                    />
                                                 </Stack>
                                             </Box>
                                         </PopoverTrigger>
-                                        <PopoverContent bgColor={'#E5F9F6'}>
-                                            <Box boxShadow={"rgba(0, 0, 0, 0.05) 0px 3px 8px"}>
+                                        <PopoverContent bgColor={"#E5F9F6"}>
+                                            <Box
+                                                boxShadow={
+                                                    "rgba(0, 0, 0, 0.05) 0px 3px 8px"
+                                                }
+                                            >
                                                 <PopoverHeader
                                                     display={"flex"}
                                                     justifyContent="space-between"
                                                 >
-                                                    <Text fontSize={'17px'}>Notification</Text>
-                                                    <Box fontSize={'21px'}>
+                                                    <Text fontSize={"17px"}>
+                                                        Notification
+                                                    </Text>
+                                                    <Box fontSize={"21px"}>
                                                         <IoIosAlert />
                                                     </Box>
                                                 </PopoverHeader>
                                             </Box>
                                             <PopoverBody>
                                                 <Box>
-                                                    <Text textAlign={'center'}>Transaction</Text>
+                                                    <Text textAlign={"center"}>
+                                                        Transaction
+                                                    </Text>
                                                 </Box>
                                             </PopoverBody>
                                         </PopoverContent>
@@ -249,10 +308,16 @@ const Navbar = () => {
                                         <PopoverTrigger>
                                             <Link to="/cart">
                                                 <Box
-                                                    _hover={{ bgColor: "#A5D8F8", borderRadius: "3px", color: 'orange' }}
+                                                    _hover={{
+                                                        bgColor: "#A5D8F8",
+                                                        borderRadius: "3px",
+                                                        color: "orange",
+                                                    }}
                                                     p={2}
                                                 >
-                                                    <IoMdCart fontSize={"22px"} />
+                                                    <IoMdCart
+                                                        fontSize={"22px"}
+                                                    />
                                                 </Box>
                                             </Link>
                                         </PopoverTrigger>
@@ -305,11 +370,15 @@ const Navbar = () => {
                                 </Box>
                             </Link>
 
-
                             {/* navbar user login */}
                             {authSelector.username ? (
-                                <Box display={{ lg: "flex", base: "none" }} mr="2" ml="1" cursor={'pointer'} >
-                                    <Popover trigger={"hover"} >
+                                <Box
+                                    display={{ lg: "flex", base: "none" }}
+                                    mr="2"
+                                    ml="1"
+                                    cursor={"pointer"}
+                                >
+                                    <Popover trigger={"hover"}>
                                         <PopoverTrigger>
                                             <Box
                                                 display={"flex"}
@@ -319,7 +388,7 @@ const Navbar = () => {
                                                 paddingLeft="5px"
                                                 paddingRight={"5px"}
                                                 _hover={{
-                                                    bgColor: '#A5D8F8',
+                                                    bgColor: "#A5D8F8",
                                                     color: "orange",
                                                     borderRadius: "3px",
                                                 }}
@@ -332,72 +401,103 @@ const Navbar = () => {
                                                     width={"25px"}
                                                     height="25px"
                                                     my="auto"
-                                                    src={authSelector.profile_picture}
+                                                    src={
+                                                        authSelector.profile_picture
+                                                    }
                                                 />
                                                 <Text my="auto" padding={"8px"} textTransform={'capitalize'}>
                                                     {authSelector.username.split(" ")[0]}
                                                 </Text>
                                             </Box>
                                         </PopoverTrigger>
-                                        <PopoverContent w={"300px"} mr="4" bgColor={'#E5F9F6'}>
+                                        <PopoverContent
+                                            w={"300px"}
+                                            mr="4"
+                                            bgColor={"#E5F9F6"}
+                                        >
                                             <PopoverBody>
-                                                <Box p="2 4"
-                                                    bgColor={'#E5F9F6'}
+                                                <Box
+                                                    p="2 4"
+                                                    bgColor={"#E5F9F6"}
                                                 >
                                                     <Box
-                                                        boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                                                        boxShadow={
+                                                            "rgba(0, 0, 0, 0.24) 0px 3px 8px"
+                                                        }
                                                         display={"flex"}
                                                         my="auto"
                                                         padding="6px 12px"
                                                         borderRadius={"5px"}
-                                                        bgColor={'#E5F9F6'}
-                                                        cursor={'pointer'}
+                                                        bgColor={"#E5F9F6"}
+                                                        cursor={"pointer"}
                                                     >
                                                         <Avatar
-                                                            name={authSelector.username}
+                                                            name={
+                                                                authSelector.username
+                                                            }
                                                             mr={2}
                                                             width={"50px"}
                                                             height="50px"
                                                             my="auto"
-                                                            src={authSelector.profile_picture}
+                                                            src={
+                                                                authSelector.profile_picture
+                                                            }
                                                         />
                                                         <Text
                                                             my="auto"
                                                             padding={"8px"}
                                                             fontSize="16px"
                                                             fontWeight={"bold"}
-                                                            color={"rgba(0,0,0,.54)"}
-                                                            textTransform={'capitalize'}
+                                                            color={
+                                                                "rgba(0,0,0,.54)"
+                                                            }
+                                                            textTransform={
+                                                                "capitalize"
+                                                            }
                                                         >
-                                                            {authSelector.username}
+                                                            {
+                                                                authSelector.username
+                                                            }
                                                         </Text>
                                                     </Box>
 
-                                                    <Box fontSize={"14px"} p="10px 0">
+                                                    <Box
+                                                        fontSize={"14px"}
+                                                        p="10px 0"
+                                                    >
                                                         <Link to="/user/profile">
                                                             <Box
                                                                 _hover={{
-                                                                    bgColor: "#A5D8F8",
-                                                                    borderRadius: "7px",
+                                                                    bgColor:
+                                                                        "#A5D8F8",
+                                                                    borderRadius:
+                                                                        "7px",
                                                                 }}
                                                                 p={"5px 4px"}
                                                             >
-                                                                <Text>Profile</Text>
+                                                                <Text>
+                                                                    Profile
+                                                                </Text>
                                                             </Box>
                                                         </Link>
 
-                                                        <Link to={'/transaction'}>
+                                                        <Link
+                                                            to={"/transaction"}
+                                                        >
                                                             <Box
                                                                 _hover={{
-                                                                    bgColor: "#A5D8F8",
-                                                                    borderRadius: "7px",
+                                                                    bgColor:
+                                                                        "#A5D8F8",
+                                                                    borderRadius:
+                                                                        "7px",
                                                                 }}
                                                                 p={"5px 4px"}
                                                             >
-                                                                <Text>Transaction</Text>
+                                                                <Text>
+                                                                    Transaction
+                                                                </Text>
                                                             </Box>
                                                         </Link>
-
                                                         {location.pathname === "/cart" ||
                                                             location.pathname === "/transaction" ||
                                                             location.pathname === "/user/profile" ||
@@ -475,7 +575,7 @@ const Navbar = () => {
                                                 fontSize="12px"
                                                 textAlign="center"
                                                 mx={"auto"}
-                                                w={'65px'}
+                                                w={"65px"}
                                             >
                                                 Register
                                             </Button>
@@ -486,7 +586,7 @@ const Navbar = () => {
                         </Box>
                     </HStack>
                 </Box>
-            </Box >
+            </Box>
         </>
     )
 }

@@ -20,6 +20,8 @@ import ChangePassword from "./pages/profile/ChangePassword"
 import Profile from "./pages/profile/Profile"
 import AdminRoute from "./components/admin/AdminRoute"
 import AddressList from "./pages/profile/AddressList"
+import Product from "./pages/product/Product"
+import ProductDetail from "./pages/product/ProductDetail"
 import { attach } from "./redux/features/resetSlice"
 import ResetPasswordConfirmation from "./pages/ResetPasswordConfirmation"
 import RequestResetPassword from "./pages/RequestResetPassword"
@@ -77,7 +79,6 @@ function App() {
   const userResetData = async () => {
     try {
       const reset_token = localStorage.getItem("reset_token")
-
       if (!reset_token) {
         setAuthCheck(true)
         return
@@ -222,6 +223,9 @@ function App() {
         />
         <Route path="/product-data" element={<ProductData />} />
         <Route path="/product/detail/:id" element={<ProductDataDetail />} />
+        {/* Product Route */}
+        <Route path="/product" element={<Product />} />
+        <Route path="/product/:id/:product_name" element={<ProductDetail />} />
       </Routes>
 
       {location.pathname === "/login" ||

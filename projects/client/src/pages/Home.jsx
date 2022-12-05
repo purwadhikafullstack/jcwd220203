@@ -1,9 +1,10 @@
 import { Box } from "@chakra-ui/react"
 import CarouselSlider from "../components/Carousel"
+import HomeProduct from "../components/product/HomeProduct"
 
 const HomePage = () => {
     return (
-        <Box height={'800px'}>
+        <Box height={"1060px"}>
             <Box w="1208px" marginX={"auto"}>
                 <Box
                     paddingBottom="24px"
@@ -14,6 +15,9 @@ const HomePage = () => {
                     <CarouselSlider />
                 </Box>
             </Box>
+
+            {/* Product Card */}
+            <HomeProduct />
         </Box>
     )
 }
