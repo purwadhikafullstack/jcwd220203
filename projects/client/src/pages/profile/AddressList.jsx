@@ -21,8 +21,10 @@ import EditForm from "../../components/profile/EditForm"
 
 const AddressList = () => {
   const authSelector = useSelector((state) => state.auth)
-  const [selectedProvince, setSelectedProvince] = useState(0)
-  const [selectedCity, setSelectedCity] = useState(0)
+  const [selectedNewProvince, setSelectedNewProvince] = useState(0)
+  const [selectedNewCity, setSelectedNewCity] = useState(0)
+  const [selectedEditProvince, setSelectedEditProvince] = useState(0)
+  const [selectedEditCity, setSelectedEditCity] = useState(0)
   const [openedEdit, setOpenedEdit] = useState(null)
   const [address, setAddress] = useState([])
   const [deleteAlert, setDeleteAlert] = useState(null)
@@ -40,6 +42,8 @@ const AddressList = () => {
 
   const doubleOnClick1 = () => {
     editFormik.handleSubmit()
+    setSelectedEditProvince(0)
+    setSelectedEditCity(0)
     onCloseAlert()
   }
 
@@ -59,6 +63,8 @@ const AddressList = () => {
   const doubleOnClick = () => {
     onClose()
     onCloseAddNewAddress()
+    setSelectedNewProvince(0)
+    setSelectedNewCity(0)
     formikAddNewAddress.handleSubmit()
   }
 
@@ -114,8 +120,8 @@ const AddressList = () => {
           recipients_name,
           phone_number,
           address_labels,
-          province: selectedProvince,
-          city: selectedCity,
+          province: selectedNewProvince,
+          city: selectedNewCity,
           districts,
           full_address,
         })
@@ -185,8 +191,8 @@ const AddressList = () => {
             recipients_name,
             phone_number,
             address_labels,
-            province: selectedProvince,
-            city: selectedCity,
+            province: selectedEditProvince,
+            city: selectedEditCity,
             districts,
             full_address,
           }
@@ -367,8 +373,8 @@ const AddressList = () => {
         formChangeHandler={formChangeHandler}
         formik={formikAddNewAddress}
         header={"Add Address"}
-        selectProvince={setSelectedProvince}
-        selectCity={setSelectedCity}
+        selectProvince={setSelectedNewProvince}
+        selectCity={setSelectedNewCity}
       />
 
       {/* Alert Add New Address */}
@@ -391,8 +397,8 @@ const AddressList = () => {
         isOpenMod={openedEdit}
         onSubmit={onOpenAlert}
         onCloseMod={() => setOpenedEdit(null)}
-        selectProvince={() => setSelectedProvince}
-        selectCity={() => setSelectedCity}
+        selectProvince={setSelectedEditProvince}
+        selectCity={setSelectedEditCity}
       />
 
       {/* Alert Edit address */}

@@ -37,8 +37,15 @@ const EditForm = ({
   selectProvince(selectedProvince)
   selectCity(selectedCity)
   const doubleOnClick = () => {
+    setSelectedProvince(0)
+    setSelectedCity(0)
     onCloseExitAlert()
     onCloseMod()
+  }
+  const doubleOnClick1 = () => {
+    onSubmit()
+    // setSelectedProvince(0)
+    // setSelectedCity(0)
   }
 
   const {
@@ -173,12 +180,15 @@ const EditForm = ({
                   </Box>
                   <Box>
                     <FormLabel mb="8px">City</FormLabel>
-                    <Select
-                      placeholder="--Select City--"
-                      onChange={cityHandler}
-                    >
-                      {renderCity()}
-                    </Select>
+                    <FormControl isInvalid={formik.errors.city}>
+                      <Select
+                        placeholder="--Select City--"
+                        onChange={cityHandler}
+                      >
+                        {renderCity()}
+                      </Select>
+                      <FormErrorMessage>{formik.errors.city}</FormErrorMessage>
+                    </FormControl>
                   </Box>
                 </Grid>
               </Box>
@@ -282,7 +292,7 @@ const EditForm = ({
                   w="80px"
                   _hover={false}
                   bgColor="#F7931E"
-                  onClick={onSubmit}
+                  onClick={doubleOnClick1}
                 >
                   Save
                 </Button>
