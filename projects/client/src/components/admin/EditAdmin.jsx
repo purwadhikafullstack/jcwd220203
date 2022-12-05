@@ -67,7 +67,7 @@ const EditAdmin = ({
     return warehouseData.map((val) => {
       return (
         <option key={val.id.toString()} value={val.id.toString()}>
-          {val.nama_warehouse}
+          {val.warehouse_name}
         </option>
       )
     })

@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 
 const Product = db.Product;
 
-const productController = {
+const adminProductController = {
   getProduct: async (req, res) => {
     try {
       const page = parseInt(req.query._page) || 0
@@ -110,5 +110,5 @@ const productController = {
 };
 
 module.exports = {
-  productController,
+  adminProductController,
 };

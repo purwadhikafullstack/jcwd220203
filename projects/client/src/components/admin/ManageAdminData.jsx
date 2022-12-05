@@ -108,7 +108,7 @@ const ManageAdminData = () => {
             {val.phone_number || "null"}
           </Td>
           <Td p="5px">{val.Role.role_name || "null"}</Td>
-          <Td p="5px">{val.Warehouse?.nama_warehouse || "null "}</Td>
+          <Td p="5px">{val.Warehouse?.warehouse_name || "null "}</Td>
           <Td p="5px">
             <Box>
               <Box mb={"2"}>

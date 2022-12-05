@@ -3,7 +3,7 @@ import { axiosInstance } from "../../api";
 
 const ProductDataImageMap = ({
   id,
-  img_url,
+  image_url,
 }) => {
 
             const productDataImage = axiosInstance.get(`/product/detail/images/${id}`)
@@ -12,7 +12,7 @@ const ProductDataImageMap = ({
     <>
       <Box>
               <img
-                src={productDataImage.data.data.img_url}
+                src={productDataImage.data.data.image_url}
               />
 
       </Box>

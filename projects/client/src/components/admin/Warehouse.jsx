@@ -1,6 +1,6 @@
 import { Tr, Td, Button } from "@chakra-ui/react";
 
-const Warehouse = ({ id, nama_warehouse, full_address, address_labels, province, city, districts, username, latitude, longitude, onEdit, onDelete }) => {
+const Warehouse = ({ id, warehouse_name, full_address, address_labels, province, city, districts, username, latitude, longitude, onEdit, onDelete }) => {
   const DeleteBtnHandler = () => {
     onDelete();
   };
@@ -12,7 +12,7 @@ const Warehouse = ({ id, nama_warehouse, full_address, address_labels, province,
     <>
       <Tr>
         <Td>{id}</Td>
-        <Td>{nama_warehouse}</Td>
+        <Td>{warehouse_name}</Td>
         <Td>{full_address}</Td>
         <Td>{province}</Td>
         <Td>{city}</Td>

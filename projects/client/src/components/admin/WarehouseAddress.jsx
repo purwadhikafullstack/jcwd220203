@@ -135,15 +135,15 @@ const WarehouseAddress = ({
             mt="20px"
             >
               <FormLabel>Warehouse Name</FormLabel>
-              <FormControl isInvalid={formik.errors.nama_warehouse}>
+              <FormControl isInvalid={formik.errors.warehouse_name}>
                 <Input
-                  value={formik.values.nama_warehouse}
-                  name="nama_warehouse"
+                  value={formik.values.warehouse_name}
+                  name="warehouse_name"
                   type="text"
                   onChange={formChangeHandler}
                 />
                 <FormErrorMessage>
-                  {formik.errors.nama_warehouse}
+                  {formik.errors.warehouse_name}
                 </FormErrorMessage>
               </FormControl>
             </Box>
@@ -234,7 +234,7 @@ const WarehouseAddress = ({
                 bgColor="#F7931E"
                 onClick={onSubmit}
                 disabled={
-                  !formik.values.nama_warehouse ||
+                  !formik.values.warehouse_name ||
                   !formik.values.address_labels ||
                   !formik.values.full_address ||
                   !formik.values.districts ||

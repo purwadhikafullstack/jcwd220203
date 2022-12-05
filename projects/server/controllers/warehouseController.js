@@ -17,7 +17,7 @@ const warehouseController = {
       const totalRows = await db.Warehouse.count({
         where: {
           [Op.or]: [
-            { nama_warehouse: { [Op.like]: "%" + search + "%" } },
+            { warehouse_name: { [Op.like]: "%" + search + "%" } },
             { address_labels: { [Op.like]: "%" + search + "%" } },
           ],
         },
@@ -30,7 +30,7 @@ const warehouseController = {
         {
         where: {
           [Op.or]: [
-            { nama_warehouse: { [Op.like]: "%" + search + "%" } },
+            { warehouse_name: { [Op.like]: "%" + search + "%" } },
             { address_labels: { [Op.like]: "%" + search + "%" } },
           ],
         },
@@ -53,7 +53,7 @@ const warehouseController = {
   },
   addWarehouseData: async (req, res) => {
     try {
-      const { nama_warehouse, address } = req.body;
+      const { warehouse_name, address } = req.body;
       const key = "90eb0535a1c742b89d44eee5c92b7909";
       const location = await axios.get(
         `https://api.opencagedata.com/geocode/v1/json?q=${address}&key=${key}`
@@ -64,7 +64,7 @@ const warehouseController = {
       const lng = location.data.results[0].geometry.lng
       const data = await db.Warehouse.create(
         {
-          nama_warehouse,
+          warehouse_name,
           address: locationResult,
           state,
           latitude: lat,
@@ -84,7 +84,7 @@ const warehouseController = {
   addNewWarehouse: async (req, res) => {
     try {
       const {
-        nama_warehouse,
+        warehouse_name,
         address_labels,
         province,
         city,
@@ -110,7 +110,7 @@ const warehouseController = {
       const longitude = location.data.results[0].geometry.lng
 
       const response = await db.Warehouse.create({
-        nama_warehouse,
+        warehouse_name,
         address_labels,
         province: provinceName,
         city: cityNameAndType,
@@ -133,11 +133,11 @@ const warehouseController = {
   },
   editWarehouseData: async (req, res) => {
     try {
-      const { nama_warehouse, address } = req.body;
+      const { warehouse_name, address } = req.body;
 
       await db.Warehouse.update(
         {
-          nama_warehouse,
+          warehouse_name,
           address,
         },
         {

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Warehouse.init(
     {
-      nama_warehouse: DataTypes.STRING,
+      warehouse_name: DataTypes.STRING,
       address_labels: DataTypes.STRING,
       province: DataTypes.STRING,
       city: DataTypes.STRING,

@@ -105,13 +105,13 @@ const WarehouseManagement = () => {
 
   const formik = useFormik({
     initialValues: {
-      nama_warehouse: "",
+      warehouse_name: "",
       address: "",
     },
     onSubmit: async (values) => {
       try {
         let addWarehouse = {
-          nama_warehouse: values.nama_warehouse,
+          warehouse_name: values.warehouse_name,
           address: values.address,
           // UserId: values.UserId,
         };
@@ -122,7 +122,7 @@ const WarehouseManagement = () => {
         toast({ title: "Warehouse added", status: "success" });
         fetchWarehouse();
         setOpenedAdd(null);
-        formik.setFieldValue("nama_warehouse", "");
+        formik.setFieldValue("warehouse_name", "");
         formik.setFieldValue("address", "");
 
       } catch (err) {
@@ -131,7 +131,7 @@ const WarehouseManagement = () => {
       }
     },
     validationSchema: Yup.object({
-      nama_warehouse: Yup.string().required().min(1),
+      warehouse_name: Yup.string().required().min(1),
       address: Yup.string().required(),
       // UserId: Yup.number().required(),
     }),
@@ -144,13 +144,13 @@ const WarehouseManagement = () => {
   };
   const editFormik = useFormik({
     initialValues: {
-      nama_warehouse: openedEdit ? openedEdit.nama_warehouse : "",
+      warehouse_name: openedEdit ? openedEdit.warehouse_name : "",
       address: openedEdit ? openedEdit.address : "",
     },
     onSubmit: async (values) => {
       try {
         let editedWarehouse = {
-          nama_warehouse: values.nama_warehouse,
+          warehouse_name: values.warehouse_name,
           address: values.address,
           // UserId: values.UserId,
         };
@@ -161,7 +161,7 @@ const WarehouseManagement = () => {
         );
 
         toast({ title: "Warehouse edited", status: "success" });
-        editFormik.setFieldValue("nama_warehouse", "");
+        editFormik.setFieldValue("warehouse_name", "");
         editFormik.setFieldValue("address", "");
         fetchWarehouse();
         setOpenedEdit(null);
@@ -171,7 +171,7 @@ const WarehouseManagement = () => {
       }
     },
     validationSchema: Yup.object({
-      nama_warehouse: Yup.string().required().min(3),
+      warehouse_name: Yup.string().required().min(3),
       address: Yup.string().required(),
       // UserId: Yup.number().required(),
     }),
@@ -190,7 +190,7 @@ const WarehouseManagement = () => {
         <Warehouse
           key={val.id.toString()}
           id={val.id.toString()}
-          nama_warehouse={val.nama_warehouse}
+          warehouse_name={val.warehouse_name}
           address={val.address}
           state={val.state}
           username={val?.User?.username}
@@ -220,7 +220,7 @@ const WarehouseManagement = () => {
   useEffect(() => {
     if (openedEdit) {
       // console.log(editFormik.values, openedEdit);
-      editFormik.setFieldValue("nama_warehouse", openedEdit.nama_warehouse);
+      editFormik.setFieldValue("warehouse_name", openedEdit.warehouse_name);
       editFormik.setFieldValue("address", openedEdit.address);
     }
   }, [openedEdit, openedAdd]);
@@ -251,7 +251,7 @@ const WarehouseManagement = () => {
         <Thead>
           <Tr>
             <Th>ID</Th>
-            <Th>Nama</Th>
+            <Th>product_name</Th>
             <Th>Address</Th>
             <Th>State</Th>
             <Th>User</Th>
@@ -307,18 +307,18 @@ const WarehouseManagement = () => {
           <ModalHeader>Edit Warehouse</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-          <FormControl isInvalid={formik.errors.nama_warehouse} />
-                <FormLabel>Nama Warehouse</FormLabel>
+          <FormControl isInvalid={formik.errors.warehouse_name} />
+                <FormLabel>product_name Warehouse</FormLabel>
                 <Input
-                  value={formik.values.nama_warehouse}
+                  value={formik.values.warehouse_name}
                   placeholder={"Input warehouse name"}
-                  name="nama_warehouse"
+                  name="warehouse_name"
                   onChange={formChangeHandler}
                   width="80%"
                   border="1px solid black"
                 />
                 <FormErrorMessage>
-                  {formik.errors.nama_warehouse}
+                  {formik.errors.warehouse_name}
                 </FormErrorMessage>
                 <FormControl isInvalid={formik.errors.address} />
                 <FormLabel>Address Format: Kota, Provinsi, Negara</FormLabel>
@@ -361,13 +361,13 @@ const WarehouseManagement = () => {
           <ModalHeader>Edit Warehouse</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl isInvalid={editFormik.errors.nama_warehouse}>
+            <FormControl isInvalid={editFormik.errors.warehouse_name}>
               <FormLabel>Warehouse Name</FormLabel>
               <Input
-                name="nama_warehouse"
+                name="warehouse_name"
                 type={"text"}
                 onChange={editFormChangeHandler}
-                value={editFormik.values.nama_warehouse}
+                value={editFormik.values.warehouse_name}
               />
             </FormControl>
             <FormControl isInvalid={editFormik.errors.address}>

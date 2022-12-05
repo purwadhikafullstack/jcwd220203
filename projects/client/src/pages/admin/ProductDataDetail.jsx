@@ -43,9 +43,9 @@ const DetailBookAdmin = () => {
       console.warn(dataDetail.Image_Urls)
       setFullImages(response.data.data.Image_Urls)
       // console.log(fullImages)
-      editDetailFormik.setFieldValue("nama", response.data.data.nama)
-      editDetailFormik.setFieldValue("deskripsi", response.data.data.deskripsi)
-      editDetailFormik.setFieldValue("harga", response.data.data.harga)
+      editDetailFormik.setFieldValue("product_name", response.data.data.product_name)
+      editDetailFormik.setFieldValue("description", response.data.data.description)
+      editDetailFormik.setFieldValue("price", response.data.data.price)
       setIsLoading(true);
 
     } catch (err) {
@@ -67,17 +67,17 @@ const DetailBookAdmin = () => {
 
   const editDetailFormik = useFormik({
     initialValues: {
-      nama: "",
-      deskripsi: "",
-      harga: "",
+      product_name: "",
+      description: "",
+      price: "",
     },
     onSubmit: async (values) => {
       try {
 
         let updateBook = {
-          nama: values.nama,
-          deskripsi: values.deskripsi,
-          harga: values.harga,
+          product_name: values.product_name,
+          description: values.description,
+          price: values.price,
           }
 
           await axiosInstance.patch(`/book/${authSelector.id}`, updateBook)
@@ -140,17 +140,17 @@ const DetailBookAdmin = () => {
             alignItems={"flex-start"}
           >
             <Heading size={"lg"}>Name</Heading>
-            <Text fontSize={"2xl"}>{dataDetail.nama}</Text>
+            <Text fontSize={"2xl"}>{dataDetail.product_name}</Text>
             <br />
             <Heading size={"lg"}>Description</Heading>
-            <Text fontSize={"2xl"}>{dataDetail.deskripsi}</Text>
+            <Text fontSize={"2xl"}>{dataDetail.description}</Text>
             <br />
             {/* <Heading size={"lg"}>Image</Heading>
             <Image src={dataDetail.Image_Urls[0].image_url} />
             <br /> */}
             <Heading size={"lg"}>Price</Heading>
-            <Text fontSize={"2xl"}>{(dataDetail?.harga) ? 
-            dataDetail.harga.toLocaleString("in-ID", {style: "currency", currency: "IDR"}) : ""
+            <Text fontSize={"2xl"}>{(dataDetail?.price) ? 
+            dataDetail.price.toLocaleString("in-ID", {style: "currency", currency: "IDR"}) : ""
             }</Text>
             
           </Box>
@@ -167,33 +167,33 @@ const DetailBookAdmin = () => {
       ) : (
         <form onSubmit={editDetailFormik.handleSubmit}>
           <Stack>
-            <FormControl isInvalid={editDetailFormik.errors.nama}>
-              <FormLabel>Nama</FormLabel>
+            <FormControl isInvalid={editDetailFormik.errors.product_name}>
+              <FormLabel>product_name</FormLabel>
               <Input
-                value={editDetailFormik.values.nama}
+                value={editDetailFormik.values.product_name}
                 defaultValue={"Otw"}
-                name="nama"
+                name="product_name"
                 onChange={formChangeHandler}
               />
-              <FormErrorMessage>{editDetailFormik.errors.nama}</FormErrorMessage>
+              <FormErrorMessage>{editDetailFormik.errors.product_name}</FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={editDetailFormik.errors.deskripsi}>
+            <FormControl isInvalid={editDetailFormik.errors.description}>
               <FormLabel>Description</FormLabel>
               <Input
-                value={editDetailFormik.values.deskripsi}
-                name="deskripsi"
+                value={editDetailFormik.values.description}
+                name="description"
                 onChange={formChangeHandler}
               />
-              <FormErrorMessage>{editDetailFormik.errors.deskripsi}</FormErrorMessage>
+              <FormErrorMessage>{editDetailFormik.errors.description}</FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={editDetailFormik.errors.harga}>
+            <FormControl isInvalid={editDetailFormik.errors.price}>
               <FormLabel>Price</FormLabel>
               <Input
-                value={editDetailFormik.values.harga}
-                name="harga"
+                value={editDetailFormik.values.price}
+                name="price"
                 onChange={formChangeHandler}
               />
-              <FormErrorMessage>{editDetailFormik.errors.harga}</FormErrorMessage>
+              <FormErrorMessage>{editDetailFormik.errors.price}</FormErrorMessage>
             </FormControl>
             <Box>
             <Button 
