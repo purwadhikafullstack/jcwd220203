@@ -13,7 +13,6 @@ const authRoute = require("../routes/authRoute")
 const adminWarehouseRoute = require("../routes/adminWarehouseRoute.js")
 const userDataRoute = require("../routes/userDataRoute")
 const adminRoute = require("../routes/adminRoute")
-const productRoute = require("../routes/productRoute")
 const addressRoute = require("../routes/addressRoute")
 const productRoute = require("../routes/productRoute.js");
 const adminProductRoute = require("../routes/adminProductRoute.js");
@@ -50,16 +49,6 @@ app.use("/warehouse", verifyToken, adminWarehouseRoute)
 
 app.use("/public", express.static("public"))
 app.use("/address", addressRoute)
-
-app.use("/product", productRoute)
-
-app.use("/product", productRoute)
-
-app.use("/product", productRoute)
-
-app.use("/product", productRoute)
-
-app.use("/product", productRoute)
 
 app.get("/api", (req, res) => {
     res.send(`Hello, this is my API`)
