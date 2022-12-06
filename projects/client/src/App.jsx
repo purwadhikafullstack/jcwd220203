@@ -31,6 +31,7 @@ import Cart from "./pages/Cart";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProductData from "./pages/admin/ProductData";
 import ProductDataDetail from "./pages/admin/ProductDataDetail";
+import Shipment from "./pages/shipment/Shipment";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -224,6 +225,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AddressList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/shipment"
+          element={
+            <ProtectedRoute>
+              <Shipment />
             </ProtectedRoute>
           }
         />

@@ -49,34 +49,7 @@ const adminWarehouseController = {
       });
     }
   },
-  addWarehouseData: async (req, res) => {
-    try {
-      const { warehouse_name, address } = req.body;
-      const key = "90eb0535a1c742b89d44eee5c92b7909";
-      const location = await axios.get(
-        `https://api.opencagedata.com/geocode/v1/json?q=${address}&key=${key}`
-      );
-      const locationResult = location.data.results[0].formatted;
-      const state = location.data.results[0].components.state;
-      const lat = location.data.results[0].geometry.lat;
-      const lng = location.data.results[0].geometry.lng;
-      const data = await db.Warehouse.create({
-        warehouse_name,
-        address: locationResult,
-        state,
-        latitude: lat,
-        longitude: lng,
-      });
-      return res.status(200).json({
-        message: "Created new warehouse",
-        data: data,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        message: "Server error adding new warehouse",
-      });
-    }
-  },
+ 
   addNewWarehouse: async (req, res) => {
     try {
       const {
@@ -108,7 +81,9 @@ const adminWarehouseController = {
       const response = await db.Warehouse.create({
         warehouse_name,
         address_labels,
+        provinceId: province,
         province: provinceName,
+        cityId: city,
         city: cityNameAndType,
         districts,
         full_address,
@@ -153,7 +128,9 @@ const adminWarehouseController = {
         {
           warehouse_name,
           address_labels,
+          provinceId: province,
           province: provinceName,
+          cityId: city,
           city: cityNameAndType,
           districts,
           full_address,

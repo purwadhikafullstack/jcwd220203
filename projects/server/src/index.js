@@ -16,6 +16,7 @@ const adminRoute = require("../routes/adminRoute")
 const addressRoute = require("../routes/addressRoute")
 const productRoute = require("../routes/productRoute.js");
 const adminProductRoute = require("../routes/adminProductRoute.js");
+const shipmentRoute = require("../routes/shipmentRoute.js");
 
 
 const PORT = process.env.PORT || 8000
@@ -42,6 +43,7 @@ app.use("/userData", userDataRoute)
 app.use("/product", productRoute)
 
 app.use("/auth", authRoute)
+app.use("/shipment", shipmentRoute)
 
 app.use("/profile", verifyToken, profileRoute)
 app.use("/admin/product", verifyToken, adminProductRoute)
