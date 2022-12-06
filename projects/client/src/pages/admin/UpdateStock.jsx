@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   FormControl,
@@ -14,23 +13,28 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react"
-import { useFormik } from "formik"
 import { useEffect } from "react"
 import { useState } from "react"
-import { IoIosAlert } from "react-icons/io"
 import { TbSearch } from "react-icons/tb"
 import { axiosInstance } from "../../api"
-import AddressModal from "./AddressModal"
+import { useFormik } from "formik"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import WarehouseStock from "../../components/admin/WarehouseStock"
+import { IoIosAlert } from "react-icons/io"
 
-const ManageUserData = () => {
-  const [userData, setUserData] = useState([])
-  const [currentSearch, setCurrentSearch] = useState("")
+const UpdateStock = () => {
+  const [warehouse, setWarehouse] = useState([])
+  const [maxPage, setMaxPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
-  const [sortBy, setSortBy] = useState("username")
+  const [currentSearch, setCurrentSearch] = useState("")
+  const [sortBy, setSortBy] = useState("warehouse_name")
   const [sortDir, setSortDir] = useState("ASC")
   const [page, setPage] = useState(1)
-  const [maxPage, setMaxPage] = useState(1)
-  const [openedAddress, setOpenedAddress] = useState(false)
+
+  const navigate = useNavigate()
+  const handleRowClick = (warehouse_name) => {
+    navigate(`/admin/update-stock/${warehouse_name}`)
+  }
 
   const nextPage = () => {
     setPage(page + 1)
@@ -40,14 +44,14 @@ const ManageUserData = () => {
     setPage(page - 1)
   }
 
-  const fetchUserData = async () => {
+  const fetchAllWarehouse = async () => {
     const maxItemsPerPage = 8
     try {
-      const response = await axiosInstance.get("/userData/getAllUser", {
+      const response = await axiosInstance.get("/stock/getAllWarehouse", {
         params: {
           _page: page,
           _limit: maxItemsPerPage,
-          username: currentSearch,
+          warehouse_name: currentSearch,
           _sortBy: sortBy,
           _sortDir: sortDir,
         },
@@ -57,33 +61,29 @@ const ManageUserData = () => {
       setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage))
 
       if (page === 1) {
-        setUserData(response.data.data)
+        setWarehouse(response.data.data)
       } else {
-        setUserData(response.data.data)
+        setWarehouse(response.data.data)
       }
     } catch (error) {
-      console.log(error)
+      console.log(error.response)
     }
   }
 
-  const renderUser = () => {
-    return userData.map((val) => {
+  const renderWarehouse = () => {
+    return warehouse.map((val) => {
       return (
-        <Tr h="auto">
-          <Td p="5px" w={"100px"}>
-            <Avatar
-              size={"lg"}
-              borderRadius={"0"}
-              name={val.username}
-              src={val.profile_picture}
-            />
-          </Td>
-          <Td p="5px">{val.username || "null"}</Td>
-          <Td p="5px">{val.email}</Td>
-          <Td p="5px">{val.phone_number || "null"}</Td>
-          <Td p="5px" maxW={"200px"}>
-            <Button onClick={() => setOpenedAddress(val)}>Details</Button>
-          </Td>
+        <Tr
+          h="auto"
+          key={val.id.toString()}
+          onClick={() => handleRowClick(val.warehouse_name)}
+        >
+          <Td>{val.warehouse_name || "null"}</Td>
+          <Td>{val.address_labels}</Td>
+          <Td>{val.province}</Td>
+          <Td>{val.city}</Td>
+          <Td>{val.districts}</Td>
+          <Td>{val.User?.username || "Not assign"}</Td>
         </Tr>
       )
     })
@@ -111,17 +111,14 @@ const ManageUserData = () => {
   }
 
   useEffect(() => {
-    fetchUserData()
-  }, [currentSearch, page, sortDir, sortBy, openedAddress])
+    fetchAllWarehouse()
+  }, [currentSearch, page, sortDir, sortBy])
   return (
     <Box marginLeft={"230px"}>
       <Box p="20px 0" display={"flex"} justifyContent="space-between" mr="4">
         <Box display={"flex"} gap="4" my={"auto"}>
           <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
-            User Data
-          </Text>
-          <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
-            Total User:{totalCount}
+            Update Stock
           </Text>
         </Box>
 
@@ -136,10 +133,10 @@ const ManageUserData = () => {
             color={"#6D6D6F"}
             _placeholder="Sort By"
           >
-            <option value="username ASC" selected>
+            <option value="warehouse_name ASC" selected>
               Name A-Z
             </option>
-            <option value="username DESC">Name Z-A</option>
+            <option value="warehouse_name DESC">Name Z-A</option>
             <option value="createdAt DESC">Latest</option>
             <option value="createdAt ASC">Old</option>
           </Select>
@@ -149,7 +146,7 @@ const ManageUserData = () => {
               <InputGroup textAlign={"right"}>
                 <Input
                   type={"text"}
-                  placeholder="Search by username"
+                  placeholder="Search by warehouse name"
                   name="search"
                   w="200px"
                   onChange={searchAdminHandler}
@@ -169,22 +166,23 @@ const ManageUserData = () => {
       <Table>
         <Thead>
           <Tr>
-            <Th p="5px">Photo Profile</Th>
-            <Th p="5px">Username</Th>
-            <Th p="5px">Email</Th>
-            <Th p="5px">Phone Number</Th>
-            <Th p="5px">Address</Th>
+            <Th>Warehouse Name</Th>
+            <Th>Address Labels</Th>
+            <Th>Province</Th>
+            <Th>City</Th>
+            <Th>Districs</Th>
+            <Th>Warehouse Admin</Th>
           </Tr>
         </Thead>
-        <Tbody>{renderUser()}</Tbody>
+        <Tbody>{renderWarehouse()}</Tbody>
       </Table>
-      {!userData.length ? (
+      {!warehouse.length ? (
         <Box p="10px" bgColor={"#E5F9F6"}>
           <Box mx="auto">
             <Box display={"flex"} mx="auto" w="170px">
               <IoIosAlert fontSize={"25px"} color="#0095DA" />
               <Text fontWeight="medium" ml="2">
-                No user found
+                No warehouse found
               </Text>
             </Box>
           </Box>
@@ -208,27 +206,8 @@ const ManageUserData = () => {
           )}
         </Box>
       </Box>
-
-      <AddressModal
-        color={"#F7931E"}
-        header="Details Address"
-        isOpen={openedAddress}
-        onClose={() => setOpenedAddress(null)}
-        val={openedAddress?.Addresses?.map((val) => {
-          if (!val) {
-            return "halo"
-          } else {
-            return (
-              <>
-                <Text>Receptients Name: {val.recipients_name} </Text>
-                <Text>Full Address: {val.full_address}</Text>
-                <Text>Phone Number:{val.phone_number}</Text>
-              </>
-            )
-          }
-        })}
-      />
     </Box>
   )
 }
-export default ManageUserData
+
+export default UpdateStock

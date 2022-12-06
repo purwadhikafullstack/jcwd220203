@@ -1,27 +1,27 @@
-import { Button, Text, useToast } from "@chakra-ui/react";
-import { Link, useNavigate } from "react-router-dom";
-import "../AdminDashboard.css";
-import Logo from "../assets/Shopedia.png";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/features/authSlice";
+import { Button, Text, useToast } from "@chakra-ui/react"
+import { Link, useNavigate } from "react-router-dom"
+import "../AdminDashboard.css"
+import Logo from "../assets/Shopedia.png"
+import { useDispatch, useSelector } from "react-redux"
+import { logout } from "../redux/features/authSlice"
 
 const SideNavBar = () => {
-  const authSelector = useSelector((state) => state.auth);
+  const authSelector = useSelector((state) => state.auth)
 
   const navigate = useNavigate()
 
-  const dispatch = useDispatch();
-  const toast = useToast();
+  const dispatch = useDispatch()
+  const toast = useToast()
 
   const logoutBtnHandler = () => {
-    localStorage.removeItem("auth_token");
-    dispatch(logout());
+    localStorage.removeItem("auth_token")
+    dispatch(logout())
     toast({
       title: "User Logout",
       status: "info",
-    });
-    navigate("/");
-  };
+    })
+    navigate("/")
+  }
 
   return (
     <div className="wrapper">
@@ -31,11 +31,11 @@ const SideNavBar = () => {
         <div className="profile">
           <img src={Logo} alt="profile_picture" />
           <h3>Hello, {authSelector.username}!</h3>
-          <p>Admin : {authSelector.RoleId}</p>
-        </div >
+          <p>{authSelector.RoleId === 3 ? "Super Admin" : "Warehouse Admin"}</p>
+        </div>
 
         {/* Dashboard */}
-        < ul >
+        <ul>
           <li>
             <Link to="/admin/dashboard">
               <Text>Dashboard Homepage</Text>
@@ -46,16 +46,20 @@ const SideNavBar = () => {
               <Text>Warehouse Management</Text>
             </Link>
           </li>
-          <li>
-            <Link to={"/manage-admin-data"}>
-              <Text>Manage Admin Data</Text>
-            </Link>
-          </li>
-          <li>
-            <Link to="/manage-user-data">
-              <Text>Manage User Data</Text>
-            </Link>
-          </li>
+          {authSelector.RoleId === 3 ? (
+            <>
+              <li>
+                <Link to={"/admin/manage-admin-data"}>
+                  <Text>Manage Admin Data</Text>
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin/manage-user-data">
+                  <Text>Manage User Data</Text>
+                </Link>
+              </li>
+            </>
+          ) : null}
           <li>
             <a href="/admin/product">
               <Text>Manage Product Data</Text>
@@ -66,11 +70,20 @@ const SideNavBar = () => {
               <Text>Manage Category</Text>
             </Link>
           </li>
-          <li>
-            <a href="#empty">
-              <Text>Update Product Stock</Text>
-            </a>
-          </li>
+          {authSelector.RoleId === 3 ? (
+            <li>
+              <Link to="/admin/update-stock">
+                <Text>Update Product Stock</Text>
+              </Link>
+            </li>
+          ) : null}
+          {authSelector.RoleId === 2 ? (
+            <li>
+              <Link to="/admin/update-stock">
+                <Text>Update Product Stock</Text>
+              </Link>
+            </li>
+          ) : null}
           <li>
             <a href="/user-data">
               <Text>Change Role Status</Text>
@@ -99,7 +112,7 @@ const SideNavBar = () => {
         </ul>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SideNavBar;
+export default SideNavBar

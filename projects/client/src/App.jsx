@@ -32,6 +32,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ProductData from "./pages/admin/ProductData";
 import ProductDataDetail from "./pages/admin/ProductDataDetail";
 import Shipment from "./pages/shipment/Shipment";
+import UpdateStock from "./pages/admin/UpdateStock"
+import WarehouseStock from "./components/admin/WarehouseStock"
+
 
 function App() {
   const [message, setMessage] = useState("");
@@ -137,21 +140,41 @@ function App() {
                 />
 
                 <Route
-                    path="/manage-admin-data"
+                    path="/admin/manage-admin-data"
                     element={
-                        <AdminRoute>
-                            <ManageAdminData />
-                        </AdminRoute>
+                      <AdminRoute>
+                        <ManageAdminData />
+                      </AdminRoute>
                     }
-                />
-                <Route
-                    path="/manage-user-data"
+                  />
+                  <Route
+                    path="/admin/manage-user-data"
                     element={
-                        <AdminRoute>
-                            <ManageUserData />
-                        </AdminRoute>
+                      <AdminRoute>
+                        <ManageUserData />
+                      </AdminRoute>
                     }
-                />
+                  />
+                  <Route
+                    path={authSelector.RoleId === 3 ? "/admin/update-stock" : null}
+                    element={
+                      <AdminRoute>
+                        <UpdateStock />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path={
+                      authSelector.RoleId === 2
+                        ? "/admin/update-stock"
+                        : "/admin/update-stock/:id"
+                    }
+                    element={
+                      <AdminRoute>
+                        <WarehouseStock />
+                      </AdminRoute>
+                    }
+                  />
 
                 <Route
                     path="/request-reset-password"
@@ -265,7 +288,7 @@ function App() {
         </Box>
       )}
     </>
-  );
+  )
 }
 
 export default App;
