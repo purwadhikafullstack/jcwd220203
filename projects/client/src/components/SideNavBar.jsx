@@ -37,12 +37,12 @@ const SideNavBar = () => {
         {/* Dashboard */}
         < ul >
           <li>
-            <Link to="/admin-dashboard">
+            <Link to="/admin/dashboard">
               <Text>Dashboard Homepage</Text>
             </Link>
           </li>
           <li>
-            <Link to="/warehouse-management">
+            <Link to="/admin/warehouse-management">
               <Text>Warehouse Management</Text>
             </Link>
           </li>
@@ -57,7 +57,7 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li>
-            <a href="/product-data">
+            <a href="/admin/product">
               <Text>Manage Product Data</Text>
             </a>
           </li>

@@ -9,7 +9,7 @@ const GuestRoute = ({ children }) => {
     const location = useLocation()
 
     if (authSelector.RoleId === 3 || authSelector.RoleId === 2) {
-        navigate("/admin-dashboard")
+        navigate("/admin/dashboard")
     } else if (authSelector.id && location.state?.from) {
         navigate(location.state.from)
     } else if (authSelector.id) {

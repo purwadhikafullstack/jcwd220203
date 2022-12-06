@@ -60,7 +60,7 @@ const ProductData = () => {
 
   const fetchProductData = async () => {
     try {
-      const productData = await axiosInstance.get("/product", {
+      const productData = await axiosInstance.get("/admin/product", {
         params: {
           _keywordHandler: keyword,
           _page: pages,
@@ -176,7 +176,7 @@ const ProductData = () => {
     },
     onSubmit: async ({ product_name, description, price }) => {
       try {
-        const response = await axiosInstance.post("/product/", {
+        const response = await axiosInstance.post("/admin/product/", {
           product_name,
           description,
           price,
@@ -285,9 +285,19 @@ const ProductData = () => {
     <>
       <Box marginLeft="250px" marginTop="65px">
         <HStack justifyContent="space-between">
-          <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
+          <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
             Product Data
           </Text>
+          <br/>
+          <Button
+            bgColor={"#F7931E"}
+            color="white"
+            _hover={false}
+            onClick={onOpenAddNewProduct}
+          >
+            Add New Product
+          </Button>
+        </HStack>
           <FormControl>
             <Input
               name="input"
@@ -299,15 +309,6 @@ const ProductData = () => {
               Search
             </Button>
           </FormControl>
-          <Button
-            bgColor={"#0095DA"}
-            color="white"
-            _hover={false}
-            onClick={onOpenAddNewProduct}
-          >
-            Add New Product
-          </Button>
-        </HStack>
 
         <Table>
           <Thead>
