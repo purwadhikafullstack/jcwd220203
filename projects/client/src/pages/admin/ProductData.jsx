@@ -1,15 +1,12 @@
 import {
   Box,
   Button,
-  Container,
   FormControl,
   FormLabel,
   HStack,
-  Img,
   Input,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -32,31 +29,23 @@ import {
 } from "@chakra-ui/react";
 import { axiosInstance } from "../../api/index";
 import { useEffect, useState } from "react";
-import { useCallback } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
-import { CgChevronLeft, CgChevronRight } from "react-icons/cg"
-
+import { CgChevronLeft, CgChevronRight } from "react-icons/cg";
 
 const ProductData = () => {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const [openedEdit, setOpenedEdit] = useState(null);
-  const [images, setImages] = useState({});
-
-  const [rows, setRows] = useState(0)
-  const [admin, setAdmin] = useState([])
-  const [pages, setPages] = useState(0)
-  const [maxPage, setMaxPage] = useState(0)
-  const [page, setPage] = useState(1)
-  const [keyword, setKeyword] = useState("")
-  const [keywordHandler, setKeywordHandler] = useState("")
-  const maxItemsPage = 5
+  const [rows, setRows] = useState(0);
+  const [admin, setAdmin] = useState([]);
+  const [pages, setPages] = useState(0);
+  const [maxPage, setMaxPage] = useState(0);
+  const [keyword, setKeyword] = useState("");
+  const [keywordHandler, setKeywordHandler] = useState("");
+  const maxItemsPage = 5;
 
   const fetchProductData = async () => {
     try {
@@ -65,14 +54,12 @@ const ProductData = () => {
           _keywordHandler: keyword,
           _page: pages,
           _limit: maxItemsPage,
-  
         },
-      });;
+      });
       setData(productData.data.data);
       setAdmin(productData.data.data);
       setRows(productData.data.totalRows - maxItemsPage);
       setMaxPage(Math.ceil(productData.data.totalRows / maxItemsPage));
-      console.warn(pages)
       setIsLoading(true);
     } catch (error) {
       console.log(error);
@@ -92,30 +79,16 @@ const ProductData = () => {
     setKeyword(keywordHandler);
   };
 
-  // const fetchImages = async (id) => {
-  //   try {
-  //     const productDataImage = await axiosInstance.get(
-  //       `/product/detail/images/${id}`
-  //     );
-  //     setImages(productDataImage.data.data);
-  //     console.log(images);
-  //     console.warn("test");
-  //     setIsLoading(true);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  const deleteBtnHandler = async (id) => {
+  const deleteBtnHandler = async (val) => {
     try {
-      await axiosInstance.delete(`/product/${id}`);
+      await axiosInstance.delete(`/admin/product/detail/${val.id}`);
       toast({ title: "Successfully deleted product", status: "success" });
       fetchProductData();
     } catch (error) {
       console.log(error);
     }
   };
-
+  console.log(data);
   const renderProductData = () => {
     return data.map((val) => {
       return (
@@ -124,21 +97,22 @@ const ProductData = () => {
           <Td>{val.product_name || "null"}</Td>
           <Td>{val.description || "null"}</Td>
           <Td>
-            {val.price.toLocaleString("in-ID", {
-              style: "currency",
-              currency: "IDR",
-            }) || "null"}
+            {val.price
+              ? val.price.toLocaleString("in-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                })
+              : "null"}
           </Td>
           <Td>
             <Box>
               <Box mb={"2"}>
-                <Link to={`/product/detail/${val.id}`}>
+                <Link to={`/admin/product/detail/${val.id}`}>
                   <Button
                     width={"100px"}
                     bgColor={"#0095DA"}
                     _hover={false}
                     color="white"
-                    onClick={() => {}}
                   >
                     Edit
                   </Button>
@@ -252,28 +226,16 @@ const ProductData = () => {
     validateOnChange: false,
   });
 
-  const editFormChangeHandler = ({ target }) => {
-    const { name, value } = target;
-    editFormik.setFieldValue(name, value);
-  };
-
-  //Carousel
-  const settings = {
-    dots: true,
-    autoplay: true,
-    infinite: true,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-  };
-
+  const onCloseModal = () => {
+    formikAddProduct.handleSubmit()
+    onCloseAddNewProduct()
+  } 
   useEffect(() => {
     fetchProductData();
-  }, [openedEdit, images, pages, setPages, keyword]);
+  }, [openedEdit, pages, setPages, keyword]);
 
   useEffect(() => {
-    // console.log(openedEdit.id)
     if (openedEdit) {
-      // fetchImages(openedEdit.id);
       console.log(openedEdit.id);
       editFormik.setFieldValue("product_name", openedEdit.product_name);
       editFormik.setFieldValue("description", openedEdit.description);
@@ -288,7 +250,7 @@ const ProductData = () => {
           <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
             Product Data
           </Text>
-          <br/>
+          <br />
           <Button
             bgColor={"#F7931E"}
             color="white"
@@ -298,18 +260,19 @@ const ProductData = () => {
             Add New Product
           </Button>
         </HStack>
+        <HStack mt="5px">
           <FormControl>
             <Input
               name="input"
               value={keywordHandler}
               onChange={(event) => setKeywordHandler(event.target.value)}
             />
-
-            <Button onClick={searchKey} mr={0}>
-              Search
-            </Button>
           </FormControl>
 
+          <Button onClick={searchKey} mr={0} bgColor="#F7931E" color="white">
+            Search
+          </Button>
+        </HStack>
         <Table>
           <Thead>
             <Tr>
@@ -427,80 +390,13 @@ const ProductData = () => {
               <Button
                 colorScheme="green"
                 mr={3}
-                onClick={formikAddProduct.handleSubmit}
+                onClick={onCloseModal}
               >
                 Add New Product
               </Button>
             </ModalFooter>
           </ModalContent>
         </form>
-      </Modal>
-
-      {/* Modal edit */}
-      <Modal isOpen={openedEdit} onClose={() => setOpenedEdit(null)}>
-        <ModalContent bgColor="#0095DA" color="white">
-          <ModalHeader>Editing Product Data</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <HStack>
-              <Box>
-                <div className="carousel">
-                  <Slider {...settings}>
-                    {/* {isLoading && renderImages()} */}
-                  </Slider>
-                  <Text> Images </Text>
-                </div>
-              </Box>
-              <Box>
-                <FormControl isInvalid={editFormik.errors.product_name}>
-                  <FormLabel>Product Name</FormLabel>
-                  <Input
-                    name="product_name"
-                    type={"text"}
-                    onChange={editFormChangeHandler}
-                    value={editFormik.values.product_name}
-                  />
-                </FormControl>
-                <FormControl isInvalid={editFormik.errors.description}>
-                  <FormLabel>Description</FormLabel>
-                  <Input
-                    name="description"
-                    type={"text"}
-                    onChange={editFormChangeHandler}
-                    value={editFormik.values.description}
-                  />
-                </FormControl>
-                <FormControl isInvalid={editFormik.errors.price}>
-                  <FormLabel>Price</FormLabel>
-                  <Input
-                    name="price"
-                    type={"text"}
-                    onChange={editFormChangeHandler}
-                    value={editFormik.values.price}
-                  />
-                </FormControl>
-              </Box>
-            </HStack>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              colorScheme="red"
-              mr={3}
-              onClick={() => setOpenedEdit(null)}
-            >
-              Cancel
-            </Button>
-            <Button
-              colorScheme="green"
-              mr={3}
-              onClick={() => editFormik.handleSubmit()}
-              type="submit"
-            >
-              Edit
-            </Button>
-          </ModalFooter>
-        </ModalContent>
       </Modal>
     </>
   );

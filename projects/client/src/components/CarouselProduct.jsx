@@ -13,7 +13,7 @@ const CarouselProductSlider = () => {
 
   const fetchProductData = async () => {
     try {
-      const response = await axiosInstance.get(`/product/detail/${params.id}`);
+      const response = await axiosInstance.get(`/admin/product/detail/${params.id}`);
 
       setImages(response.data.data.Image_Urls);
       console.log(images)

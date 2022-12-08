@@ -6,6 +6,8 @@ const { adminProductController } = require("../controllers/adminProductControlle
 router.get("/", adminProductController.getProduct)
 router.post("/", adminProductController.addProduct)
 router.get("/detail/:id", adminProductController.getProductDetail)
+router.patch("/detail/:id", adminProductController.patchProductDetail)
+router.delete("/detail/:id", adminProductController.deleteProductDetail)
 router.get("/detail/images/:id", adminProductController.getPictures)
 
 module.exports = router

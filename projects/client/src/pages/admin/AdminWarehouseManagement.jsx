@@ -271,18 +271,19 @@ const WarehouseManagement = () => {
       <Text fontSize={"30px"} fontWeight="bold" color="#0095DA">
         Warehouse Data
       </Text>
-      <FormControl>
-        <Input
-          name="input"
-          value={keywordHandler}
-          onChange={(event) => setKeywordHandler(event.target.value)}
-        />
+      <HStack mt="5px">
+          <FormControl>
+            <Input
+              name="input"
+              value={keywordHandler}
+              onChange={(event) => setKeywordHandler(event.target.value)}
+            />
+          </FormControl>
 
-        <Button onClick={searchKey} mr={0}>
-          Search
-        </Button>
-      </FormControl>
-      <Text></Text>
+          <Button onClick={searchKey} mr={0} bgColor="#F7931E" color="white">
+            Search
+          </Button>
+        </HStack>
       <Table>
         <Thead>
           <Tr>

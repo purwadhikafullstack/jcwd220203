@@ -17,7 +17,6 @@ import {
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { axiosInstance } from "../../api/index";
-import { useSelector } from "react-redux";
 import * as Yup from "yup"
 import { useFormik } from "formik";
 import Slider from "react-slick";
@@ -26,27 +25,21 @@ import "slick-carousel/slick/slick-theme.css";
 import CarouselProductSlider from "../../components/CarouselProduct";
 
 const DetailBookAdmin = () => {
-  const authSelector = useSelector((state) => state.auth);
   const [dataDetail, setDataDetail] = useState({});
   const toast = useToast();
   const params = useParams();
   const [adminUpdate, setAdminUpdate] = useState(false)
-  const [isLoading, setIsLoading] = useState(false);
-  const [fullImages, setFullImages] = useState([])
 
 
   const fetchProductData = async () => {
     try {
-      const response = await axiosInstance.get(`/product/detail/${params.id}`);
+      const response = await axiosInstance.get(`/admin/product/detail/${params.id}`);
 
       setDataDetail(response.data.data);
       console.warn(dataDetail.Image_Urls)
-      setFullImages(response.data.data.Image_Urls)
-      // console.log(fullImages)
       editDetailFormik.setFieldValue("product_name", response.data.data.product_name)
       editDetailFormik.setFieldValue("description", response.data.data.description)
       editDetailFormik.setFieldValue("price", response.data.data.price)
-      setIsLoading(true);
 
     } catch (err) {
       console.log(err);
@@ -56,9 +49,8 @@ const DetailBookAdmin = () => {
 
   const destroyProduct = async () => {
     try {
-      await axiosInstance.delete(`/product/${authSelector.id}`)
-
-      toast({ title: "Product removed", status: "success" })
+      await axiosInstance.delete(`/admin/product/detail/${params.id}`)
+      toast({ title: "Product removed", status: "success" });
     } catch (err) {
       console.log(err)
       toast({ title: "Error deleting product", status: "error" })
@@ -74,30 +66,25 @@ const DetailBookAdmin = () => {
     onSubmit: async (values) => {
       try {
 
-        let updateBook = {
+        let updateProduct = {
           product_name: values.product_name,
           description: values.description,
           price: values.price,
           }
-
-          await axiosInstance.patch(`/book/${authSelector.id}`, updateBook)
+          console.log("test")
+          await axiosInstance.patch(`/admin/product/detail/${params.id}`, updateProduct)
 
         setAdminUpdate(false)
-        toast({ title: "Profile edited", status:"success"})
+        toast({ title: "Product edited", status:"success"})
         fetchProductData()
       } catch (err) {
         console.log(err);
       }
     },
     validationSchema: Yup.object({
-      title: Yup.string().required().min(3),
-      author: Yup.string().required(),
-      release_year: Yup.string().required(),
-      ISBN: Yup.string().required(),
-      publisher: Yup.string().required(),
-      genre: Yup.string().required(),
-      pages: Yup.number().required(),
-      language: Yup.string().required(),
+      product_name: Yup.string().required().min(3),
+      description: Yup.string().required(),
+      price: Yup.number().required(),
     }),
     validateOnChange: false,
   });
@@ -117,7 +104,7 @@ const DetailBookAdmin = () => {
     <Box ml="250px" p={"40px"} pt={"5px"}>
       <Grid templateColumns="repeat(2, 1fr)">
         <GridItem w="100%">
-          <Heading p={5}>PRODUCT DETAILS</Heading>
+          <Heading p={5} color="#0095DA">PRODUCT DETAILS</Heading>
         </GridItem>
 
       </Grid>
@@ -155,20 +142,25 @@ const DetailBookAdmin = () => {
             
           </Box>
         <Box>
-          <Button mt="8" mr="8" width="150px" onClick={() => setAdminUpdate(true)}>
+          <Button mt="2" mr="8" width="150px" onClick={() => setAdminUpdate(true)} bgColor="#0095DA">
             Edit Product Detail
           </Button>
           <br />
-          <Button mt="10" mr="8" width="150px" onClick={destroyProduct}>
+          <Link to="/admin/product">
+          <Button mt="2" mr="8" width="150px" onClick={destroyProduct} bgColor="red">
             Delete Product
             </Button>
+          </Link>
+          <br />
+          <Link to="/admin/product">
+          <Button mt="2" mr="8" width="150px" bgColor="#F7931E">Back</Button></Link>
           </Box>
         </Flex>
       ) : (
         <form onSubmit={editDetailFormik.handleSubmit}>
           <Stack>
             <FormControl isInvalid={editDetailFormik.errors.product_name}>
-              <FormLabel>product_name</FormLabel>
+              <FormLabel>Product name</FormLabel>
               <Input
                 value={editDetailFormik.values.product_name}
                 defaultValue={"Otw"}
@@ -197,7 +189,6 @@ const DetailBookAdmin = () => {
             </FormControl>
             <Box>
             <Button 
-            type="submit" 
             colorScheme="red"
             width="100px"
             onClick={() => setAdminUpdate(false)}
@@ -206,10 +197,9 @@ const DetailBookAdmin = () => {
               Cancel
             </Button>
             <Button 
-            type="submit" 
             colorScheme="teal"
             width="100px"
-            onClick={editDetailFormik.handleSubmit}
+            onClick={() => editDetailFormik.handleSubmit()}
             >
               Save
             </Button>

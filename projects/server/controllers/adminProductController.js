@@ -89,6 +89,57 @@ const adminProductController = {
     }
   },
   
+  patchProductDetail: async (req, res) => {
+    try {
+      const {
+        product_name,
+        description,
+        price
+      } = req.body;
+
+      await Product.update(
+        {
+          product_name,
+          description,
+          price,
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+        }
+      );
+
+      return res.status(200).json({
+        message: "Successfully edit product data",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        message: "Failed to edit product data",
+      });
+    }
+  },
+  deleteProductDetail: async (req, res) => {
+    try {
+      const dataByID = await Product.destroy({
+        where: {
+          id: req.params.id
+        },
+      });
+
+      return res.status(200).json({
+        message: "Successfully delete product data",
+        data: dataByID,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        message: "Failed to delete product data",
+      });
+    }
+  },
+
   getPictures: async (req, res) => {
     try {
       const takePicture = await db.ImageURL.findAll({
