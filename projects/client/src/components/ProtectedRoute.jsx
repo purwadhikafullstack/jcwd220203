@@ -1,4 +1,4 @@
-import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, useDisclosure } from "@chakra-ui/react"
+import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Box, Button, Text, useDisclosure } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
 import { Link, useLocation } from "react-router-dom"
@@ -37,24 +37,40 @@ const ProtectedRoute = ({ children }) => {
                         bg="blackAlpha.400"
                         backdropFilter='blur(50px) hue-rotate(90deg)'
                     >
-                        <AlertDialogContent>
-                            <AlertDialogHeader fontSize="lg" fontWeight="bold" color={'#F7931E'}>
+                        <AlertDialogContent
+                            borderRadius={'30px'}
+                            mt={'-50px'}
+                        >
+                            <AlertDialogHeader fontSize="lg" fontWeight="bold" color={'#F7931E'} pt={'20px'}>
                                 Notification!
                             </AlertDialogHeader>
 
-                            <AlertDialogBody >
-                                You must log in first before do any transaction
+                            <AlertDialogBody>
+                                <Box
+                                    display={'flex'}
+                                    flexDirection={'column'}
+                                    justifyContent={'center'}
+                                    alignItems={'center'}
+                                    boxSizing={'border-box'}
+                                >
+                                    <Text pb={'10px'} fontFamily={'Open Sauce One, Nunito Sans, -apple-system, sans-serif'} fontWeight={500}>
+                                        You must log in first before do any transaction
+                                    </Text>
+                                    <Link to={"/login"} replace state={{ from: location }}>
+                                        <Button
+                                            borderRadius={'20px'}
+                                            mt={'16px'}
+                                            width={'220px'}
+                                            colorScheme="blue"
+                                            onClick={backToLogin}
+                                        >
+                                            OK
+                                        </Button>
+                                    </Link>
+                                </Box>
                             </AlertDialogBody>
 
-                            <AlertDialogFooter>
-                                <Link to={"/login"} replace state={{ from: location }}>
-                                    <Button
-                                        colorScheme="blue"
-                                        onClick={backToLogin}
-                                    >
-                                        OK
-                                    </Button>
-                                </Link>
+                            <AlertDialogFooter pb={'5px'}>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialogOverlay>

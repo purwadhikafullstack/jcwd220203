@@ -18,7 +18,7 @@ const stockRoute = require("../routes/stockRoute")
 const productRoute = require("../routes/productRoute.js");
 const adminProductRoute = require("../routes/adminProductRoute.js");
 const shipmentRoute = require("../routes/shipmentRoute.js");
-
+const cartsRoute = require("../routes/cartsRoute")
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -42,6 +42,8 @@ app.use("/admin", adminRoute)
 
 app.use("/userData", userDataRoute)
 app.use("/product", productRoute)
+
+app.use("/carts", cartsRoute)
 
 app.use("/auth", authRoute)
 app.use("/shipment", shipmentRoute)

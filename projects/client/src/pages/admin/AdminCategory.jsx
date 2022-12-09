@@ -1,8 +1,8 @@
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, GridItem, HStack, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Table, Tbody, Text, Tfoot, Th, Thead, Tr, useDisclosure, useToast, VStack } from "@chakra-ui/react"
 import { useFormik } from "formik"
 import React, { useEffect, useRef, useState } from "react"
-import { axiosInstance } from "../api"
-import AdminCategoryItems from "../components/AdminCategoryItems"
+import { axiosInstance } from "../../api"
+import AdminCategoryItems from "../../components/admin/AdminCategoryItems"
 import { BiSearchAlt2 } from "react-icons/bi"
 import { MdAddCircle } from "react-icons/md"
 import { BsFillArrowLeftSquareFill, BsFillArrowRightSquareFill } from "react-icons/bs";
