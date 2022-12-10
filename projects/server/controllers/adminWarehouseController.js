@@ -1,17 +1,17 @@
 // const { axiosInstance } = require("../../client/src/api");
 // const { axiosInstance } = require("../../client/src/api/index");
-const db = require("../models");
+const db = require("../models")
 // import axios from "axios"
-const axios = require("axios");
-const { Op } = require("sequelize");
+const axios = require("axios")
+const { Op } = require("sequelize")
 
 const adminWarehouseController = {
   getAllWarehouseData: async (req, res) => {
     try {
-      const page = parseInt(req.query._page) || 0;
-      const limit = parseInt(req.query._limit) || 20;
-      const search = req.query._keywordHandler || "";
-      const offset = limit * page;
+      const page = parseInt(req.query._page) || 0
+      const limit = parseInt(req.query._limit) || 20
+      const search = req.query._keywordHandler || ""
+      const offset = limit * page
 
       const totalRows = await db.Warehouse.count({
         where: {
@@ -20,10 +20,10 @@ const adminWarehouseController = {
             { address_labels: { [Op.like]: "%" + search + "%" } },
           ],
         },
-      });
+      })
       // console.log(totalRows)
 
-      const totalPage = Math.ceil(totalRows / limit);
+      const totalPage = Math.ceil(totalRows / limit)
       // console.log(offset)
       const findWarehouse = await db.Warehouse.findAll({
         where: {
@@ -35,21 +35,21 @@ const adminWarehouseController = {
         include: [{ model: db.User }],
         offset: offset,
         limit: limit,
-      });
+      })
       return res.status(200).json({
         message: "Warehouse data found!",
         data: findWarehouse,
         limit: limit,
         totalRows: totalRows,
         totalPage: totalPage,
-      });
+      })
     } catch (err) {
       return res.status(500).json({
         message: "Server error get all warehouse",
-      });
+      })
     }
   },
- 
+
   addNewWarehouse: async (req, res) => {
     try {
       const {
@@ -59,24 +59,24 @@ const adminWarehouseController = {
         city,
         districts,
         full_address,
-      } = req.body;
+      } = req.body
 
-      const RajaOngkirKey = "219e2276d40a703824dea05e2ebfb639";
+      const RajaOngkirKey = process.env.RAJAONGKIR_API_KEY
       const provinceAndCity = await axios.get(
         `https://api.rajaongkir.com/starter/city?id=${city}&province=${province}&key=${RajaOngkirKey}`
-      );
-      const provinceName = provinceAndCity.data.rajaongkir.results.province;
-      const cityName = provinceAndCity.data.rajaongkir.results.city_name;
-      const cityType = provinceAndCity.data.rajaongkir.results.type;
-      const cityNameAndType = `${cityType} ${cityName}`;
+      )
+      const provinceName = provinceAndCity.data.rajaongkir.results.province
+      const cityName = provinceAndCity.data.rajaongkir.results.city_name
+      const cityType = provinceAndCity.data.rajaongkir.results.type
+      const cityNameAndType = `${cityType} ${cityName}`
 
-      const key = "90eb0535a1c742b89d44eee5c92b7909";
+      const key = process.env.OPENCAGE_API_KEY
       const location = await axios.get(
         `https://api.opencagedata.com/geocode/v1/json?key=${key}&q=${districts},${cityNameAndType},${provinceName}`
-      );
+      )
 
-      const latitude = location.data.results[0].geometry.lat;
-      const longitude = location.data.results[0].geometry.lng;
+      const latitude = location.data.results[0].geometry.lat
+      const longitude = location.data.results[0].geometry.lng
 
       const response = await db.Warehouse.create({
         warehouse_name,
@@ -89,17 +89,17 @@ const adminWarehouseController = {
         full_address,
         longitude,
         latitude,
-      });
+      })
 
       return res.status(200).json({
         message: "Successfully Added New Address",
         data: response,
-      });
+      })
     } catch (error) {
-      console.log(error);
+      console.log(error)
       return res.status(500).json({
         message: "Server Error Adding New Address",
-      });
+      })
     }
   },
   editWarehouseData: async (req, res) => {
@@ -111,18 +111,24 @@ const adminWarehouseController = {
         city,
         districts,
         full_address,
-        longitude,
-        latitude,
-      } = req.body;
-      
-      const RajaOngkirKey = "219e2276d40a703824dea05e2ebfb639";
+      } = req.body
+
+      const RajaOngkirKey = process.env.RAJAONGKIR_API_KEY
       const provinceAndCity = await axios.get(
         `https://api.rajaongkir.com/starter/city?id=${city}&province=${province}&key=${RajaOngkirKey}`
-      );
-      const provinceName = provinceAndCity.data.rajaongkir.results.province;
-      const cityName = provinceAndCity.data.rajaongkir.results.city_name;
-      const cityType = provinceAndCity.data.rajaongkir.results.type;
-      const cityNameAndType = `${cityType} ${cityName}`;
+      )
+      const provinceName = provinceAndCity.data.rajaongkir.results.province
+      const cityName = provinceAndCity.data.rajaongkir.results.city_name
+      const cityType = provinceAndCity.data.rajaongkir.results.type
+      const cityNameAndType = `${cityType} ${cityName}`
+
+      const key = process.env.OPENCAGE_API_KEY
+      const location = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?key=${key}&q=${districts},${cityNameAndType},${provinceName}`
+      )
+
+      const latitude = location.data.results[0].geometry.lat
+      const longitude = location.data.results[0].geometry.lng
 
       await db.Warehouse.update(
         {
@@ -142,14 +148,14 @@ const adminWarehouseController = {
             id: req.params.id,
           },
         }
-      );
+      )
       return res.status(200).json({
         message: "Updated this book",
-      });
+      })
     } catch (error) {
       return res.status(500).json({
         message: "Server error editing warehouse",
-      });
+      })
     }
   },
   deleteWarehouseData: async (req, res) => {
@@ -158,25 +164,25 @@ const adminWarehouseController = {
         where: {
           id: req.params.id,
         },
-      });
+      })
       return res.status(200).json({
         message: "Warehouse deleted",
-      });
+      })
     } catch (error) {
       return res.status(500).json({
         message: "Server error get all warehouse",
-      });
+      })
     }
   },
   getLocation: async (req, res) => {
     try {
     } catch (error) {
-      console.log(error);
+      console.log(error)
       return res.status(500).json({
         message: "Server error on getting location",
-      });
+      })
     }
   },
-};
+}
 
-module.exports = adminWarehouseController;
+module.exports = adminWarehouseController

@@ -107,7 +107,7 @@ const authController = {
           id: newUser.id,
         })
 
-        const link = ` http://localhost:3000/`
+        const link = process.env.BASE_URL_FE
 
         const rawHTML = fs.readFileSync("templates/welcome.html", "utf-8")
 
@@ -169,7 +169,7 @@ const authController = {
         id: findUserByEmail.id,
       })
 
-      const resetPasswordLink = `http://localhost:3000/reset-password-confirmation?reset_token=${reset_token}`
+      const resetPasswordLink = `${process.env.BASE_URL_FE}reset-password-confirmation?reset_token=${reset_token}`
 
       const rawHTML = fs.readFileSync("templates/resetPassword.html", "utf-8")
 
@@ -178,7 +178,7 @@ const authController = {
       const htmlResult = compiledHTML({
         email,
         resetPasswordLink,
-        username: findUserByEmail.username
+        username: findUserByEmail.username,
       })
 
       await emailer({
@@ -226,22 +226,22 @@ const authController = {
 
       if (newPassword !== confirmNewPassword) {
         return res.status(500).json({
-          message: "Password doesn't match"
+          message: "Password doesn't match",
         })
       }
 
       const passwordUsed = bcrypt.compareSync(
-        newPassword, findUserByEmail.password
+        newPassword,
+        findUserByEmail.password
       )
 
       if (passwordUsed) {
         return res.status(400).json({
-          message: "the new password must be different from the old password"
+          message: "the new password must be different from the old password",
         })
       }
 
       const hashedPassword = bcrypt.hashSync(newPassword, 5)
-
 
       await User.update(
         {
@@ -257,14 +257,13 @@ const authController = {
       return res.status(201).json({
         message: "Password has been reset ",
       })
-
     } catch (err) {
       console.log(err)
       return res.status(500).json({
         message: "Server error",
       })
     }
-  }
+  },
 }
 
 module.exports = {

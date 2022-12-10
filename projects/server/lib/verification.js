@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-const VERIFICATION_KEY = "123123"
+const VERIFICATION_KEY = process.env.VERIFICATION_KEY
 
 const createVerificationToken = (payload) => {
   return jwt.sign(payload, VERIFICATION_KEY, { expiresIn: "15m" })

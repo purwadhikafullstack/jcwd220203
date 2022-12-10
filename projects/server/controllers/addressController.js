@@ -2,8 +2,8 @@ const axios = require("axios")
 const db = require("../models")
 const Address = db.Address
 
-const RajaOngkirKey = "b846db1d8b8034b8c1d64c373ac4f5c7"
-const OpenCageKey = "6833b88f6e234551a37c6dcb7f4de083"
+const RajaOngkirKey = process.env.RAJAONGKIR_API_KEY
+const OpenCageKey = process.env.OPENCAGE_API_KEY
 
 const addressController = {
   getAddressById: async (req, res) => {

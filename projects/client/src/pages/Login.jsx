@@ -29,8 +29,8 @@ import { BiShow } from "react-icons/bi"
 import { BiHide } from "react-icons/bi"
 import Warehouse from "../components/admin/Warehouse"
 
-const clientId =
-  "551516387346-2skc8ac82egk828q4agk7htffth1iiga.apps.googleusercontent.com"
+const clientId = process.env.REACT_APP_CLIENT_ID
+const appId = process.env.REACT_APP_APP_ID
 
 const LoginPage = () => {
   const authSelector = useSelector((state) => state.auth)
@@ -444,7 +444,7 @@ const LoginPage = () => {
 
                 {/* facebook login */}
                 <FacebookLogin
-                  appId="624798946100981"
+                  appId={appId}
                   autoLoad={false}
                   callback={responseFacebook}
                   fields="name,email,picture"

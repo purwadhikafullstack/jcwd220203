@@ -152,7 +152,7 @@ const userDataController = {
         })
       }
 
-      const profile_picture = `http://localhost:8000/public/${req.file.filename}`
+      const profile_picture = req.file.filename
       const { email, password, phone_number, username, WarehouseId } = req.body
 
       const findEmail = await db.User.findOne({
@@ -180,7 +180,6 @@ const userDataController = {
 
       const hashedPassword = bcrypt.hashSync(password, 5)
 
-      
       const newUser = await db.User.create({
         email,
         password: hashedPassword,
@@ -215,7 +214,7 @@ const userDataController = {
       }
 
       if (req.file) {
-        req.body.profile_picture = `http://localhost:8000/public/${req.file.filename}`
+        req.body.profile_picture = req.file.filename
       }
 
       const { branch, phone_number, profile_picture, username, WarehouseId } =

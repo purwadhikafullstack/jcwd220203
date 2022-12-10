@@ -43,7 +43,7 @@ const RegisterController = {
         id: newUser.id,
       })
 
-      const verificationLink = ` http://localhost:3000/register/verification?verification_token=${verification_token}`
+      const verificationLink = ` ${process.env.BASE_URL_FE}register/verification?verification_token=${verification_token}`
 
       const rawHTML = fs.readFileSync("templates/verification.html", "utf-8")
 
@@ -151,7 +151,7 @@ const RegisterController = {
           id: newUser.id,
         })
 
-        const link = ` http://localhost:3000/`
+        const link = process.env.BASE_URL_FE
 
         const rawHTML = fs.readFileSync("templates/welcome.html", "utf-8")
 

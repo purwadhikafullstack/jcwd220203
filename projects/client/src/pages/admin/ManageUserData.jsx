@@ -65,6 +65,7 @@ const ManageUserData = () => {
       console.log(error)
     }
   }
+  const apiImg = process.env.REACT_APP_IMAGE_URL
 
   const renderUser = () => {
     return userData.map((val) => {
@@ -75,7 +76,7 @@ const ManageUserData = () => {
               size={"lg"}
               borderRadius={"0"}
               name={val.username}
-              src={val.profile_picture}
+              src={`${apiImg}/${val.profile_picture}`}
             />
           </Td>
           <Td p="5px">{val.username || "null"}</Td>
