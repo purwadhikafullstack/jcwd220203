@@ -59,6 +59,10 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
 
     const location = useLocation()
 
+    const refreshPage = () => {
+        window.location.reload(false)
+    }
+
     const fetchMyCart = async () => {
         try {
             const response = await axiosInstance.get("/carts/me")
@@ -109,15 +113,36 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
     const logoutBtnHandler = () => {
         localStorage.removeItem("auth_token")
         dispatch(logout())
+
         toast({
             title: "User Logout",
             status: "info",
         })
+
+        if (
+            location.pathname ===
+            "/cart" ||
+            location.pathname ===
+            "/transaction" ||
+            location.pathname ===
+            "/user/profile" ||
+            location.pathname ===
+            "/user/profile/change-password" ||
+            location.pathname ===
+            "/user/profile/address"
+        ) {
+            navigate("/login")
+            refreshPage()
+        } else {
+            refreshPage()
+        }
     }
+
     const changeBtnHandler = (e) => {
         setSearchValue(e.target.value)
         onChange(e)
     }
+
     const keyDownBtnHandler = (e) => {
         if (e.key === "Enter") {
             navigate({
