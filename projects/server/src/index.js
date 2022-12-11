@@ -20,6 +20,7 @@ const adminProductRoute = require("../routes/adminProductRoute.js");
 const shipmentRoute = require("../routes/shipmentRoute.js");
 const cartsRoute = require("../routes/cartsRoute")
 const categoryRoute = require("../routes/categoryRoute")
+const addressCheckoutRoute = require("../routes/addressCheckoutRoute")
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -57,6 +58,7 @@ app.use("/warehouse", verifyToken, adminWarehouseRoute)
 app.use("/public", express.static("public"))
 app.use("/address", addressRoute)
 app.use("/stock", stockRoute)
+app.use("/checkoutAddress", addressCheckoutRoute)
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`)

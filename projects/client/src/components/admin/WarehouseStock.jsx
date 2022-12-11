@@ -32,6 +32,7 @@ const WarehouseStock = ({}) => {
   const authSelector = useSelector((state) => state.auth)
   const [data, setData] = useState([])
   const params = useParams()
+  console.log(params)
   const [sortBy, setSortBy] = useState("product_name")
   const [sortDir, setSortDir] = useState("ASC")
   const [maxPage, setMaxPage] = useState(1)

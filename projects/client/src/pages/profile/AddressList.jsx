@@ -198,7 +198,7 @@ const AddressList = () => {
           }
         )
         toast({
-          title: "Admin Edited",
+          title: "Address Edited",
           description: response.data.message,
           status: "success",
         })

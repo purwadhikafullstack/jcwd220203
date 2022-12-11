@@ -36,6 +36,8 @@ import ProductDataDetail from "./pages/admin/ProductDataDetail"
 import Shipment from "./pages/shipment/Shipment"
 import UpdateStock from "./pages/admin/UpdateStock"
 import WarehouseStock from "./components/admin/WarehouseStock"
+import ChangeAddress from "./components/order/ChangeAddress"
+import Checkout from "./pages/order/Checkout"
 
 function App() {
   const [message, setMessage] = useState("")
@@ -114,11 +116,13 @@ function App() {
       ) : null}
 
       {location.pathname === "/login" ||
-        location.pathname === "/register" ||
-        location.pathname === "/reset-password-confirmation" ||
-        location.pathname === "/request-reset-password" ||
-        authSelector.RoleId === 3 ||
-        authSelector.RoleId === 2 ? null : (
+      location.pathname === "/register" ||
+      location.pathname === "/reset-password-confirmation" ||
+      location.pathname === "/request-reset-password" ||
+      location.pathname === "/cart/shipment" ||
+      authSelector.RoleId === 3 ||
+      authSelector.RoleId === 2 ? null : (
+
         <Box>
           <Navbar />
         </Box>
@@ -261,6 +265,14 @@ function App() {
           }
         />
         <Route
+          path="/cart/shipment"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/product"
           element={
             <AdminRoute>
@@ -284,11 +296,13 @@ function App() {
       </Routes>
 
       {location.pathname === "/login" ||
-        location.pathname === "/register" ||
-        location.pathname === "/reset-password-confirmation" ||
-        location.pathname === "/request-reset-password" ||
-        authSelector.RoleId === 3 ||
-        authSelector.RoleId === 2 ? null : (
+      location.pathname === "/register" ||
+      location.pathname === "/reset-password-confirmation" ||
+      location.pathname === "/request-reset-password" ||
+      location.pathname === "/cart/shipment" ||
+      authSelector.RoleId === 3 ||
+      authSelector.RoleId === 2 ? null : (
+
         <Box>
           <Footer />
         </Box>
