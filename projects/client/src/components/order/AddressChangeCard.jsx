@@ -68,7 +68,7 @@ const AddressChangeCard = ({
                 mt="16px"
                 fontSize={"12px"}
                 color={"#F7931E"}
-                // onClick={on_edit}
+                onClick={on_edit}
               >
                 Change Address
               </Text>

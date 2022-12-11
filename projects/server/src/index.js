@@ -22,7 +22,6 @@ const cartsRoute = require("../routes/cartsRoute")
 const categoryRoute = require("../routes/categoryRoute")
 const addressCheckoutRoute = require("../routes/addressCheckoutRoute")
 
-
 const PORT = process.env.PORT || 8000
 const app = express()
 app.use(
