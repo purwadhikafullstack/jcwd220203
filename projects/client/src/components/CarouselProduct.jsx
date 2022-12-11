@@ -16,14 +16,14 @@ const CarouselProductSlider = () => {
       const response = await axiosInstance.get(`/admin/product/detail/${params.id}`);
 
       setImages(response.data.data.Image_Urls);
-      console.log(images)
+      // console.log(images)
     } catch (err) {
       console.log(err);
     }
   };
 
   const renderImages = () => {
-    console.warn(images);
+    // console.warn(images);
     return images.map((val) => {
       return <Box><Image src={val.image_url || ""} alt="Product images" /></Box>
     });

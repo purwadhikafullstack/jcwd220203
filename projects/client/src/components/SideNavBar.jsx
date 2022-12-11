@@ -61,9 +61,9 @@ const SideNavBar = () => {
             </>
           ) : null}
           <li>
-            <a href="/admin/product">
+            <Link to="/admin/product">
               <Text>Manage Product Data</Text>
-            </a>
+            </Link>
           </li>
           <li>
             <Link to="/admin/category">
@@ -85,19 +85,14 @@ const SideNavBar = () => {
             </li>
           ) : null}
           <li>
-            <a href="/user-data">
+            <Link to="/user-data">
               <Text>Change Role Status</Text>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/user-data">
-              <Text>Change Role Status</Text>
-            </a>
-          </li>
-          <li>
-            <a href="#empty">
+            <Link to="#empty">
               <Text>Sales Report</Text>
-            </a>
+            </Link>
           </li>
           <li>
             <Button

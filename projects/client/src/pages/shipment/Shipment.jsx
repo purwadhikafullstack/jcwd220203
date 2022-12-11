@@ -29,7 +29,9 @@ const Shipment = () => {
   const fetchUserData = async () => {
     try {
       const fetchUser = await axiosInstance.get("/shipment/userAddress");
-      setUserData(fetchUser.data.data[0]);
+      setUserData(fetchUser.data.data);
+      console.warn(userData)
+      console.warn(fetchUser.data)
     } catch (error) {
       console.log(error);
     }
@@ -62,6 +64,7 @@ const Shipment = () => {
   };
 
   const renderWarehouse = () => {
+    console.log(warehouseData)
     return Array.from(warehouseData).map((val) => {
       return (
         <option value={val.cityId} key={val.id.toString()}>
@@ -86,6 +89,8 @@ const Shipment = () => {
           courier: selectedCourier,
         };
 
+        console.log(costForm)
+
         const response = await axiosInstance.post("/shipment/query", costForm);
 
         toast({
@@ -93,6 +98,7 @@ const Shipment = () => {
           status: "success",
         });
         setResults(response);
+        console.log(results)
       } catch (error) {
         console.log("Server error creating cost query");
       }
@@ -121,7 +127,7 @@ const Shipment = () => {
     });
   };
 
-
+  console.warn(results)
   console.log(results?.data?.results[0]?.costs);
   useEffect(() => {
     fetchWarehouseData();
@@ -143,7 +149,7 @@ const Shipment = () => {
           <Divider />
           <Box mt="20px">
             <Text>
-              From your current location: <strong>{userData.city}</strong>
+              From your current location: <strong>{userData?.city ? userData.city : "Please login and set address"}</strong>
             </Text>
             <br />
             <FormLabel>To our warehouse: </FormLabel>

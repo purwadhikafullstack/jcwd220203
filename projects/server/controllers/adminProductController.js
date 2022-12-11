@@ -29,9 +29,10 @@ const adminProductController = {
             { description: { [Op.like]: "%" + search + "%" } },
           ],
         },
+        include: [{model: db.Image_Url}, {model: db.Category}],
         offset: offset,
         limit: limit,
-      });;
+      });
 
       return res.status(200).json({
         message: "Successfully getting product data",
@@ -50,13 +51,20 @@ const adminProductController = {
   
   addProduct: async (req, res) => {
     try {
-      const { product_name, description, price } = req.body
+      const { product_name, description, price, CategoryId } = req.body
+      const image_url = `http://localhost:8000/public/${req.file.filename}`
 
       const addProductData = await Product.create({
         product_name,
         description,
         price,
+        CategoryId,
       })
+      await db.Image_Url.create({
+        image_url,
+        ProductId: addProductData.id
+      })
+      
       return res.status(200).json({
         message: "Successfully added product data",
         data: addProductData
@@ -68,13 +76,32 @@ const adminProductController = {
       })
     }
   },
+  addImages: async (req, res) => {
+    try {
+      const image_url = `http://localhost:8000/public/${req.file.filename}`
+
+      await db.Image_Url.create({
+        image_url,
+        ProductId: req.params.id
+      })
+      
+      return res.status(200).json({
+        message: "Successfully added product image",
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        message: "Error adding product image"
+      })
+    }
+  },
   getProductDetail: async (req, res) => {
     try {
       const dataByID = await Product.findOne({
         where: {
           id: req.params.id
         },
-        include: [{model: db.Image_Url}]
+        include: [{model: db.Image_Url}, {model: db.Category}]
       });
 
       return res.status(200).json({
@@ -94,7 +121,8 @@ const adminProductController = {
       const {
         product_name,
         description,
-        price
+        price,
+        CategoryId,
       } = req.body;
 
       await Product.update(
@@ -102,6 +130,7 @@ const adminProductController = {
           product_name,
           description,
           price,
+          CategoryId,
         },
         {
           where: {
@@ -157,7 +186,23 @@ const adminProductController = {
         message: "Server error when taking pictures"
       })
     }
-  }
+  },
+  getCategory: async (req, res) => {
+    try {
+      const categories = await db.Category.findAll({})
+
+      return res.status(200).json({
+        message: "Successfully getting categories",
+        data: categories,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        message: "Server error when taking categories"
+      })
+    }
+  },
+  
 };
 
 module.exports = {

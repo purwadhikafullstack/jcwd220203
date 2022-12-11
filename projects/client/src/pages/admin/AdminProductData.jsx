@@ -26,15 +26,19 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Image,
+  Avatar,
+  Select,
 } from "@chakra-ui/react";
 import { axiosInstance } from "../../api/index";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { CgChevronLeft, CgChevronRight } from "react-icons/cg";
+import { TbCameraPlus } from "react-icons/tb";
 
-const ProductData = () => {
+const AdminProductData = () => {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
@@ -47,6 +51,11 @@ const ProductData = () => {
   const [keywordHandler, setKeywordHandler] = useState("");
   const maxItemsPage = 5;
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const inputFileRef = useRef();
+
+  const [category, setCategory] = useState({});
+
   const fetchProductData = async () => {
     try {
       const productData = await axiosInstance.get("/admin/product", {
@@ -58,14 +67,33 @@ const ProductData = () => {
       });
       setData(productData.data.data);
       setAdmin(productData.data.data);
+      console.log(productData.data.data);
+      // console.warn(productData.data.data.Image_Urls);
+      // console.warn(data.Image_Urls);
       setRows(productData.data.totalRows - maxItemsPage);
       setMaxPage(Math.ceil(productData.data.totalRows / maxItemsPage));
+
+      const categoryRes = await axiosInstance.get("/admin/product/category");
+      setCategory(categoryRes.data.data);
+      console.log(category);
+
       setIsLoading(true);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const renderCategory = () => {
+    console.log(isLoading);
+    console.warn(category);
+    return Array.from(category).map((val) => {
+      return (
+        <option value={val.id} key={val.id.toString()}>
+          {val.category_name}
+        </option>
+      );
+    });
+  };
   const nextPage = () => {
     setPages(pages + 1);
   };
@@ -88,12 +116,19 @@ const ProductData = () => {
       console.log(error);
     }
   };
-  console.log(data);
+  // console.log(data.Image_Urls[0]);
   const renderProductData = () => {
     return data.map((val) => {
       return (
         <Tr key={val.id.toString()}>
           <Td>{val.id.toString()}</Td>
+          <Td>
+            <Image
+              width="100px"
+              height="100px"
+              src={val?.Image_Urls[0]?.image_url}
+            />
+          </Td>
           <Td>{val.product_name || "null"}</Td>
           <Td>{val.description || "null"}</Td>
           <Td>
@@ -104,6 +139,7 @@ const ProductData = () => {
                 })
               : "null"}
           </Td>
+          <Td>{val?.Category?.category_name}</Td>
           <Td>
             <Box>
               <Box mb={"2"}>
@@ -144,25 +180,54 @@ const ProductData = () => {
 
   const formikAddProduct = useFormik({
     initialValues: {
+      image_url:{},
       product_name: "",
       description: "",
       price: "",
+      CategoryId: "",
     },
-    onSubmit: async ({ product_name, description, price }) => {
+    onSubmit: async ({
+      image_url,
+      product_name,
+      description,
+      price,
+      CategoryId,
+    }) => {
       try {
-        const response = await axiosInstance.post("/admin/product/", {
-          product_name,
-          description,
-          price,
-        });
+        const data = new FormData();
+
+        if (image_url) {
+          console.log(image_url)
+          data.append("image_url", image_url);
+        }
+        if (product_name) {
+          data.append("product_name", product_name);
+        }
+        if (description) {
+          data.append("description", description);
+          console.log(description)
+        }
+        if (price) {
+          data.append("price", price);
+        }
+        if (CategoryId) {
+          data.append("CategoryId", CategoryId);
+        }
+        console.warn(data.image_url)
+        const response = await axiosInstance.post("/admin/product/", 
+          data
+        );
+
         toast({
           title: "Registration Success",
           description: response.data.message,
           status: "success",
         });
+        formikAddProduct.setFieldValue("image_url", "");
         formikAddProduct.setFieldValue("product_name", "");
         formikAddProduct.setFieldValue("description", "");
         formikAddProduct.setFieldValue("price", "");
+        formikAddProduct.setFieldValue("CategoryId", "");
         fetchProductData();
       } catch (error) {
         console.log(error.response);
@@ -177,6 +242,7 @@ const ProductData = () => {
       product_name: Yup.string().required().min(3),
       description: Yup.string().required().min(3),
       price: Yup.number().required().min(3),
+      CategoryId: Yup.number().required(),
     }),
     validateOnChange: false,
   });
@@ -227,11 +293,12 @@ const ProductData = () => {
   });
 
   const onCloseModal = () => {
-    formikAddProduct.handleSubmit()
-    onCloseAddNewProduct()
-  } 
+    formikAddProduct.handleSubmit();
+    onCloseAddNewProduct();
+  };
   useEffect(() => {
     fetchProductData();
+    // fetchCategory();
   }, [openedEdit, pages, setPages, keyword]);
 
   useEffect(() => {
@@ -240,6 +307,7 @@ const ProductData = () => {
       editFormik.setFieldValue("product_name", openedEdit.product_name);
       editFormik.setFieldValue("description", openedEdit.description);
       editFormik.setFieldValue("price", openedEdit.price);
+      editFormik.setFieldValue("CategoryId", openedEdit.CategoryId);
     }
   }, [openedEdit]);
 
@@ -277,10 +345,12 @@ const ProductData = () => {
           <Thead>
             <Tr>
               <Th w="10px">ID</Th>
-              {/* <Th w="100px">Photo Profile</Th> */}
+              <Th w="100px">Photo Profile</Th>
               <Th w="150px">Name</Th>
               <Th w="450px">Description</Th>
               <Th>Price</Th>
+              <Th>Category</Th>
+              <Th>Action</Th>
             </Tr>
           </Thead>
           <Tbody>{isLoading && renderProductData()}</Tbody>
@@ -320,16 +390,73 @@ const ProductData = () => {
         isOpen={isOpenAddNewProduct}
         onClose={onCloseAddNewProduct}
         motionPreset="slideInBottom"
-        size={"md"}
+        size={"4xl"}
       >
         <form onSubmit={formikAddProduct.handleSubmit}>
           <ModalOverlay />
-          <ModalContent bgColor={"#0095DA"} color="white" p="20px">
+          <ModalContent bgColor={"#0095DA"} p="20px">
             <ModalHeader fontSize={"2xl"} fontWeight="bold">
               New Product
             </ModalHeader>
 
             <ModalBody>
+              <HStack>
+                <FormControl isInvalid={formikAddProduct.errors.image_url}>
+                  <Image
+                    w={"150px"}
+                    h="150px"
+                    objectFit={"cover"}
+                    borderRadius={"8px"}
+                    border="3px solid"
+                    color={"#0095DA"}
+                    mx="auto"
+                    src={
+                      selectedImage
+                        ? selectedImage
+                        : "Input Your Profile Picture"
+                    }
+                  />
+                  <Button
+                    borderRadius={"50%"}
+                    w="auto"
+                    h="30px"
+                    border="2px solid"
+                    onClick={() => inputFileRef.current.click()}
+                    color={"#F7931E"}
+                    _hover={false}
+                    ml="58%"
+                    size={"xs"}
+                    mt="-33px"
+                  >
+                    <TbCameraPlus color={"#F7931E"} />
+                  </Button>
+
+                  <Input
+                    w="100%"
+                    _hover={false}
+                    fontWeight="bold"
+                    bgColor={"white"}
+                    onChange={(e) => {
+                      console.log(e.target.files[0].File)
+                      formikAddProduct.setFieldValue(
+                        "image_url",
+                        e.target.files[0]
+                      );
+                      setSelectedImage(URL.createObjectURL(e.target.files[0]));
+                    }}
+                    accept="image/*"
+                    name="image_url"
+                    type="file"
+                    color="transparent"
+                    border="0"
+                    display={"none"}
+                    ref={inputFileRef}
+                  />
+                  <FormErrorMessage>
+                    {formikAddProduct.errors.image_url}
+                  </FormErrorMessage>
+                </FormControl>
+              </HStack>
               <FormLabel>Name</FormLabel>
               <FormControl isInvalid={formikAddProduct.errors.product_name}>
                 <Input
@@ -349,7 +476,6 @@ const ProductData = () => {
                   value={formikAddProduct.values.description}
                   name="description"
                   onChange={formChangeHandler}
-                  //
                 />
                 <FormErrorMessage>
                   {formikAddProduct.errors.description}
@@ -362,36 +488,32 @@ const ProductData = () => {
                   value={formikAddProduct.values.price}
                   name="price"
                   onChange={formChangeHandler}
-                  //
                 />
                 <FormErrorMessage>
                   {formikAddProduct.errors.price}
                 </FormErrorMessage>
               </FormControl>
 
-              {/* <FormLabel mt={"15px"}>Product Picture</FormLabel>
-              <FormControl isInvalid={formikAddNewAdmin.errors.image_url}>
-                  <Input
-                    value={formikAddNewAdmin.values.image_url}
-                    name="image_url"
-                    type="tel"
-                    onChange={formChangeHandler}
-                  />
+              <FormLabel mt={"15px"}>Category</FormLabel>
+              <FormControl isInvalid={formikAddProduct.errors.CategoryId}>
+                <Select
+                  name="CategoryId"
+                  onChange={formChangeHandler}
+                  placeholder="Select category"
+                >
+                  {isLoading && renderCategory()}
+                </Select>
                 <FormErrorMessage>
-                  {formikAddNewAdmin.errors.image_url}
+                  {formikAddProduct.errors.CategoryId}
                 </FormErrorMessage>
-              </FormControl> */}
+              </FormControl>
             </ModalBody>
 
             <ModalFooter>
               <Button colorScheme="red" mr={3} onClick={onCloseAddNewProduct}>
                 Cancel
               </Button>
-              <Button
-                colorScheme="green"
-                mr={3}
-                onClick={onCloseModal}
-              >
+              <Button colorScheme="green" mr={3} onClick={onCloseModal}>
                 Add New Product
               </Button>
             </ModalFooter>
@@ -402,4 +524,4 @@ const ProductData = () => {
   );
 };
 
-export default ProductData;
+export default AdminProductData;
