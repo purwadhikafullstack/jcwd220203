@@ -412,7 +412,7 @@ const ProductDetail = ({ product_name, id }) => {
                                     color={'#31353BF5'}
                                     fontWeight={500}
                                 >
-                                    {`Total Stock: `}
+                                    {`Total Stocks: `}
                                     <Text as={'span'} fontWeight={'bolder'}>
                                         {stock}
                                     </Text>

@@ -82,7 +82,7 @@ const HomeProduct = () => {
     return (
         <>
             {/* Category Selection */}
-            <Box
+            {/* <Box
                 // border="1px solid red"
                 mx="auto"
                 mt="20px"
@@ -108,10 +108,10 @@ const HomeProduct = () => {
                         // w="156.062px"
                     >
                         <Text>Selected Category</Text>
-                    </Box>
+                    </Box> */}
 
-                    {/* Category Card */}
-                    <Grid
+            {/* Category Card */}
+            {/* <Grid
                         // border="1px solid green"
                         display="grid"
                         p="1px 0"
@@ -123,12 +123,12 @@ const HomeProduct = () => {
                         // boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
                         borderRadius="8px"
                     >
-                        {renderCategory()}
-                        {/* 1 */}
-                        <GridItem p="16px" mb="24px"></GridItem>
+                        {renderCategory()} */}
+            {/* 1 */}
+            {/* <GridItem p="16px" mb="24px"></GridItem>
                     </Grid>
                 </Box>
-            </Box>
+            </Box> */}
 
             {/* Product Recommendation */}
             <Box

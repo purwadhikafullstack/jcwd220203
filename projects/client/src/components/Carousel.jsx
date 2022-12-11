@@ -2,6 +2,11 @@ import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import { Box, Button, Image, UnorderedList } from "@chakra-ui/react"
+import slider1 from "../assets/ImageSlider/Banner-Slider-1.jpg"
+import slider2 from "../assets/ImageSlider/Banner-Slider-2.jpg"
+import slider3 from "../assets/ImageSlider/Banner-Slider-3.jpg"
+import slider4 from "../assets/ImageSlider/Banner-Slider-4.jpg"
+import slider5 from "../assets/ImageSlider/Banner-Slider-5.jpg"
 
 import React from "react"
 
@@ -52,8 +57,8 @@ const CarouselSlider = () => {
 
     const myStyle = {
         display: true,
-        width: 1100,
-        height: 300,
+        width: 1200,
+        height: "375px",
         borderRadius: 40
     }
 
@@ -65,64 +70,79 @@ const CarouselSlider = () => {
                 mt={'70px'}
                 style={myStyle}
                 cursor={'pointer'}
+                mb={'20px'}
             >
 
                 <Slider ref={slider} {...settings}>
+                    <Box>
+                        <Image
+                            src={slider1}
+                            borderRadius={'15px'}
+                            height={'375px'}
+                            width={'1200px'}
+                        />
+                    </Box>
+                    <Box>
+                        <Image
+                            src={slider2}
+                            borderRadius={'15px'}
+                            height={'375px'}
+                            width={'1200px'}
+                        />
+                    </Box>
+                    <Box>
+                        <Image
+                            src={slider3}
+                            borderRadius={'15px'}
+                            height={'375px'}
+                            width={'1200px'}
+                        />
+                    </Box>
                     <Box  >
                         <Image
-                            src={"https://images.tokopedia.net/img/cache/1208/NsjrJu/2022/11/10/c080e6e7-b310-4ffa-b83c-5ca1b80c913f.jpg?ect=4g"}
+                            src={slider4}
                             borderRadius={'15px'}
-                            height={'302px'}
+                            height={'375px'}
                             width={'1200px'}
                         />
                     </Box>
                     <Box>
                         <Image
-                            src={'https://images.tokopedia.net/img/cache/1190/wmEwCC/2022/11/16/270540a4-a7a0-4761-99e4-b31cc6c51d3a.jpg.webp?ect=4g'}
+                            src={slider5}
                             borderRadius={'15px'}
-                            height={'302px'}
-                            width={'1200px'}
-                        />
-                    </Box>
-                    <Box>
-                        <Image
-                            src={"https://images.tokopedia.net/img/cache/1190/wmEwCC/2022/11/17/96e9efcf-b612-4822-ac7a-fcf176f54c60.jpg.webp?ect=4g"}
-                            borderRadius={'15px'}
-                            height={'302px'}
+                            height={'375px'}
                             width={'1200px'}
                         />
                     </Box>
                 </Slider>
-                <Button
-                    mt={'-335px'}
-                    ml={'-20px'}
-                    onClick={() => slider?.current?.slickPrev()}
-                    borderRadius={'50px'}
-                    color={'#0095DA'}
-                    bgColor={'#E5F9F6'}
-                    _hover={{
-                        color: '#0095DA',
-                        bgColor: 'orange'
-                    }}
-                >
-                    ❮
-                </Button>
-                <Button
-                    display={'inline'}
-                    mt={'-380px'}
-                    ml={'1080px'}
-                    onClick={() => slider?.current?.slickNext()}
-                    borderRadius={'50px'}
-                    color={'#0095DA'}
-                    bgColor={'E5F9F6'}
-                    _hover={{
-                        display: 'inline',
-                        color: '#0095DA',
-                        bgColor: 'orange'
-                    }}
-                >
-                    ❯
-                </Button>
+                <Box display={'flex'} width={'1240px'} justifyContent={'space-between'} ml={'-20px'} mt={'-210px'}>
+                    <Button
+                        onClick={() => slider?.current?.slickPrev()}
+                        borderRadius={'50px'}
+                        color={'#0095DA'}
+                        bgColor={'#E5F9F6'}
+                        _hover={{
+                            color: '#0095DA',
+                            bgColor: 'orange'
+                        }}
+                    >
+                        ❮
+                    </Button>
+                    <Button
+                        display={'inline'}
+                        onClick={() => slider?.current?.slickNext()}
+                        borderRadius={'50px'}
+                        color={'#0095DA'}
+                        bgColor={'E5F9F6'}
+                        _hover={{
+                            display: 'inline',
+                            color: '#0095DA',
+                            bgColor: 'orange'
+                        }}
+                    >
+                        ❯
+                    </Button>
+                </Box>
             </Box>
         </>
     )
