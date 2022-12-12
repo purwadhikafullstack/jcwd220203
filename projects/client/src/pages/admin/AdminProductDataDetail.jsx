@@ -30,16 +30,20 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import CarouselProductSlider from "../../components/CarouselProduct";
 import { TbCameraPlus } from "react-icons/tb";
+import upload from "../../assets/upload.png"
 
 const AdminProductDataDetail = () => {
   const [dataDetail, setDataDetail] = useState({});
   const toast = useToast();
   const params = useParams();
   const [adminUpdate, setAdminUpdate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [category, setCategory] = useState({});
   const inputFileRef = useRef();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageData, setImageData] = useState({});
+
 
   const {
     isOpen: isOpenAddNewProduct,
@@ -54,6 +58,7 @@ const AdminProductDataDetail = () => {
       );
 
       setDataDetail(response.data.data);
+      setImageData(dataDetail.Image_Urls);
       console.log(dataDetail);
       // console.log(dataDetail.Image_Urls)
       // console.warn(response.data.data.Image_Urls)
@@ -75,9 +80,10 @@ const AdminProductDataDetail = () => {
         response.data.data.Category.CategoryId
       );
 
+      setIsLoading(true);
       const categoryRes = await axiosInstance.get("/admin/product/category");
       setCategory(categoryRes.data.data);
-      console.log(category);
+      //console.log(category);
     } catch (err) {
       console.log(err);
     }
@@ -91,11 +97,37 @@ const AdminProductDataDetail = () => {
       );
     });
   };
+  const renderImages = () => {
+    return Array.from(dataDetail.Image_Urls).map((val) => {
+      return (
+        <GridItem textAlign={"center"}>
+          <Box border="1px solid black">
+            <Image src={val?.image_url} />
+            <Button bgColor="red" onClick={() => deleteImage(val)}>
+              Delete
+            </Button>
+          </Box>
+        </GridItem>
+      );
+    });
+  };
+
+  const deleteImage = async (val) => {
+    try {
+      await axiosInstance.delete(`/admin/product/detail/images/${val.id}`);
+      toast({ title: "Success deleted product image", status: "success" });
+      fetchProductData();
+    } catch (error) {
+      console.log(error);
+      toast({ title: "Error deleting product image", status: "error" });
+    }
+  };
 
   const destroyProduct = async () => {
     try {
       await axiosInstance.delete(`/admin/product/detail/${params.id}`);
       toast({ title: "Product removed", status: "success" });
+      fetchProductData();
     } catch (err) {
       console.log(err);
       toast({ title: "Error deleting product", status: "error" });
@@ -142,6 +174,7 @@ const AdminProductDataDetail = () => {
     initialValues: {
       image_url: "",
     },
+
     onSubmit: async ({
       image_url,
     }) => {
@@ -149,14 +182,11 @@ const AdminProductDataDetail = () => {
         const data = new FormData();
 
         if (image_url) {
-          console.log(image_url)
+          console.log(image_url);
           data.append("image_url", image_url);
         }
         console.log("test");
-        await axiosInstance.post(
-          `/admin/product/detail/${params.id}`,
-          data
-        );
+        await axiosInstance.post(`/admin/product/detail/${params.id}`, data);
 
         setAdminUpdate(false);
         toast({ title: "Product image added successfully", status: "success" });
@@ -178,7 +208,6 @@ const AdminProductDataDetail = () => {
     onCloseAddNewProduct();
   };
 
-  // console.warn(dataDetail);
   useEffect(() => {
     fetchProductData();
   }, []);
@@ -196,9 +225,12 @@ const AdminProductDataDetail = () => {
       {!adminUpdate ? (
         <Flex direction={{ base: "column", md: "column", lg: "row" }}>
           <Box flex={"1"}>
-            <CarouselProductSlider />
-            {/* {isLoading && renderImages()} */}
-            {/* <Image h={"100%"} src={dataDetail.ImageURLs[1].image_url || ""} alt="book image" /> */}
+            <Stack>
+              <CarouselProductSlider />
+              <Grid gridTemplateColumns={"1fr 1fr 1fr "}>
+                {isLoading && renderImages()}
+              </Grid>
+            </Stack>
           </Box>
           <Box
             flex={"1"}
@@ -230,15 +262,16 @@ const AdminProductDataDetail = () => {
             <Text fontSize={"2xl"}>{dataDetail?.Category?.category_name}</Text>
           </Box>
           <Box>
-          <Button
-            bgColor={"green"}
-            color="white"
-            _hover={false}
-            onClick={onOpenAddNewProduct}
-          >
-            Add New Picture
-          </Button>
-          <br />
+            <Button
+              bgColor={"green"}
+              color="white"
+              _hover={false}
+              onClick={onOpenAddNewProduct}
+            >
+              Add New Picture
+            </Button>
+            <br />
+
             <Button
               mt="2"
               mr="8"
@@ -306,6 +339,7 @@ const AdminProductDataDetail = () => {
               </FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={editDetailFormik.errors.CategoryId}>
+            <FormLabel>Category</FormLabel>
               <Select
                 name="CategoryId"
                 onChange={formChangeHandler}
@@ -364,7 +398,7 @@ const AdminProductDataDetail = () => {
                     src={
                       selectedImage
                         ? selectedImage
-                        : "Input Your Profile Picture"
+                        : upload
                     }
                   />
                   <Button

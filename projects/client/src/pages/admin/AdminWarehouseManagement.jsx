@@ -268,9 +268,20 @@ const WarehouseManagement = () => {
 
   return (
     <Box marginBottom={"50px"} ml="275px" mt="65px">
+      <HStack justifyContent={"space-between"}>
       <Text fontSize={"30px"} fontWeight="bold" color="#0095DA">
         Warehouse Data
       </Text>
+      <Button
+          colorScheme={"green"}
+          marginLeft="64%"
+          marginTop={"5%"}
+          onClick={() => onOpenAddNewWarehouseAddress()}
+          w="100px"
+        >
+          Add
+        </Button>
+        </HStack>
       <HStack mt="5px">
           <FormControl>
             <Input
@@ -331,18 +342,6 @@ const WarehouseManagement = () => {
       </Grid>
       <Divider />
 
-      <HStack justifyContent={"space-between"}>
-        <Box></Box>
-        <Button
-          colorScheme={"green"}
-          marginLeft="64%"
-          marginTop={"5%"}
-          onClick={() => onOpenAddNewWarehouseAddress()}
-          w="100px"
-        >
-          Add
-        </Button>
-      </HStack>
 
       {/* Modal nambah data */}
       <WarehouseAddress

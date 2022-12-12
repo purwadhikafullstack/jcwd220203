@@ -202,6 +202,26 @@ const adminProductController = {
       })
     }
   },
+  deletePictures: async (req, res) => {
+    try {
+      const dataByID = await db.Image_Url.destroy({
+        where: {
+          id: req.params.id
+        },
+      });
+
+      return res.status(200).json({
+        message: "Successfully delete product data",
+        data: dataByID,
+      });
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        message: "Server error when taking categories"
+      })
+    }
+  },
+
   
 };
 
