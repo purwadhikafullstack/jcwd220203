@@ -38,6 +38,7 @@ import UpdateStock from "./pages/admin/UpdateStock"
 import WarehouseStock from "./components/admin/WarehouseStock"
 import ChangeAddress from "./components/order/ChangeAddress"
 import Checkout from "./pages/order/Checkout"
+import ShippingComponent from "./components/product/ShippingComponent"
 
 function App() {
     const [message, setMessage] = useState("")
@@ -262,6 +263,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Shipment />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shipment-component"
+                    element={
+                        <ProtectedRoute>
+                            <ShippingComponent />
                         </ProtectedRoute>
                     }
                 />
