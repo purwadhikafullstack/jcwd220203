@@ -25,8 +25,17 @@ const AddressChangeCard = ({
             color="black"
             fontSize={"14px"}
             bgColor="#E5F9F6"
+            border={"1px solid #F7931E"}
           >
-            <Text>{address_labels}</Text>
+            <Box
+              bgColor={"#F7931E"}
+              w="6.5px"
+              h="35px"
+              // position={"absolute"}
+              ml="-25px"
+              borderRightRadius={"5px"}
+            />
+            <Text mt="-35px">{address_labels}</Text>
             <Text>{recipients_name}</Text>
             <Text mt="4px" fontWeight={"normal"}>
               {phone_number}
@@ -56,7 +65,15 @@ const AddressChangeCard = ({
           color="black"
           fontSize={"14px"}
         >
-          <Text>{address_labels}</Text>
+          <Box
+            bgColor={"#F7931E"}
+            w="6.5px"
+            h="35px"
+            // position={"absolute"}
+            ml="-25px"
+            borderRightRadius={"5px"}
+          />
+          <Text mt="-35px">{address_labels}</Text>
           <Text>{recipients_name}</Text>
           <Text mt="4px" fontWeight={"normal"}>
             {phone_number}

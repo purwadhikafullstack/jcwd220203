@@ -9,5 +9,10 @@ router.get(
   addressCheckoutController.getMainAddress
 )
 router.get("/allAddress", verifyToken, addressCheckoutController.getAllAddress)
+router.post(
+  "/addNewAddress",
+  verifyToken,
+  addressCheckoutController.addNewAddress
+)
 
 module.exports = router

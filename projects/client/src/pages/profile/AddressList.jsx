@@ -5,6 +5,9 @@ import {
   HStack,
   useDisclosure,
   useToast,
+  FormControl,
+  InputGroup,
+  Input,
 } from "@chakra-ui/react"
 import { BiUser } from "react-icons/bi"
 import { Link } from "react-router-dom"
@@ -18,9 +21,11 @@ import * as Yup from "yup"
 import FormAddress from "../../components/profile/FormAddress"
 import Alert from "../../components/profile/Alert"
 import EditForm from "../../components/profile/EditForm"
+import { TbSearch } from "react-icons/tb"
 
 const AddressList = () => {
   const authSelector = useSelector((state) => state.auth)
+
   const [selectedNewProvince, setSelectedNewProvince] = useState(0)
   const [selectedNewCity, setSelectedNewCity] = useState(0)
   const [selectedEditProvince, setSelectedEditProvince] = useState(0)
@@ -29,11 +34,14 @@ const AddressList = () => {
   const [address, setAddress] = useState([])
   const [deleteAlert, setDeleteAlert] = useState(null)
   const [defaultAlert, setDefaultAlert] = useState(null)
+  const [currentSearch, setCurrentSearch] = useState("")
+
   const {
     onOpen: onOpenAlert,
     isOpen: isOpenAlert,
     onClose: onCloseAlert,
   } = useDisclosure()
+
   const {
     isOpen: isOpenAddNewAddress,
     onOpen: onOpenAddNewAddress,
@@ -57,8 +65,9 @@ const AddressList = () => {
     setAsDefault(defaultAlert.id)
   }
 
-  const toast = useToast()
   const { onOpen, isOpen, onClose } = useDisclosure()
+
+  const toast = useToast()
 
   const doubleOnClick = () => {
     onClose()
@@ -70,9 +79,15 @@ const AddressList = () => {
 
   const cancelRef = React.useRef()
 
-  const fetchAddres = async () => {
+  const fetchAddress = async () => {
     try {
-      const response = await axiosInstance.get("/address/userAddress")
+      const response = await axiosInstance.get("/address/userAddress", {
+        params: {
+          recipients_name: currentSearch,
+          full_address: currentSearch,
+        },
+      })
+
       setAddress(response.data.data)
     } catch (error) {
       console.log(error)
@@ -138,7 +153,7 @@ const AddressList = () => {
         formikAddNewAddress.setFieldValue("city", "")
         formikAddNewAddress.setFieldValue("districts", "")
         formikAddNewAddress.setFieldValue("full_address", "")
-        fetchAddres()
+        fetchAddress()
       } catch (error) {
         console.log(error.response)
         toast({
@@ -179,8 +194,6 @@ const AddressList = () => {
       recipients_name,
       phone_number,
       address_labels,
-      province,
-      city,
       districts,
       full_address,
     }) => {
@@ -208,7 +221,7 @@ const AddressList = () => {
         editFormik.setFieldValue("address_labels", "")
         editFormik.setFieldValue("full_address", "")
         editFormik.setFieldValue("districts", "")
-        fetchAddres()
+        fetchAddress()
         setOpenedEdit(null)
       } catch (error) {
         console.log(error)
@@ -244,7 +257,7 @@ const AddressList = () => {
         description: response.data.message,
         status: "success",
       })
-      fetchAddres()
+      fetchAddress()
     } catch (error) {
       console.log(error.response)
       toast({
@@ -264,7 +277,7 @@ const AddressList = () => {
         description: response.data.message,
         status: "success",
       })
-      fetchAddres()
+      fetchAddress()
     } catch (error) {
       console.log(error.response)
       toast({
@@ -275,9 +288,24 @@ const AddressList = () => {
     }
   }
 
+  const formikSearch = useFormik({
+    initialValues: {
+      search: "",
+    },
+    onSubmit: ({ search }) => {
+      setCurrentSearch(search)
+    },
+  })
+
+  const searchAdminHandler = ({ target }) => {
+    const { name, value } = target
+    formikSearch.setFieldValue(name, value)
+  }
+
   useEffect(() => {
-    fetchAddres()
-  }, [openedEdit, deleteAlert])
+    fetchAddress()
+  }, [openedEdit, deleteAlert, currentSearch])
+
   useEffect(() => {
     if (openedEdit) {
       editFormik.setFieldValue("address_labels", openedEdit.address_labels)
@@ -333,7 +361,29 @@ const AddressList = () => {
             </Box>
           </HStack>
           <Box borderTop={"1px solid #dfe1e3"} p="30px 16px 16px">
-            <Box textAlign={"right"}>
+            <Box display={"flex"} justifyContent="space-between">
+              <Box>
+                <form onSubmit={formikSearch.handleSubmit}>
+                  <FormControl>
+                    <InputGroup textAlign={"right"}>
+                      <Input
+                        type={"text"}
+                        placeholder="Search by recipient's address or name"
+                        name="search"
+                        w="300px"
+                        onChange={searchAdminHandler}
+                        _placeholder={"halo"}
+                        borderRightRadius="0"
+                        value={formikSearch.values.search}
+                      />
+
+                      <Button borderLeftRadius={"0"} type="submit">
+                        <TbSearch />
+                      </Button>
+                    </InputGroup>
+                  </FormControl>
+                </form>
+              </Box>
               <Button
                 m="0 4px"
                 _hover={false}

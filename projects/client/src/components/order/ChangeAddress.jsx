@@ -1,6 +1,9 @@
 import {
   Box,
   Button,
+  FormControl,
+  Input,
+  InputGroup,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -19,6 +22,7 @@ import { useFormik } from "formik"
 import * as Yup from "yup"
 import Alert from "../profile/Alert"
 import EditForm from "../profile/EditForm"
+import { TbSearch } from "react-icons/tb"
 
 const ChangeAddress = () => {
   const { onOpen, isOpen, onClose } = useDisclosure()
@@ -50,7 +54,8 @@ const ChangeAddress = () => {
   const [selectedEditProvince, setSelectedEditProvince] = useState(0)
   const [selectedEditCity, setSelectedEditCity] = useState(0)
   const [openedEdit, setOpenedEdit] = useState(null)
-  console.log(openedEdit)
+  const [currentSearch, setCurrentSearch] = useState("")
+
   const fetchAddress = async () => {
     try {
       const response = await axiosInstance.get(
@@ -64,9 +69,13 @@ const ChangeAddress = () => {
 
   const fetchAllAddress = async () => {
     try {
-      const response = await axiosInstance.get("/checkoutAddress/allAddress")
+      const response = await axiosInstance.get("/checkoutAddress/allAddress", {
+        params: {
+          recipients_name: currentSearch,
+          full_address: currentSearch,
+        },
+      })
       setAllAddress(response.data.data)
-      console.log(response)
     } catch (error) {
       console.log(error.response)
     }
@@ -246,13 +255,27 @@ const ChangeAddress = () => {
     onCloseAlert()
   }
 
+  const formikSearch = useFormik({
+    initialValues: {
+      search: "",
+    },
+    onSubmit: ({ search }) => {
+      setCurrentSearch(search)
+    },
+  })
+
+  const searchAdminHandler = ({ target }) => {
+    const { name, value } = target
+    formikSearch.setFieldValue(name, value)
+  }
+
   useEffect(() => {
     fetchAddress()
   }, [])
 
   useEffect(() => {
     fetchAllAddress()
-  }, [isOpen])
+  }, [isOpen, currentSearch])
 
   useEffect(() => {
     if (openedEdit) {
@@ -338,6 +361,26 @@ const ChangeAddress = () => {
             p="24px 40px"
             fontSize={"14px"}
           >
+            <form onSubmit={formikSearch.handleSubmit}>
+              <FormControl>
+                <InputGroup textAlign={"right"}>
+                  <Input
+                    type={"text"}
+                    placeholder="Search by recipient's address or name"
+                    name="search"
+                    mb="24px"
+                    onChange={searchAdminHandler}
+                    _placeholder={"halo"}
+                    borderRightRadius="0"
+                    value={formikSearch.values.search}
+                  />
+
+                  <Button borderLeftRadius={"0"} type="submit">
+                    <TbSearch />
+                  </Button>
+                </InputGroup>
+              </FormControl>
+            </form>
             <Box
               p="20px"
               fontSize={"16px"}
