@@ -48,7 +48,6 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
     const authSelector = useSelector((state) => state.auth)
     const [searchValue, setSearchValue] = useState("")
     const [searchParam, setSearchParam] = useSearchParams()
-    const navigate = useNavigate()
     const cartSelector = useSelector((state) => state.cart)
     const [showCategory, setShowCategory] = useState([])
     const [totalCartQuantity, setTotalCartQuantity] = useState(0)
@@ -56,7 +55,8 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
 
     const dispatch = useDispatch()
     const toast = useToast()
-
+    const navigate = useNavigate()
+    const apiImg = process.env.REACT_APP_IMAGE_URL
     const location = useLocation()
 
     const refreshPage = () => {
@@ -78,7 +78,6 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
             }
 
             setTotalCartQuantity(Total)
-
         } catch (err) {
             console.log(err)
         }
@@ -88,7 +87,6 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
         try {
             const response = await axiosInstance.get("/categories")
             setShowCategory(response.data.data)
-
         } catch (err) {
             console.log(err)
         }
@@ -120,16 +118,11 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
         })
 
         if (
-            location.pathname ===
-            "/cart" ||
-            location.pathname ===
-            "/transaction" ||
-            location.pathname ===
-            "/user/profile" ||
-            location.pathname ===
-            "/user/profile/change-password" ||
-            location.pathname ===
-            "/user/profile/address"
+            location.pathname === "/cart" ||
+            location.pathname === "/transaction" ||
+            location.pathname === "/user/profile" ||
+            location.pathname === "/user/profile/change-password" ||
+            location.pathname === "/user/profile/address"
         ) {
             navigate("/login")
             refreshPage()
@@ -159,61 +152,75 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
         return cartData.map((val) => {
             return (
                 <>
-                    <Link to={'/cart'}>
-                        <Box h={'1px'} bgColor={"#fcd4a5"} mt={"-2px"} />
-                        <Box display={'flex'} flexDirection={'row'}
-                            mt={'15px'} pl={'10px'} pr={'10px'} pb={'13px'}
+                    <Link to={"/cart"}>
+                        <Box h={"1px"} bgColor={"#fcd4a5"} mt={"-2px"} />
+                        <Box
+                            display={"flex"}
+                            flexDirection={"row"}
+                            mt={"15px"}
+                            pl={"10px"}
+                            pr={"10px"}
+                            pb={"13px"}
                         >
                             <Image
                                 src={val.Product.Image_Urls[0].image_url}
-                                h={'35px'}
-                                w={'35px'}
+                                h={"35px"}
+                                w={"35px"}
                             />
-                            <Box
-                                pl={'10px'}
-                            >
+                            <Box pl={"10px"}>
                                 <Text
                                     fontWeight={600}
-                                    fontSize={'14px'}
-                                    whiteSpace={'nowrap'}
-                                    overflow={'hidden'}
-                                    textOverflow={'ellipsis'}
-                                    width={'200px'}
+                                    fontSize={"14px"}
+                                    whiteSpace={"nowrap"}
+                                    overflow={"hidden"}
+                                    textOverflow={"ellipsis"}
+                                    width={"200px"}
                                     fontColor={"#31353BF5"}
-                                    fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                    fontFamily={
+                                        "Open Sauce One,Nunito Sans, sans-serif"
+                                    }
                                     _hover={{
-                                        color: "blue"
+                                        color: "blue",
                                     }}
                                 >
                                     {val.Product.product_name}
                                 </Text>
                                 <Text
                                     fontWeight={400}
-                                    fontSize={'12px'}
-                                    width={'180px'}
+                                    fontSize={"12px"}
+                                    width={"180px"}
                                     fontColor={"#31353BF5"}
-                                    fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                    fontFamily={
+                                        "Open Sauce One,Nunito Sans, sans-serif"
+                                    }
                                 >
-                                    {val.quantity} {val.quantity > 1 ? "items" : "item"}
+                                    {val.quantity}{" "}
+                                    {val.quantity > 1 ? "items" : "item"}
                                 </Text>
                             </Box>
                         </Box>
                         <Box>
                             <Text
-                                pl={'3px'}
-                                fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                pl={"3px"}
+                                fontFamily={
+                                    "Open Sauce One,Nunito Sans, sans-serif"
+                                }
                                 fontWeight={700}
-                                fontSize={'15px'}
-                                color={'#F7931E'}
-                                mt={'-42px'}
-                                textAlign={'right'}
-                                pb={'20px'}
-                                mr={'8px'}
+                                fontSize={"15px"}
+                                color={"#F7931E"}
+                                mt={"-42px"}
+                                textAlign={"right"}
+                                pb={"20px"}
+                                mr={"8px"}
                             >
-                                {new Intl.NumberFormat("id-ID", {
-                                    style: "currency",
-                                    currency: "IDR",
-                                }).format(val.Product.price).split(",")[0]}
+                                {
+                                    new Intl.NumberFormat("id-ID", {
+                                        style: "currency",
+                                        currency: "IDR",
+                                    })
+                                        .format(val.Product.price)
+                                        .split(",")[0]
+                                }
                             </Text>
                         </Box>
                     </Link>
@@ -282,7 +289,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                         fontSize="28px"
                                         fontWeight="semibold"
                                         p="15px"
-                                        pr={'17px'}
+                                        pr={"17px"}
                                         pt={"8x"}
                                         color={"#878787"}
                                         _hover={{
@@ -308,14 +315,12 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                     <Grid
                                         templateColumns="1fr"
                                         gap="6"
-                                        width={'180px'}
-                                        height={'400px'}
-                                        overflow={'auto'}
-                                        cursor={'pointer'}
+                                        width={"180px"}
+                                        height={"400px"}
+                                        overflow={"auto"}
+                                        cursor={"pointer"}
                                     >
-                                        <GridItem>
-                                            {renderCategory()}
-                                        </GridItem>
+                                        <GridItem>{renderCategory()}</GridItem>
                                     </Grid>
                                 </PopoverBody>
                             </PopoverContent>
@@ -334,9 +339,17 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                     onKeyDown={keyDownBtnHandler}
                                     value={searchValue}
                                 />
-                                <InputRightElement width='3.5rem' mr={"-5px"}>
-                                    <Button borderLeftRadius="0" _hover={{ bgColor: "none" }} size={'md'} h={'36px'} bgColor={'#fff'} mr={'4px'} borderRadius={'15px'}>
-                                        <BiSearch color={'#F7931E'} />
+                                <InputRightElement width="3.5rem" mr={"-5px"}>
+                                    <Button
+                                        borderLeftRadius="0"
+                                        _hover={{ bgColor: "none" }}
+                                        size={"md"}
+                                        h={"36px"}
+                                        bgColor={"#fff"}
+                                        mr={"4px"}
+                                        borderRadius={"15px"}
+                                    >
+                                        <BiSearch color={"#F7931E"} />
                                     </Button>
                                 </InputRightElement>
                             </InputGroup>
@@ -360,12 +373,14 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                 >
                                     <Popover trigger="hover">
                                         <PopoverTrigger>
-                                            <Box
-                                                pl={"10px"} mr={'-12px'}
-                                            >
+                                            <Box pl={"10px"} mr={"-12px"}>
                                                 <Stack
                                                     p={2}
-                                                    _hover={{ bgColor: "#A5D8F8", borderRadius: "7px", color: 'orange' }}
+                                                    _hover={{
+                                                        bgColor: "#A5D8F8",
+                                                        borderRadius: "7px",
+                                                        color: "orange",
+                                                    }}
                                                 >
                                                     <IoIosNotifications
                                                         fontSize={"22px"}
@@ -373,7 +388,12 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                 </Stack>
                                             </Box>
                                         </PopoverTrigger>
-                                        <PopoverContent bgColor={"#E5F9F6"} width={'340px'} height={'270px'} borderRadius={'20px'}>
+                                        <PopoverContent
+                                            bgColor={"#E5F9F6"}
+                                            width={"340px"}
+                                            height={"270px"}
+                                            borderRadius={"20px"}
+                                        >
                                             <Box
                                                 boxShadow={
                                                     "rgba(0, 0, 0, 0.05) 0px 3px 8px"
@@ -382,8 +402,8 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                 <PopoverHeader
                                                     display={"flex"}
                                                     justifyContent="space-between"
-                                                    pt={'10px'}
-                                                    pb={'10px'}
+                                                    pt={"10px"}
+                                                    pb={"10px"}
                                                 >
                                                     <Text fontSize={"17px"}>
                                                         Notification
@@ -395,117 +415,192 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                             </Box>
                                             <PopoverBody>
                                                 <Box
-                                                    display={'flex'}
-                                                    justifyContent={'space-between'}
-                                                    pb={'7px'}
-                                                    pt={'5px'}
+                                                    display={"flex"}
+                                                    justifyContent={
+                                                        "space-between"
+                                                    }
+                                                    pb={"7px"}
+                                                    pt={"5px"}
                                                 >
                                                     <Text
-                                                        fontSize={'15px'}
+                                                        fontSize={"15px"}
                                                         fontWeight={600}
-                                                        ml={'40px'}
-                                                        fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                                        ml={"40px"}
+                                                        fontFamily={
+                                                            "Open Sauce One,Nunito Sans, sans-serif"
+                                                        }
                                                     >
                                                         Transaction
                                                     </Text>
                                                     <Link to={"/transaction"}>
                                                         <Text
-                                                            color={'#F7931E'}
-                                                            fontSize={'12px'}
-                                                            mt={'10px'}
-                                                            mb={'-5px'}
-                                                            fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                                            color={"#F7931E"}
+                                                            fontSize={"12px"}
+                                                            mt={"10px"}
+                                                            mb={"-5px"}
+                                                            fontFamily={
+                                                                "Open Sauce One,Nunito Sans, sans-serif"
+                                                            }
                                                         >
                                                             See All
                                                         </Text>
                                                     </Link>
                                                 </Box>
-                                                <Box display={'flex'} dir={'row'} justifyContent={''}>
-                                                    <Box width={'164px'} bgColor={'#F7931E'} h={'3px'} mb={'7px'} />
-                                                    <Box width={'164px'} bgColor={'#0095DA'} h={'3px'} mb={'7px'} />
-                                                </Box>
-                                                <Box pl={'8px'} pr={'8px'}>
+                                                <Box
+                                                    display={"flex"}
+                                                    dir={"row"}
+                                                    justifyContent={""}
+                                                >
                                                     <Box
-                                                        fontSize={'13px'}
+                                                        width={"164px"}
+                                                        bgColor={"#F7931E"}
+                                                        h={"3px"}
+                                                        mb={"7px"}
+                                                    />
+                                                    <Box
+                                                        width={"164px"}
+                                                        bgColor={"#0095DA"}
+                                                        h={"3px"}
+                                                        mb={"7px"}
+                                                    />
+                                                </Box>
+                                                <Box pl={"8px"} pr={"8px"}>
+                                                    <Box
+                                                        fontSize={"13px"}
                                                         fontWeight={400}
-                                                        mt={'7px'}
-                                                        fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                                        mt={"7px"}
+                                                        fontFamily={
+                                                            "Open Sauce One,Nunito Sans, sans-serif"
+                                                        }
                                                     >
                                                         Transaction Status
                                                     </Box>
-                                                    <Grid templateColumns='repeat(4, 1fr)' gap={"4px"} mt={'15px'} display={'flex'} justifyContent={'space-between'}>
-                                                        <GridItem w='70px' h='10' alignItems={'center'} >
+                                                    <Grid
+                                                        templateColumns="repeat(4, 1fr)"
+                                                        gap={"4px"}
+                                                        mt={"15px"}
+                                                        display={"flex"}
+                                                        justifyContent={
+                                                            "space-between"
+                                                        }
+                                                    >
+                                                        <GridItem
+                                                            w="70px"
+                                                            h="10"
+                                                            alignItems={
+                                                                "center"
+                                                            }
+                                                        >
                                                             <Image
-                                                                margin={'auto'}
-                                                                w={'47px'}
-                                                                h={'47px'}
+                                                                margin={"auto"}
+                                                                w={"47px"}
+                                                                h={"47px"}
                                                                 src={status1}
                                                             />
                                                             <Text
-                                                                mt={'8px'}
-                                                                textAlign={'center'}
-                                                                fontSize={'12px'}
+                                                                mt={"8px"}
+                                                                textAlign={
+                                                                    "center"
+                                                                }
+                                                                fontSize={
+                                                                    "12px"
+                                                                }
                                                                 fontWeight={400}
-                                                                fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                                                fontFamily={
+                                                                    "Open Sauce One,Nunito Sans, sans-serif"
+                                                                }
                                                             >
-                                                                Awaiting Confirmation
+                                                                Awaiting
+                                                                Confirmation
                                                             </Text>
                                                         </GridItem>
-                                                        <GridItem w='60px' h='10' >
+                                                        <GridItem
+                                                            w="60px"
+                                                            h="10"
+                                                        >
                                                             <Image
-                                                                mt={'8px'}
-                                                                margin={'auto'}
-                                                                w={'47px'}
-                                                                h={'47px'}
+                                                                mt={"8px"}
+                                                                margin={"auto"}
+                                                                w={"47px"}
+                                                                h={"47px"}
                                                                 src={status2}
                                                             />
                                                             <Text
-                                                                mt={'8px'}
-                                                                textAlign={'center'}
-                                                                fontSize={'12px'}
+                                                                mt={"8px"}
+                                                                textAlign={
+                                                                    "center"
+                                                                }
+                                                                fontSize={
+                                                                    "12px"
+                                                                }
                                                                 fontWeight={400}
-                                                                fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                                                fontFamily={
+                                                                    "Open Sauce One,Nunito Sans, sans-serif"
+                                                                }
                                                             >
                                                                 Processed
                                                             </Text>
                                                         </GridItem>
-                                                        <GridItem w='60px' h='10' >
+                                                        <GridItem
+                                                            w="60px"
+                                                            h="10"
+                                                        >
                                                             <Image
-                                                                margin={'auto'}
+                                                                margin={"auto"}
                                                                 src={status4}
-                                                                w={'47px'}
-                                                                h={'47px'}
+                                                                w={"47px"}
+                                                                h={"47px"}
                                                             />
                                                             <Text
-                                                                mt={'8px'}
-                                                                textAlign={'center'}
-                                                                fontSize={'12px'}
+                                                                mt={"8px"}
+                                                                textAlign={
+                                                                    "center"
+                                                                }
+                                                                fontSize={
+                                                                    "12px"
+                                                                }
                                                                 fontWeight={400}
-                                                                fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                                                fontFamily={
+                                                                    "Open Sauce One,Nunito Sans, sans-serif"
+                                                                }
                                                             >
                                                                 Shipping
                                                             </Text>
                                                         </GridItem>
-                                                        <GridItem w='60px' h='10'>
+                                                        <GridItem
+                                                            w="60px"
+                                                            h="10"
+                                                        >
                                                             <Image
-                                                                margin={'auto'}
+                                                                margin={"auto"}
                                                                 src={status3}
-                                                                w={'47px'}
-                                                                h={'47px'}
+                                                                w={"47px"}
+                                                                h={"47px"}
                                                             />
                                                             <Text
-                                                                mt={'8px'}
-                                                                textAlign={'center'}
-                                                                fontSize={'12px'}
+                                                                mt={"8px"}
+                                                                textAlign={
+                                                                    "center"
+                                                                }
+                                                                fontSize={
+                                                                    "12px"
+                                                                }
                                                                 fontWeight={400}
-                                                                fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                                                                fontFamily={
+                                                                    "Open Sauce One,Nunito Sans, sans-serif"
+                                                                }
                                                             >
                                                                 Delivered
                                                             </Text>
                                                         </GridItem>
                                                     </Grid>
                                                 </Box>
-                                                <Box width={'100%'} bgColor={'#e6e6e6'} h={'5px'} mt={'60px'} />
+                                                <Box
+                                                    width={"100%"}
+                                                    bgColor={"#e6e6e6"}
+                                                    h={"5px"}
+                                                    mt={"60px"}
+                                                />
                                             </PopoverBody>
                                         </PopoverContent>
                                     </Popover>
@@ -533,72 +628,119 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                         <PopoverTrigger>
                                             <Link to="/cart">
                                                 <Button
-                                                    ml={'10px'}
+                                                    ml={"10px"}
                                                     bgColor={"inherit"}
                                                     fontSize={"2xl"}
-                                                    _hover={{ bgColor: '#A5D8F8', color: 'orange' }}
-                                                    mr={'10px'}
+                                                    _hover={{
+                                                        bgColor: "#A5D8F8",
+                                                        color: "orange",
+                                                    }}
+                                                    mr={"10px"}
                                                     p={2}
                                                 >
-
-                                                    <IoMdCart fontSize={"22px"} />
-                                                    {cartSelector.cart.length && authSelector.id ? (
+                                                    <IoMdCart
+                                                        fontSize={"22px"}
+                                                    />
+                                                    {cartSelector.cart.length &&
+                                                    authSelector.id ? (
                                                         <sup>
                                                             <Box
-                                                                fontSize={"11px"}
-                                                                backgroundColor={"#EF144A"}
-                                                                borderRadius={"50%"}
-                                                                mt={'-2px'}
+                                                                fontSize={
+                                                                    "11px"
+                                                                }
+                                                                backgroundColor={
+                                                                    "#EF144A"
+                                                                }
+                                                                borderRadius={
+                                                                    "50%"
+                                                                }
+                                                                mt={"-2px"}
                                                                 ml={"-8px"}
-                                                                mr={'-8px'}
+                                                                mr={"-8px"}
                                                                 pt={"8px"}
                                                                 pr={"7px"}
                                                                 pb={"9px"}
                                                                 pl={"6px"}
-                                                                color={'white'}
+                                                                color={"white"}
                                                                 fontWeight={700}
                                                             >
-                                                                {totalCartQuantity}
+                                                                {
+                                                                    totalCartQuantity
+                                                                }
                                                             </Box>
-                                                        </sup>)
-                                                        : null}
+                                                        </sup>
+                                                    ) : null}
                                                 </Button>
                                             </Link>
                                         </PopoverTrigger>
                                         {cartSelector.cart.length ? (
                                             <>
-                                                <PopoverContent bgColor={'#E5F9F6'} w={'405px'} borderRadius={'12px'}>
+                                                <PopoverContent
+                                                    bgColor={"#E5F9F6"}
+                                                    w={"405px"}
+                                                    borderRadius={"12px"}
+                                                >
                                                     <PopoverBody>
                                                         <Box
                                                             display={"flex"}
                                                             justifyContent="space-between"
-                                                            mt={'8px'}
-                                                            mb={'12px'}
-                                                            pl={'2px'}
-                                                            pr={'2px'}
+                                                            mt={"8px"}
+                                                            mb={"12px"}
+                                                            pl={"2px"}
+                                                            pr={"2px"}
                                                         >
                                                             <Text
                                                                 // fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-                                                                fontSize={'15px'}
+                                                                fontSize={
+                                                                    "15px"
+                                                                }
                                                                 fontWeight={600}
                                                             >
-                                                                Total ({totalCartQuantity})
+                                                                Total (
+                                                                {
+                                                                    totalCartQuantity
+                                                                }
+                                                                )
                                                             </Text>
                                                             <Link to="/cart">
-                                                                <Text color="#0095DA"
-                                                                    fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-                                                                    fontWeight={700}
-                                                                    fontSize={'13px'}
-                                                                    mr={'5px'}
+                                                                <Text
+                                                                    color="#0095DA"
+                                                                    fontFamily={
+                                                                        "Open Sauce One,Nunito Sans, sans-serif"
+                                                                    }
+                                                                    fontWeight={
+                                                                        700
+                                                                    }
+                                                                    fontSize={
+                                                                        "13px"
+                                                                    }
+                                                                    mr={"5px"}
                                                                 >
                                                                     {" "}
                                                                     Cart
                                                                 </Text>
                                                             </Link>
                                                         </Box>
-                                                        <Box h={'1px'} bgColor={"#F7931E"} mb={'-6px'} pb={'2px'} />
-                                                        <Box h={'1px'} bgColor={"transparent"} pb={"4px"} mt={"2px"} />
-                                                        <Box pt={'2px'} overflow={'auto'} maxH={'335px'} cursor={'pointer'}>
+                                                        <Box
+                                                            h={"1px"}
+                                                            bgColor={"#F7931E"}
+                                                            mb={"-6px"}
+                                                            pb={"2px"}
+                                                        />
+                                                        <Box
+                                                            h={"1px"}
+                                                            bgColor={
+                                                                "transparent"
+                                                            }
+                                                            pb={"4px"}
+                                                            mt={"2px"}
+                                                        />
+                                                        <Box
+                                                            pt={"2px"}
+                                                            overflow={"auto"}
+                                                            maxH={"335px"}
+                                                            cursor={"pointer"}
+                                                        >
                                                             {renderCartNavbar()}
                                                         </Box>
                                                     </PopoverBody>
@@ -606,7 +748,9 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                             </>
                                         ) : (
                                             <>
-                                                <PopoverContent bgColor={'#E5F9F6'}>
+                                                <PopoverContent
+                                                    bgColor={"#E5F9F6"}
+                                                >
                                                     <PopoverBody>
                                                         <Box>
                                                             <Image
@@ -685,9 +829,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                     width={"25px"}
                                                     height="25px"
                                                     my="auto"
-                                                    src={
-                                                        authSelector.profile_picture
-                                                    }
+                                                    src={`${apiImg}/${authSelector.profile_picture}`}
                                                 />
                                                 <Text
                                                     my="auto"
@@ -731,9 +873,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                             width={"50px"}
                                                             height="50px"
                                                             my="auto"
-                                                            src={
-                                                                authSelector.profile_picture
-                                                            }
+                                                            src={`${apiImg}/${authSelector.profile_picture}`}
                                                         />
                                                         <Text
                                                             my="auto"
@@ -773,7 +913,9 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                             </Box>
                                                         </Link>
 
-                                                        <Link to={"/transaction"}>
+                                                        <Link
+                                                            to={"/transaction"}
+                                                        >
                                                             <Box
                                                                 _hover={{
                                                                     bgColor:
@@ -790,13 +932,13 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         </Link>
                                                         {location.pathname ===
                                                             "/cart" ||
-                                                            location.pathname ===
+                                                        location.pathname ===
                                                             "/transaction" ||
-                                                            location.pathname ===
+                                                        location.pathname ===
                                                             "/user/profile" ||
-                                                            location.pathname ===
+                                                        location.pathname ===
                                                             "/user/profile/change-password" ||
-                                                            location.pathname ===
+                                                        location.pathname ===
                                                             "/user/profile/address" ? (
                                                             <Link
                                                                 to={"/login"}
@@ -875,8 +1017,8 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                         md: "flex",
                                         base: "none",
                                     }}
-                                    pl={'15px'}
-                                    mr={'0px'}
+                                    pl={"15px"}
+                                    mr={"0px"}
                                 >
                                     <Link
                                         to={"/login"}
@@ -892,7 +1034,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                 color={"#0095DA"}
                                                 fontSize="12px"
                                                 fontWeight={"bold"}
-                                                borderRadius={'12px'}
+                                                borderRadius={"12px"}
                                             >
                                                 Login
                                             </Button>
@@ -903,7 +1045,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                             <Button
                                                 _hover={"null"}
                                                 height="32px"
-                                                borderRadius={'12px'}
+                                                borderRadius={"12px"}
                                                 bgColor={"#0095DA"}
                                                 border={"1px solid #0095DA"}
                                                 color={"#fff"}
