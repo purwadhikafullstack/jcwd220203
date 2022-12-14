@@ -39,13 +39,14 @@ import WarehouseStock from "./components/admin/WarehouseStock"
 import ChangeAddress from "./components/order/ChangeAddress"
 import Checkout from "./pages/order/Checkout"
 import ShippingComponent from "./components/product/ShippingComponent"
+import ShippingComponent2 from "./components/product/ShippingComponent2"
 
 function App() {
     const [message, setMessage] = useState("")
     const authSelector = useSelector((state) => state.auth)
 
     useEffect(() => {
-        ;(async () => {
+        ; (async () => {
             const { data } = await axios.get(
                 `${process.env.REACT_APP_API_BASE_URL}/api/greetings`
             )
@@ -117,12 +118,12 @@ function App() {
             ) : null}
 
             {location.pathname === "/login" ||
-            location.pathname === "/register" ||
-            location.pathname === "/reset-password-confirmation" ||
-            location.pathname === "/request-reset-password" ||
-            location.pathname === "/cart/shipment" ||
-            authSelector.RoleId === 3 ||
-            authSelector.RoleId === 2 ? null : (
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password-confirmation" ||
+                location.pathname === "/request-reset-password" ||
+                location.pathname === "/cart/shipment" ||
+                authSelector.RoleId === 3 ||
+                authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Navbar />
                 </Box>
@@ -270,7 +271,7 @@ function App() {
                     path="/shipment-component"
                     element={
                         <ProtectedRoute>
-                            <ShippingComponent />
+                            <ShippingComponent2 />
                         </ProtectedRoute>
                     }
                 />
@@ -299,65 +300,65 @@ function App() {
                     }
                 />
 
-        {/* Profiling Route */}
-        <Route
-          path="/user/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/user/profile/change-password"
-          element={
-            <ProtectedRoute>
-              <ChangePassword />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/user/profile/address"
-          element={
-            <ProtectedRoute>
-              <AddressList />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/shipment"
-          element={
-            <ProtectedRoute>
-              <Shipment />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cart/shipment"
-          element={
-            <ProtectedRoute>
-              <Checkout />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/product"
-          element={
-            <AdminRoute>
-              <AdminProductData />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/product/detail/:id"
-          element={
-            <AdminRoute>
-              <AdminProductDataDetail />
-            </AdminRoute>
-          }
-        />
+                {/* Profiling Route */}
+                <Route
+                    path="/user/profile"
+                    element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/user/profile/change-password"
+                    element={
+                        <ProtectedRoute>
+                            <ChangePassword />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/user/profile/address"
+                    element={
+                        <ProtectedRoute>
+                            <AddressList />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shipment"
+                    element={
+                        <ProtectedRoute>
+                            <Shipment />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/cart/shipment"
+                    element={
+                        <ProtectedRoute>
+                            <Checkout />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/product"
+                    element={
+                        <AdminRoute>
+                            <AdminProductData />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path="/admin/product/detail/:id"
+                    element={
+                        <AdminRoute>
+                            <AdminProductDataDetail />
+                        </AdminRoute>
+                    }
+                />
 
-       
+
                 {/* Product Route */}
                 <Route path="/product" element={<Product />} />
                 <Route
@@ -367,12 +368,12 @@ function App() {
             </Routes>
 
             {location.pathname === "/login" ||
-            location.pathname === "/register" ||
-            location.pathname === "/reset-password-confirmation" ||
-            location.pathname === "/request-reset-password" ||
-            location.pathname === "/cart/shipment" ||
-            authSelector.RoleId === 3 ||
-            authSelector.RoleId === 2 ? null : (
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password-confirmation" ||
+                location.pathname === "/request-reset-password" ||
+                location.pathname === "/cart/shipment" ||
+                authSelector.RoleId === 3 ||
+                authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Footer />
                 </Box>

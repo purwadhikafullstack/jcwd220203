@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       price: DataTypes.INTEGER,
+      product_weight: DataTypes.INTEGER
     },
     {
       sequelize,

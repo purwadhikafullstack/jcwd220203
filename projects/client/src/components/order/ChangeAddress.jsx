@@ -288,34 +288,62 @@ const ChangeAddress = () => {
   }, [openedEdit])
   return (
     <>
-      <Box borderBottom="1px solid var(--N100,#DBDEE2)">
-        <Text fontSize={"14px"} fontWeight="bold" pb="14px">
+      <Box borderBottom="1px solid #e4e6e9">
+        <Text
+          fontSize={'14px'}
+          fontFamily={'Open Sauce One, sans-serif'}
+          fontWeight={700}
+          color={'#31353B'}
+          pb="14px">
           Shipping Address
         </Text>
       </Box>
       <Box pb="15px" pt="10px">
         <Box>
           <Box display={"flex"} mb="4px">
-            <Text fontWeight={"bold"} mr="2px">
+            <Text fontWeight={'bolder'} mr="2px" fontSize={'13px'} color={'#31353B'} lineHeight={'1.4'} fontFamily={'Open Sauce One, sans-serif'}>
               {address.recipients_name}
             </Text>
-            <Text mr="1">{address.address_labels} </Text>
+            <Text mr="2px" color={'#31353B'} lineHeight={'1.4'} fontFamily={'Open Sauce One, sans-serif'} fontSize={'13px'}>
+              {`(${address.address_labels})`}
+            </Text>
             <Box
-              fontWeight={"bold"}
+              display={'inline-flex'}
+              alignItems={'center'}
+              fontWeight={700}
+              lineHeight={'16px'}
               fontSize="10px"
               backgroundColor="#E5F9F6"
               p="0 8px"
-              my="auto"
               borderRadius={"3px"}
               color="#0095DA"
+              w={'52.2px'}
+              h={'20px'}
+              fontFamily={'Open Sauce One, sans-serif'}
+              m={'0px'}
+              justifyContent={'center'}
             >
               Main
             </Box>
           </Box>
-          <Box mb="4px">
-            <Text>{address.phone_number}</Text>
-          </Box>
           <Box>
+            <Text
+              color={'#31353B'}
+              lineHeight={'1.4'}
+              fontFamily={'Open Sauce One, sans-serif'}
+              fontSize={'13px'}
+              mb="4px"
+            >
+              {address.phone_number}
+            </Text>
+          </Box>
+          <Box
+            fontFamily={'Open Sauce One, sans-serif'}
+            fontSize={'13px'}
+            color={'#0000008A'}
+            wordBreak={'break-word'}
+            lineHeight={'1.4'}
+          >
             <Text>{address.full_address}</Text>
             <Text>
               {address.districts}, {address.city}, {address.province}
@@ -323,13 +351,16 @@ const ChangeAddress = () => {
           </Box>
         </Box>
       </Box>
-      <Box borderTop="1px solid var(--N100,#DBDEE2)" pt="15px" pb="5">
+      <Box borderTop="1px solid #e4e6e9" p={'15px 0px 5px'}>
         <Button
           p="0 16px"
           mb="10px"
-          border="1px solid var(--N100,#DBDEE2)"
+          border="1px solid #E5E7E9"
           bgColor={"white"}
           onClick={onOpen}
+          fontSize={'14px'}
+          fontFamily={'Open Sauce One, sans-serif'}
+          color={'#31353BF5'}
         >
           <Text fontWeight={"bold"}>Choose Another Address</Text>
         </Button>

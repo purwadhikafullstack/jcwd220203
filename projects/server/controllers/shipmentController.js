@@ -6,51 +6,51 @@ const Address = db.Address
 const Warehouse = db.Warehouse
 
 const shipmentController = {
-    getAddressById: async (req, res) => {
-        try {
-          const response = await Address.findOne({
-            where: {
-              UserId: req.user.id,
-              is_default: 1,
-            },
-          })
-    
-          return res.status(200).json({
-            message: "Successfully Getting User Address",
-            data: response,
-          })
-        } catch (error) {
-          console.log(error)
-          return res.status(500).json({
-            message: "Server Error",
-          })
-        }
-      },
-    getWarehouseAddress: async (req, res) => {
-        try {
-          const response = await Warehouse.findAll()
-    
-          return res.status(200).json({
-            message: "Successfully Getting Warehouse Data",
-            data: response,
-          })
-        } catch (error) {
-          console.log(error)
-          return res.status(500).json({
-            message: "Server Error Getting Warehouse",
-          })
-        }
-      },
-      query: async (req, res) => {
-        try {
-            const {
-                origin,
-                destination,
-                weight,
-                courier,
-              } = req.body;
-              axios.defaults.headers.common["key"] = "219e2276d40a703824dea05e2ebfb639"
-              axios.defaults.headers.post["Content-Type"] ="application/x-www-form-urlencoded"
+  getAddressById: async (req, res) => {
+    try {
+      const response = await Address.findOne({
+        where: {
+          UserId: req.user.id,
+          is_default: 1,
+        },
+      })
+
+      return res.status(200).json({
+        message: "Successfully Getting User Address",
+        data: response,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        message: "Server Error",
+      })
+    }
+  },
+  getWarehouseAddress: async (req, res) => {
+    try {
+      const response = await Warehouse.findAll()
+
+      return res.status(200).json({
+        message: "Successfully Getting Warehouse Data",
+        data: response,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        message: "Server Error Getting Warehouse",
+      })
+    }
+  },
+  query: async (req, res) => {
+    try {
+      const {
+        origin,
+        destination,
+        weight,
+        courier,
+      } = req.body;
+      axios.defaults.headers.common["key"] = "219e2276d40a703824dea05e2ebfb639"
+      axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded"
 
       return res.status(200).json({
         message: "Successfully Getting User Address",

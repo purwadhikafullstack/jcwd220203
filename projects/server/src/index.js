@@ -22,6 +22,8 @@ const cartsRoute = require("../routes/cartsRoute")
 const categoryRoute = require("../routes/categoryRoute")
 const addressCheckoutRoute = require("../routes/addressCheckoutRoute")
 const userProfileRoute = require("../routes/userProfileRoute")
+const transactionsRoute = require("../routes/transactionsRoute")
+
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -47,7 +49,7 @@ app.use("/userData", userDataRoute)
 app.use("/product", productRoute)
 app.use("/categories", categoryRoute)
 app.use("/carts", cartsRoute)
-
+app.use("/transactions", verifyToken, transactionsRoute)
 app.use("/auth", authRoute)
 app.use("/shipment", shipmentRoute)
 
