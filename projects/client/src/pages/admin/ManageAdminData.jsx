@@ -58,6 +58,7 @@ const ManageAdminData = () => {
   const [openedEdit, setOpenedEdit] = useState(null)
   const [selectedImage, setSelectedImage] = useState(null)
   const [deleteAlert, setDeleteAlert] = useState(null)
+  console.log(deleteAlert?.id)
 
   const fetchAdminData = async () => {
     const maxItemsPerPage = 6
@@ -318,7 +319,7 @@ const ManageAdminData = () => {
         status: "info",
       })
     } catch (error) {
-      console.log(error.response)
+      console.log(error)
       toast({
         title: "Failed Delete Admin",
         description: error.response.data.message,

@@ -85,8 +85,8 @@ const SideNavBar = () => {
             </li>
           ) : null}
           <li>
-            <Link to="/user-data">
-              <Text>Change Role Status</Text>
+            <Link to="/admin/order">
+              <Text>Order</Text>
             </Link>
           </li>
           <li>

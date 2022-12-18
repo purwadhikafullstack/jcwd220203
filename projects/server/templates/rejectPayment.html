@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Rejected</title>
+  </head>
+  <body
+    style="
+      background-color: #f3f4f5;
+      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+        sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+    "
+  >
+    <div
+      style="
+        width: 600px;
+        margin: 20px auto;
+        padding: 24px 32px;
+        background-color: white;
+        font-size: 16px;
+      "
+    >
+      <image
+        src="../../client/src/assets/logo.png"
+        style="height: 27px; display: inline"
+      />
+
+      <p
+        style="
+          font-size: 24px;
+          font-weight: bold;
+          color: #0095da;
+          display: inline;
+        "
+      >
+        Shop
+      </p>
+      <p
+        style="
+          font-size: 24px;
+          font-weight: bold;
+          color: #f7931e;
+          display: inline;
+
+          margin-left: -6px;
+        "
+      >
+        edia
+      </p>
+      <div
+        style="padding-top: 24px; display: grid; grid-template-columns: 1fr 1fr"
+      >
+        <p style="font-size: 35px; font-weight: bold; display: inline">
+          Sorry, your payment <br />
+          is rejected
+        </p>
+        <image
+          src="../../client/src/assets/Feeling sorry-pana.png"
+          style="
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            height: 200px;
+          "
+        />
+      </div>
+      <div style="padding-top: 24px">
+        <p style="display: inline">Hello</p>
+        <p style="display: inline; font-weight: bold">{{username}},</p>
+      </div>
+      <div style="margin-top: 15px">
+        <p>{{message}}</p>
+        <p style="padding-top: 12px; margin: 0px">
+          Click the button below to upload a new proof of payment
+        </p>
+        <div style="padding-top: 24px">
+          <a href="{{uploadLink}}" style="text-decoration: none">
+            <div
+              style="
+                width: 100%;
+                padding: 8px;
+                font-weight: bold;
+                color: white;
+                background-color: #f7931e;
+                border: 0px;
+                border-radius: 5px;
+                text-align: center;
+              "
+            >
+              Upload Payment Proof
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

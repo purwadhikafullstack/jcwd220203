@@ -333,7 +333,7 @@ const AddressList = () => {
             <Box display={"flex"} height="53px" fontWeight={"bold"}>
               <Link to="/user/profile">
                 <Box p="16px 24px" _hover={{ color: "#0095DA" }}>
-                  <Text>Personal Info</Text>
+                  <Text>Personal Data</Text>
                 </Box>
               </Link>
             </Box>
