@@ -95,6 +95,11 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li>
+            <Link to="/admin/report/stock">
+              <Text>Stock Report</Text>
+            </Link>
+          </li>
+          <li>
             <Button
               ml={"75px"}
               size={"sm"}

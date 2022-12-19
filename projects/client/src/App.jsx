@@ -40,6 +40,7 @@ import ChangeAddress from "./components/order/ChangeAddress"
 import Checkout from "./pages/order/Checkout"
 import ShippingComponent from "./components/product/ShippingComponent"
 import ShippingComponent2 from "./components/product/ShippingComponent2"
+import AdminStockChangesReport from "./pages/admin/AdminStockChangesReport"
 import AdminOrder from "./pages/admin/AdminOrder"
 
 function App() {
@@ -233,6 +234,79 @@ function App() {
           }
         />
 
+                {/* Profiling Route */}
+                <Route
+                    path="/user/profile"
+                    element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/user/profile/change-password"
+                    element={
+                        <ProtectedRoute>
+                            <ChangePassword />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/user/profile/address"
+                    element={
+                        <ProtectedRoute>
+                            <AddressList />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shipment"
+                    element={
+                        <ProtectedRoute>
+                            <Shipment />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shipment-component"
+                    element={
+                        <ProtectedRoute>
+                            <ShippingComponent2 />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/cart/shipment"
+                    element={
+                        <ProtectedRoute>
+                            <Checkout />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/product"
+                    element={
+                        <AdminRoute>
+                            <AdminProductData />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path="/admin/product/detail/:id"
+                    element={
+                        <AdminRoute>
+                            <AdminProductDataDetail />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path="/admin/report/stock"
+                    element={
+                        <AdminRoute>
+                            <AdminStockChangesReport />
+                        </AdminRoute>
+                    }
+                />
         <Route
           path="/admin/order"
           element={

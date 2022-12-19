@@ -4,8 +4,10 @@ const cors = require("cors")
 const { join } = require("path")
 const db = require("../models")
 const { verifyToken } = require("../middlewares/authMiddleware")
+const { sequelize } = require("../models")
 
 const fs = require("fs")
+
 
 // Import Routes
 const profileRoute = require("../routes/profileRoute")
@@ -23,6 +25,8 @@ const categoryRoute = require("../routes/categoryRoute")
 const addressCheckoutRoute = require("../routes/addressCheckoutRoute")
 const userProfileRoute = require("../routes/userProfileRoute")
 const transactionsRoute = require("../routes/transactionsRoute")
+const exportRoute = require("../routes/exportRoute")
+
 const adminOrderRoute = require("../routes/adminOrderRoute")
 
 const PORT = process.env.PORT || 8000
@@ -63,6 +67,7 @@ app.use("/address", addressRoute)
 app.use("/stock", stockRoute)
 app.use("/checkoutAddress", addressCheckoutRoute)
 app.use("/user-profile", verifyToken, userProfileRoute)
+app.use("/export", verifyToken, exportRoute)
 app.use("/adminOrder", verifyToken, adminOrderRoute)
 
 app.get("/api", (req, res) => {
