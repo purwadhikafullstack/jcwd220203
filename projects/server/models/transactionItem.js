@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            // TransactionItem.belongsTo(models.Transaction)
+            TransactionItem.belongsTo(models.Transaction)
             TransactionItem.belongsTo(models.Product)
             TransactionItem.belongsTo(models.Cart)
         }

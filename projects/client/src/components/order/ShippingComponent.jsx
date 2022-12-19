@@ -1,30 +1,20 @@
 import {
   Box,
   Text,
-  Divider,
-  FormLabel,
-  Select,
   Button,
-  FormControl,
-  Input,
-  useToast,
-  Grid,
   GridItem,
-  HStack,
-  flexbox,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../../api";
 import { MdKeyboardArrowUp } from "react-icons/md";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import moment from "moment"
 
-
-const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setShippingError, setOpenSelectPay }) => {
+const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, shippingError, setShippingError }) => {
   const [userData, setUserData] = useState({});
   const [warehouseData, setWarehouseData] = useState({});
-  const [selectedWarehouse, setSelectedWarehouse] = useState(0);
-  const [selectedCourier, setSelectedCourier] = useState(0);
+  const [courirDuration, setCourirDuration] = useState("");
   const [results, setResults] = useState({});
   const [openSelect, setOpenSelect] = useState(false)
   const [shippingFee, setShippingFee] = useState(0)
@@ -33,6 +23,7 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
   const [shippingDate, setShippingDate] = useState("")
 
   shippingFeePay(shippingFee)
+  selectedCourir(courirDuration)
 
   const fetchUserData = async () => {
     try {
@@ -88,22 +79,38 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
   const mapCosts = () => {
     return results?.data?.results[0]?.costs.map((val) => {
       return (
-        <Box value={val.cost[0].value} cursor={'pointer'} _hover={{ bgColor: "#f3f4f5" }} onClick={() => setShippingFee(val.cost[0].value)} >
+        <Box value={val.cost[0].value} cursor={'pointer'} _hover={{ bgColor: "#E5F9F6" }} onClick={() => setShippingFee(val.cost[0].value)} >
           <Box onClick={shipmentButton} h={'56px'} >
-            <Box h={'56px'} onClick={() => setShippingDate(val.cost[0].etd)}>
-              <Box h={'56px'} p={'12px 15px'} alignItems={'center'} onClick={() => setShippingCourir(val.service)}>
-                <Box display={'flex'} justifyContent={'space-between'} fontSize={'12px'}>
-                  <Text
-                    fontWeight={700}
-                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                    lineHeight={'18px'}
-                    letterSpacing={'0px'}
-                    m={'0px 8px 0px 0px'}
-                    color={'#31353B'}
-                  >
-                    {val.service}
-                  </Text>
-                  <Text
+            <Box h={'56px'} onClick={() => setShippingDate(Number(val.cost[0].etd) === 1 ? "tomorrow" : moment().add('days', Number(val.cost[0].etd)).format("DD MMM"))}>
+              <Box h={'56px'} onClick={() => setCourirDuration(`${val.service} at ${Number(val.cost[0].etd) === 1 ? "tomorrow" : moment().add('days', Number(val.cost[0].etd)).format("DD MMM")}`)}>
+                <Box h={'56px'} p={'12px 15px'} alignItems={'center'} onClick={() => setShippingCourir(val.service)}>
+                  <Box display={'flex'} justifyContent={'space-between'} fontSize={'12px'}>
+                    <Text
+                      fontWeight={700}
+                      fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                      lineHeight={'18px'}
+                      letterSpacing={'0px'}
+                      m={'0px 8px 0px 0px'}
+                      color={'#31353B'}
+                    >
+                      {val.service}
+                    </Text>
+                    <Text
+                      color={'#31353BAD'}
+                      fontWeight={400}
+                      lineHeight={'18px'}
+                      letterSpacing={'0px'}
+                      m={'0px'}
+                      fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                    >
+                      {val.cost[0].value.toLocaleString("in-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      })}
+                    </Text>
+                  </Box>
+                  <Box
+                    fontSize={'12px'}
                     color={'#31353BAD'}
                     fontWeight={400}
                     lineHeight={'18px'}
@@ -111,33 +118,21 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
                     m={'0px'}
                     fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                   >
-                    {val.cost[0].value.toLocaleString("in-ID", {
-                      style: "currency",
-                      currency: "IDR",
-                    })}
-                  </Text>
-                </Box>
-                <Box
-                  fontSize={'12px'}
-                  color={'#31353BAD'}
-                  fontWeight={400}
-                  lineHeight={'18px'}
-                  letterSpacing={'0px'}
-                  m={'0px'}
-                  fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                >
-                  <Text>
-                    Estimated arrival in ({val.cost[0].etd} {val.cost[0].etd > 1 ? 'days' : 'day'})
-                  </Text>
+                    <Text>
+                      Estimated arrival {Number(val.cost[0].etd) === 1 ? "tomorrow" : moment().add('days', Number(val.cost[0].etd)).format("DD MMM")}
+                    </Text>
+                  </Box>
                 </Box>
               </Box>
             </Box>
           </Box>
           <Box borderBottom={'1px solid #e9ebed'} h={'1px'} mt={'-2px'} w={'283.5px'} ml={'10px'} />
         </Box>
-      );
-    });
-  };
+      )
+    })
+  }
+
+
 
   function distanceBetweenTwoPlace(
     firstLat,
@@ -209,11 +204,11 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
 
   return (
     <>
-      <GridItem w={'305.99px'}>
+      <GridItem w={'305.99px'} mt={'10px'}>
         <Button
           border={'1px solid #0095DA'}
           h={'40px'}
-          width={'305.99px'}
+          width={'300px'}
           lineHeight={'20px'}
           height={'40px'}
           fontWeight={700}
@@ -227,10 +222,12 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
           onClick={openSelectButton}
           justifyContent={'flex-end'}
           gap={!shippingFee ? "95px" : "110px"}
-          _hover={{
-            bgColor: "#0095DA",
-            color: "#fff"
-          }}
+          _hover={
+            {
+              bgColor: "#0095DA",
+              color: "#fff"
+            }
+          }
           _active={{
             bgColor: "#0095DA",
             color: "#fff"
@@ -245,12 +242,12 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
         </Button>
         {shippingError === true ?
           <Text fontSize={'12px'} lineHeight={'1.4'} color={'#D6001C'} fontFamily={'Open Sauce One, sans-serif'} marginTop={'6px'}>
-            Shipping duration is required
+            Shipping duration is required*
           </Text>
           : null}
         {openSelect === true ? (
           <Box
-            w={'100%'}
+            w={'300px'}
             h={'168px'}
             border={'1px solid #e6e6e6'}
             borderRadius={'8px'}
@@ -259,7 +256,7 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
           </Box>
         ) : null}
         {shippingFee && shippingDetails === true ? (
-          <Box w={'306px'} h={'48.19px'} border={'1px solid #e4e6e9'} mt={'10px'} p={'5px'} borderRadius={'8px'} bgColor={'#E5F9F6'}>
+          <Box w={'300px'} h={'48.19px'} border={'1px solid #e4e6e9'} mt={'10px'} p={'5px'} borderRadius={'8px'} bgColor={'#E5F9F6'}>
             <Box
               display={'flex'}
               justifyContent={'space-between'}
@@ -268,7 +265,10 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
               color={'#0000008A'}
               lineHeight={'1.3'}
             >
-              <Text>
+              <Text
+                color={'#31353BAD'}
+                fontWeight={700}
+              >
                 {shippingCourir}
               </Text>
               <Text>
@@ -285,7 +285,7 @@ const ShippingComponent = ({ shippingFeePay, productWeight, shippingError, setSh
               color={'#0000008A'}
               lineHeight={'1.3'}
             >
-              Estimated arrival in ({shippingDate} days)
+              Estimated arrival {shippingDate}
             </Text>
           </Box>
         ) : null}

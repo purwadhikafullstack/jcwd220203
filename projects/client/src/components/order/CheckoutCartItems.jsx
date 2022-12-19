@@ -1,4 +1,4 @@
-import { Box, Button, Grid, GridItem, Image, Text } from "@chakra-ui/react"
+import { Box, GridItem, Image, Text } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { axiosInstance } from "../../api"
@@ -8,7 +8,6 @@ const CheckoutCartItems = () => {
 
     const cartSelector = useSelector((state) => state.cart)
 
-    const [shippingFee, setShippingFee] = useState(0)
     const [productWeight, setProductWeight] = useState(0)
 
     const dispatch = useDispatch()
@@ -61,7 +60,7 @@ const CheckoutCartItems = () => {
                                 whiteSpace={'nowrap'}
                                 overflow={'hidden'}
                                 textOverflow={'ellipsis'}
-                                width={'290px'}
+                                width={'280px'}
                             >
                                 {val.Product.product_name}
                             </Text>
@@ -115,11 +114,6 @@ const CheckoutCartItems = () => {
                             {val.note ? `Note: ${val.note}` : null}
                         </Text>
                     </Box>
-                    {/* <Box
-                        width={"379px"}
-                        h={'1px'}
-                        bgColor={cartSelector.checkoutCart.length !== 1 ? "#e4e6e9" : "#fff"}
-                        mt={!val.note ? '-20px' : null} mb={'20px'} /> */}
                 </Box>
 
             )

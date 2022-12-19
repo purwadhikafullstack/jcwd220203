@@ -159,7 +159,7 @@ const adminController = {
             }
 
             if (req.file) {
-                req.body.profile_picture = `http://localhost:8000/public/${req.file.filename}`
+                req.body.category_image = `http://localhost:8000/public/${req.file.filename}`
             }
 
             const { id } = req.params

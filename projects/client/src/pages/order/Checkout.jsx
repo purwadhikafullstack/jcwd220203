@@ -6,7 +6,6 @@ import {
   Image,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -31,7 +30,7 @@ import BCA from "../../assets/BankLogo/BCA.png"
 import BNI from "../../assets/BankLogo/BNI.png"
 import mandiri from "../../assets/BankLogo/mandiri.png"
 import { AiOutlineSafety } from "react-icons/ai"
-import ShippingComponent from "../../components/product/ShippingComponent"
+import ShippingComponent from "../../components/order/ShippingComponent"
 
 const Checkout = () => {
   const { onOpen, isOpen, onClose } = useDisclosure()
@@ -46,6 +45,8 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("BCA")
   const [shippingFee, setShippingFee] = useState(0)
   const [shippingError, setShippingError] = useState(false)
+  const [defaultAddressId, setDefaultAddressId] = useState(0)
+  const [courirDuration, setCourirDuration] = useState("");
 
   const BCARadio = () => {
     setBCAChecked(true)
@@ -130,8 +131,12 @@ const Checkout = () => {
       const response = await axiosInstance.post("/transactions/payItems", {
         shipping_fee: shippingFee,
         payment_method: paymentMethod,
-        total_price: totalPrice
+        total_price: totalPrice,
+        AddressId: defaultAddressId,
+        courir_duration: courirDuration
       })
+
+      navigate(`/payment/thank-you/shopedia/${response.data.data.transaction_name}`)
 
       toast({
         title: "Payment Success",
@@ -143,7 +148,6 @@ const Checkout = () => {
       console.log(err)
       toast({
         title: "payment failed",
-        description: err.response.data.message,
         status: "error",
       })
     }
@@ -157,6 +161,8 @@ const Checkout = () => {
     fetchTotalPrice()
     fetchCheckoutCartItems()
   }, [])
+
+
 
   return (
     <Box>
@@ -190,61 +196,67 @@ const Checkout = () => {
       <Box w={"1120px"} p="0 20px" mx="auto">
         <Flex>
           <Box w="685px" mr="45px">
-            <Box mt="40px">
+            <Box mt="30px">
               <Text
                 fontWeight={700}
                 fontSize="24px"
                 color={'#31353B'}
                 fontFamily={'Open Sauce One, sans-serif'}
-                margin={'0px 0px 29px'}
+                margin={'0px 0px 20px'}
               >
                 Checkout
               </Text>
-              <Box borderBottom="6px solid #f3f4f5">
-                <ChangeAddress />
-              </Box>
-              <Box pt={'16px'} minH={'232px'}>
-                <Grid templateColumns='.55fr .45fr' gap={1}>
-                  <CheckoutCartItems />
-                  <ShippingComponent shippingFeePay={setShippingFee} productWeight={productWeight} shippingError={shippingError} setShippingError={setShippingError} />
-                </Grid>
-              </Box >
-              <Box h={'1px'} bgColor={'#e4e6e9'} w={'685px'}></Box>
-              <Box
-                display={'flex'}
-                justifyContent={'space-between'}
-                p={'10px 0px'}
-                fontWeight={700}
-                fontSize={'14px'}
-                fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                lineHeight={'20px'}
-                letterSpacing={'0px'}
-                margin={'0px'}
-                color={'#31353BF5'}
-                borderBottom="6px solid #f3f4f5"
-              >
-                <Text>
-                  Subtotal
-                </Text>
-                <Text
+              <Box w={'710px'} border={'1px solid #99d5f0'} boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%)"} borderRadius={"15px"} mb={'50px'} p={'20px'}>
+                <Box borderBottom="6px solid #F7931E">
+                  <ChangeAddress defaultAddressUser={setDefaultAddressId} />
+                </Box>
+                <Box pt={'19px'} minH={'232px'}>
+                  <Grid templateColumns='.55fr .45fr' gap={1}>
+                    <CheckoutCartItems />
+                    <ShippingComponent selectedCourir={setCourirDuration} shippingFeePay={setShippingFee} productWeight={productWeight} shippingError={shippingError} setShippingError={setShippingError} />
+                  </Grid>
+                </Box >
+                <Box h={'1px'} bgColor={'#fcd4a5'} w={'100%'}></Box>
+                <Box
+                  display={'flex'}
+                  justifyContent={'space-between'}
+                  p={'10px 0px'}
+                  fontWeight={700}
+                  fontSize={'14px'}
+                  fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                  lineHeight={'20px'}
+                  letterSpacing={'0px'}
+                  margin={'0px'}
+                  color={'#31353BF5'}
+                  borderBottom="6px solid #F7931E"
+                  mb={'10px'}
                 >
-                  {new Intl.NumberFormat("id-ID", {
-                    style: "currency",
-                    currency: "IDR",
-                  }).format(cartSelector.totalPrice).split(",")[0]}
-                </Text>
+                  <Text>
+                    Subtotal
+                  </Text>
+                  <Text
+                  >
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                    }).format(cartSelector.totalPrice).split(",")[0]}
+                  </Text>
+                </Box>
               </Box>
             </Box>
           </Box>
+
+          {/* Shopping Summary */}
           <Box w="350px" mt="85px">
             <Box>
               <Box
                 inset="92px auto auto 0px"
                 zIndex={"1"}
-                boxShadow={'0 1px 6px 0 rgba(49,53,59,0.12)'}
-                borderRadius="8px"
+                boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%)"}
+                borderRadius={"15px"}
+                border={"1px solid #99d5f0"}
               >
-                <Box p="16px">
+                <Box p="16px" pb={'25px'}>
                   <Text
                     fontWeight={700}
                     lineHeight={1.6}
@@ -295,7 +307,7 @@ const Checkout = () => {
                     justifyContent="space-between"
                     pt="16px"
                     mb="22px"
-                    borderTop="1px solid var(--N100,#DBDEE2)"
+                    borderTop="1px solid #fcd4a5"
                     fontWeight={700}
                     fontSize={'16px'}
                     fontFamily={'Open Sauce One, sans-serif'}
@@ -352,7 +364,6 @@ const Checkout = () => {
         onClose={onClose}
         onSubmit={() => navigate("/cart")}
       />
-
 
       <Modal isOpen={paymentIsOpen} onClose={paymentOnclose} closeOnOverlayClick={false}>
         <ModalOverlay bg='blackAlpha.900' />
@@ -650,7 +661,6 @@ const Checkout = () => {
                 }).format(totalPrice).split(",")[0]}
               </Text>
             </Box>
-
             <Button
               variant='ghost'
               h={'40px'}
@@ -662,6 +672,10 @@ const Checkout = () => {
               bgColor={'#0095DA'}
               color={'#fff'}
               onClick={createNewTransaction}
+              _hover={'none'}
+              _active={{
+                bgColor: '#0370A2'
+              }}
             >
               <Box >
                 <AiOutlineSafety style={{ height: "23.99px", width: "23.99px" }} />
@@ -674,6 +688,7 @@ const Checkout = () => {
         </ModalContent>
       </Modal>
     </Box >
+
   )
 }
 

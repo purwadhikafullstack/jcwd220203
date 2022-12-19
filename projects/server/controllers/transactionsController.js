@@ -1,4 +1,5 @@
 const db = require("../models")
+const moment = require("moment")
 
 const { Cart, Transaction, TransactionItem } = db
 
@@ -38,7 +39,7 @@ const transactionsController = {
     },
     createNewTransaction: async (req, res) => {
         try {
-            const { payment_method, shipping_fee, total_price } = req.body
+            const { payment_method, shipping_fee, total_price, AddressId, courir_duration } = req.body
 
             const getCheckedCartItems = await Cart.findAll({
                 where: {
@@ -72,7 +73,6 @@ const transactionsController = {
                 group by c.id;`
             )
 
-            // console.log(getCheckedCartItems.id)
             const stockProduct = getTotal[0]
 
             const arrProductStock = stockProduct.map((val) => Number(val.totalStock))
@@ -102,18 +102,25 @@ const transactionsController = {
                     ProductId: cart.ProductId,
                     note: cart.note,
                     quantity: qty,
-                    price_per_item: cart.Product.price
+                    price_per_item: cart.Product.price,
                 }
             })
 
             const total_quantity = totalQuantity
+
+            const expDate = moment().add(1, 'days').format("YYYY-MM-DD HH:mm:ss")
 
             const createTransaction = await Transaction.create({
                 total_price: total_price,
                 total_quantity: total_quantity,
                 UserId: req.user.id,
                 shipping_fee: shipping_fee,
-                payment_method: `${payment_method} Virtual Account`
+                payment_method: `${payment_method} Virtual Account`,
+                payment_expired_date: expDate,
+                OrderStatusId: 1,
+                PaymentStatusId: 1,
+                AddressId: AddressId,
+                courir_duration: courir_duration
             })
 
             await Transaction.update(
@@ -136,8 +143,25 @@ const transactionsController = {
                 })
             )
 
+            await db.Cart.destroy({
+                where: {
+                    UserId: req.user.id,
+                    is_checked: true
+                },
+            })
+
+            const findCreatedTransaction = await Transaction.findByPk(createTransaction.id, {
+                include: [{
+                    model: TransactionItem,
+                    include: [
+                        { model: db.Product }
+                    ]
+                }]
+            })
+
             return res.status(201).json({
                 message: "Transaction created",
+                data: findCreatedTransaction
             })
 
         } catch (err) {
@@ -146,8 +170,105 @@ const transactionsController = {
                 message: "Server error",
             })
         }
-    }
+    },
+    getTransactionByTransactionName: async (req, res) => {
+        try {
+            const { transaction_name } = req.query
 
+            const findTransactionByTransactionName = await Transaction.findOne({
+                where: {
+                    transaction_name: transaction_name
+                },
+                include: [{
+                    model: TransactionItem,
+                    include: [
+                        { model: db.Product }
+                    ],
+                },
+                { model: db.Address }
+                ]
+            })
+            return res.status(201).json({
+                message: "Get transaction by name",
+                data: findTransactionByTransactionName
+            })
+
+        } catch (err) {
+            console.log(err)
+            return res.status(500).json({
+                message: "Server error",
+            })
+        }
+    },
+    paymentProofUpload: async (req, res) => {
+        try {
+            const { transaction_name } = req.params
+
+            if (req.file) {
+                req.body.payment_proof = `http://localhost:8000/public/${req.file.filename}`
+            }
+
+            const { payment_proof } = req.body
+
+            const payment_date = moment().add().format("YYYY-MM-DD HH:mm:ss")
+
+            await Transaction.update(
+                {
+                    payment_proof: payment_proof,
+                    PaymentStatusId: 2,
+                    is_paid: true,
+                    payment_date: payment_date
+                },
+                {
+                    where:
+                    {
+                        transaction_name: transaction_name
+                    }
+                })
+
+            const findpaymentProof = await Transaction.findOne({
+                where: {
+                    transaction_name: transaction_name,
+                }
+            })
+
+            return res.status(200).json({
+                message: "payment proof uploaded",
+                data: findpaymentProof
+            })
+        } catch (err) {
+            console.log(err)
+            return res.status(500).json({
+                message: "Server error",
+            })
+        }
+    },
+    setPaymentExpired: async (req, res) => {
+        try {
+            const { transaction_name } = req.params
+
+            await Transaction.update(
+                {
+                    PaymentStatusId: 4,
+                    is_paid: null
+                },
+                {
+                    where: {
+                        transaction_name,
+                    }
+                })
+
+            return res.status(200).json({
+                message: "payment expired",
+            })
+
+        } catch (err) {
+            console.log(err)
+            return res.status(500).json({
+                message: "Server error",
+            })
+        }
+    },
 }
 
 module.exports = transactionsController

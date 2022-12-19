@@ -24,7 +24,7 @@ import Alert from "../profile/Alert"
 import EditForm from "../profile/EditForm"
 import { TbSearch } from "react-icons/tb"
 
-const ChangeAddress = () => {
+const ChangeAddress = ({ defaultAddressUser }) => {
   const { onOpen, isOpen, onClose } = useDisclosure()
   const {
     onOpen: onOpenAddNewAddress,
@@ -55,6 +55,8 @@ const ChangeAddress = () => {
   const [selectedEditCity, setSelectedEditCity] = useState(0)
   const [openedEdit, setOpenedEdit] = useState(null)
   const [currentSearch, setCurrentSearch] = useState("")
+  const [defaultAddressId, setDefaultAddressId] = useState(0)
+  defaultAddressUser(defaultAddressId)
 
   const fetchAddress = async () => {
     try {
@@ -62,6 +64,7 @@ const ChangeAddress = () => {
         "/checkoutAddress/defaultAddress"
       )
       setAddress(response.data.data)
+      setDefaultAddressId(response.data.data.id)
     } catch (error) {
       console.log(error.response)
     }
@@ -90,6 +93,7 @@ const ChangeAddress = () => {
         description: response.data.message,
         status: "success",
       })
+
       fetchAllAddress()
       fetchAddress()
     } catch (error) {
@@ -288,7 +292,7 @@ const ChangeAddress = () => {
   }, [openedEdit])
   return (
     <>
-      <Box borderBottom="1px solid #e4e6e9">
+      <Box borderBottom="1px solid #fcd4a5">
         <Text
           fontSize={'14px'}
           fontFamily={'Open Sauce One, sans-serif'}
@@ -298,7 +302,7 @@ const ChangeAddress = () => {
           Shipping Address
         </Text>
       </Box>
-      <Box pb="15px" pt="10px">
+      <Box pb="20px" pt="20px">
         <Box>
           <Box display={"flex"} mb="4px">
             <Text fontWeight={'bolder'} mr="2px" fontSize={'13px'} color={'#31353B'} lineHeight={'1.4'} fontFamily={'Open Sauce One, sans-serif'}>
@@ -322,6 +326,7 @@ const ChangeAddress = () => {
               fontFamily={'Open Sauce One, sans-serif'}
               m={'0px'}
               justifyContent={'center'}
+              ml={'2px'}
             >
               Main
             </Box>
@@ -351,16 +356,19 @@ const ChangeAddress = () => {
           </Box>
         </Box>
       </Box>
-      <Box borderTop="1px solid #e4e6e9" p={'15px 0px 5px'}>
+      <Box borderTop="1px solid #fcd4a5" p={'25px 0px 10px'}>
         <Button
-          p="0 16px"
-          mb="10px"
-          border="1px solid #E5E7E9"
+          p="0 17px"
+          mb="18px"
+          border="1px solid #0095DA"
           bgColor={"white"}
           onClick={onOpen}
           fontSize={'14px'}
           fontFamily={'Open Sauce One, sans-serif'}
-          color={'#31353BF5'}
+          color={'#0095DA'}
+          _hover={'none'}
+          display={'flex'}
+          alignContent={'center'}
         >
           <Text fontWeight={"bold"}>Choose Another Address</Text>
         </Button>

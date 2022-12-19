@@ -38,17 +38,18 @@ import UpdateStock from "./pages/admin/UpdateStock"
 import WarehouseStock from "./components/admin/WarehouseStock"
 import ChangeAddress from "./components/order/ChangeAddress"
 import Checkout from "./pages/order/Checkout"
-import ShippingComponent from "./components/product/ShippingComponent"
+import ShippingComponent from "./components/order/ShippingComponent"
 import ShippingComponent2 from "./components/product/ShippingComponent2"
 import AdminStockChangesReport from "./pages/admin/AdminStockChangesReport"
 import AdminOrder from "./pages/admin/AdminOrder"
+import PaymentProof from "./pages/PaymentProof"
 
 function App() {
   const [message, setMessage] = useState("")
   const authSelector = useSelector((state) => state.auth)
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/api/greetings`
       )
@@ -120,12 +121,12 @@ function App() {
       ) : null}
 
       {location.pathname === "/login" ||
-      location.pathname === "/register" ||
-      location.pathname === "/reset-password-confirmation" ||
-      location.pathname === "/request-reset-password" ||
-      location.pathname === "/cart/shipment" ||
-      authSelector.RoleId === 3 ||
-      authSelector.RoleId === 2 ? null : (
+        location.pathname === "/register" ||
+        location.pathname === "/reset-password-confirmation" ||
+        location.pathname === "/request-reset-password" ||
+        location.pathname === "/cart/shipment" ||
+        authSelector.RoleId === 3 ||
+        authSelector.RoleId === 2 ? null : (
         <Box>
           <Navbar />
         </Box>
@@ -366,6 +367,14 @@ function App() {
           }
         />
         <Route
+          path="/payment/thank-you/shopedia/:transaction_name"
+          element={
+            <ProtectedRoute>
+              <PaymentProof />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/product"
           element={
             <AdminRoute>
@@ -446,12 +455,12 @@ function App() {
       </Routes>
 
       {location.pathname === "/login" ||
-      location.pathname === "/register" ||
-      location.pathname === "/reset-password-confirmation" ||
-      location.pathname === "/request-reset-password" ||
-      location.pathname === "/cart/shipment" ||
-      authSelector.RoleId === 3 ||
-      authSelector.RoleId === 2 ? null : (
+        location.pathname === "/register" ||
+        location.pathname === "/reset-password-confirmation" ||
+        location.pathname === "/request-reset-password" ||
+        location.pathname === "/cart/shipment" ||
+        authSelector.RoleId === 3 ||
+        authSelector.RoleId === 2 ? null : (
         <Box>
           <Footer />
         </Box>
