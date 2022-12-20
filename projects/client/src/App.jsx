@@ -234,7 +234,6 @@ function App() {
             </AdminRoute>
           }
         />
-
                 {/* Profiling Route */}
                 <Route
                     path="/user/profile"
@@ -316,7 +315,6 @@ function App() {
             </AdminRoute>
           }
         />
-
         {/* Profiling Route */}
         <Route
           path="/user/profile"
@@ -390,65 +388,6 @@ function App() {
             </AdminRoute>
           }
         />
-
-        {/* Profiling Route */}
-        <Route
-          path="/user/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/user/profile/change-password"
-          element={
-            <ProtectedRoute>
-              <ChangePassword />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/user/profile/address"
-          element={
-            <ProtectedRoute>
-              <AddressList />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/shipment"
-          element={
-            <ProtectedRoute>
-              <Shipment />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cart/shipment"
-          element={
-            <ProtectedRoute>
-              <Checkout />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/product"
-          element={
-            <AdminRoute>
-              <AdminProductData />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/product/detail/:id"
-          element={
-            <AdminRoute>
-              <AdminProductDataDetail />
-            </AdminRoute>
-          }
-        />
-
         {/* Product Route */}
         <Route path="/product" element={<Product />} />
         <Route path="/product/:id/:product_name" element={<ProductDetail />} />

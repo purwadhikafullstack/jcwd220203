@@ -5,9 +5,11 @@ import {
   Box,
   Button,
   FormControl,
+  Grid,
   Input,
   InputGroup,
   Select,
+  Skeleton,
   Table,
   Tbody,
   Td,
@@ -28,6 +30,7 @@ import Alert from "../../components/profile/Alert"
 import EditAdmin from "../../components/admin/EditAdmin"
 import { TbSearch } from "react-icons/tb"
 import { IoIosAlert } from "react-icons/io"
+import { AiOutlineLeftCircle, AiOutlineRightCircle } from "react-icons/ai"
 
 const ManageAdminData = () => {
   const [userData, setUserData] = useState([])
@@ -38,7 +41,7 @@ const ManageAdminData = () => {
   const [sortDir, setSortDir] = useState("ASC")
   const [page, setPage] = useState(1)
   const [maxPage, setMaxPage] = useState(1)
-
+  const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
 
   const {
@@ -61,7 +64,7 @@ const ManageAdminData = () => {
   console.log(deleteAlert?.id)
 
   const fetchAdminData = async () => {
-    const maxItemsPerPage = 6
+    const maxItemsPerPage = 10
     try {
       const response = await axiosInstance.get(
         "/userData/getAllWarehouseAdmin",
@@ -84,6 +87,7 @@ const ManageAdminData = () => {
       } else {
         setUserData(response.data.data)
       }
+      setIsLoading(true)
     } catch (error) {
       console.log(error)
     }
@@ -95,7 +99,7 @@ const ManageAdminData = () => {
     return userData.map((val) => {
       return (
         <Tr key={val.id.toString()}>
-          <Td p="5px" w="100px">
+          <Td p={"10px"} w="100px">
             <Avatar
               size={"lg"}
               borderRadius={"0"}
@@ -103,16 +107,16 @@ const ManageAdminData = () => {
               src={`${apiImg}/${val.profile_picture}`}
             />
           </Td>
-          <Td p="5px">{val.username}</Td>
-          <Td p="5px" w="240px">
+          <Td p={"10px"}>{val.username}</Td>
+          <Td p={"10px"} w="240px">
             {val.email}
           </Td>
-          <Td p="5px" w="160px">
+          <Td p={"10px"} w="160px">
             {val.phone_number || "null"}
           </Td>
-          <Td p="5px">{val.Role.role_name || "null"}</Td>
-          <Td p="5px">{val.Warehouse?.warehouse_name || "null "}</Td>
-          <Td p="5px">
+          <Td p={"10px"}>{val.Role.role_name || "null"}</Td>
+          <Td p={"10px"}>{val.Warehouse?.warehouse_name || "null "}</Td>
+          <Td p={"10px"}>
             <Box>
               <Box mb={"2"}>
                 <Button
@@ -386,83 +390,89 @@ const ManageAdminData = () => {
     }
   }, [openedEdit])
   return (
-    <Box marginLeft={"230px"}>
-      <Box p="20px 0" display={"flex"} justifyContent="space-between" mr="2">
-        <Box display={"flex"} gap="4" my={"auto"}>
-          <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
-            Admin Data
-          </Text>
-          <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
-            Total Admin:{totalCount}
-          </Text>
-        </Box>
-
-        <Box gap="4" display={"flex"}>
-          <Text my="auto">Sort</Text>
-          <Select
-            onChange={sortCategoryHandler}
-            fontSize={"15px"}
-            fontWeight="normal"
-            fontFamily="serif"
-            width={"137px"}
-            color={"#6D6D6F"}
-            _placeholder="Sort By"
-          >
-            <option value="username ASC" selected>
-              Name A-Z
-            </option>
-            <option value="username DESC">Name Z-A</option>
-            <option value="createdAt DESC">Latest</option>
-            <option value="createdAt ASC">Old</option>
-          </Select>
-
-          <form onSubmit={formikSearch.handleSubmit}>
-            <FormControl>
-              <InputGroup textAlign={"right"}>
-                <Input
-                  type={"text"}
-                  placeholder="Search by username"
-                  name="search"
-                  w="200px"
-                  onChange={searchAdminHandler}
-                  _placeholder={"halo"}
-                  borderRightRadius="0"
-                  value={formikSearch.values.search}
-                />
-
-                <Button borderLeftRadius={"0"} type="submit">
-                  <TbSearch />
-                </Button>
-              </InputGroup>
-            </FormControl>
-          </form>
-
-          <Button
-            w={"200px"}
-            bgColor={"#0095DA"}
-            color="white"
-            _hover={false}
-            onClick={onOpenAddNewAdmin}
-          >
-            Add New Admin
-          </Button>
-        </Box>
+    <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} h="100vh">
+      <Box mb="16px">
+        <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
+          Admin Data({totalCount})
+        </Text>
       </Box>
-      <Table>
+
+      <Grid gap="4" templateColumns={"repeat(3, 1fr)"} mt="4" mb="4">
+        <Select
+          onChange={sortCategoryHandler}
+          fontSize={"15px"}
+          fontWeight="normal"
+          color={"#6D6D6F"}
+          placeholder="Sort By"
+          bgColor={"white"}
+        >
+          <option value="username ASC" selected>
+            Name A-Z
+          </option>
+          <option value="username DESC">Name Z-A</option>
+          <option value="createdAt DESC">Latest</option>
+          <option value="createdAt ASC">Old</option>
+        </Select>
+
+        <form onSubmit={formikSearch.handleSubmit}>
+          <FormControl>
+            <InputGroup textAlign={"right"}>
+              <Input
+                type={"text"}
+                placeholder="Search by username"
+                name="search"
+                onChange={searchAdminHandler}
+                borderRightRadius="0"
+                value={formikSearch.values.search}
+                bgColor={"white"}
+                _hover={false}
+              />
+
+              <Button
+                borderLeftRadius={"0"}
+                type="submit"
+                bgColor={"white"}
+                _hover={false}
+                border="1px solid #e2e8f0"
+                borderLeft={"0px"}
+              >
+                <TbSearch />
+              </Button>
+            </InputGroup>
+          </FormControl>
+        </form>
+
+        <Button
+          bgColor={"#0095DA"}
+          color="white"
+          _hover={false}
+          onClick={onOpenAddNewAdmin}
+        >
+          Add New Admin
+        </Button>
+      </Grid>
+
+      <Table
+        variant={"striped"}
+        colorScheme={"blue"}
+        bgColor="white"
+        borderRadius="8px"
+        boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+      >
         <Thead>
           <Tr>
-            <Th p="5px">Photo Profile</Th>
-            <Th p="5px">Username</Th>
-            <Th p="5px">Email</Th>
-            <Th p="5px">Phone Number</Th>
-            <Th p="5px">Role</Th>
-            <Th p="5px">Warehouse</Th>
-            <Th p="5px">Option</Th>
+            <Th p="10px">Photo Profile</Th>
+            <Th p="10px">Username</Th>
+            <Th p="10px">Email</Th>
+            <Th p="10px">Phone Number</Th>
+            <Th p="10px">Role</Th>
+            <Th p="10px">Warehouse</Th>
+            <Th p="10px">Option</Th>
           </Tr>
         </Thead>
-        <Tbody>{renderUser()}</Tbody>
+        <Tbody>{isLoading && renderUser()}</Tbody>
       </Table>
-      {!userData.length ? (
+      {!userData.length && isLoading === true ? (
         <Box p="10px" bgColor={"#E5F9F6"}>
           <Box mx="auto">
             <Box display={"flex"} mx="auto" w="170px">
@@ -473,6 +483,14 @@ const ManageAdminData = () => {
             </Box>
           </Box>
         </Box>
+      ) : null}
+      {isLoading === false ? (
+        <Skeleton
+          startColor="#bab8b8"
+          endColor="#d4d2d2"
+          height="100px"
+          borderRadius="8px"
+        />
       ) : null}
 
       {/* Alert Delete */}
@@ -538,20 +556,28 @@ const ManageAdminData = () => {
 
       <Box p="20px">
         <Box textAlign={"center"}>
-          {page === 1 ? null : (
-            <Button onClick={previousPage} disabled={page === 1 ? true : null}>
-              {"<"}
-            </Button>
-          )}
-          {page >= maxPage ? null : (
-            <Button
-              onClick={nextPage}
-              ml="10px"
-              disabled={page >= maxPage ? true : null}
-            >
-              {">"}
-            </Button>
-          )}
+          <Button
+            onClick={previousPage}
+            disabled={page === 1 ? true : null}
+            _hover={false}
+            _active={false}
+          >
+            <AiOutlineLeftCircle fontSize={"20px"} />
+          </Button>
+
+          <Box display={"inline"}>{page}</Box>
+
+          <Button
+            onClick={nextPage}
+            disabled={page >= maxPage ? true : null}
+            _hover={false}
+            _active={false}
+          >
+            <AiOutlineRightCircle fontSize={"20px"} />
+          </Button>
+          <Box>
+            Page: {page} of {maxPage}
+          </Box>
         </Box>
       </Box>
     </Box>

@@ -11,6 +11,7 @@ import {
   ModalContent,
   ModalOverlay,
   Select,
+  Skeleton,
   Table,
   Tbody,
   Td,
@@ -36,6 +37,8 @@ import {
 } from "react-icons/ai"
 import { Link } from "react-router-dom"
 import moment from "moment"
+import { IoIosAlert } from "react-icons/io"
+import { useSelector } from "react-redux"
 
 const AdminOrder = () => {
   const [order, setOrder] = useState([])
@@ -50,8 +53,14 @@ const AdminOrder = () => {
   const [maxPage, setMaxPage] = useState(1)
   const [orderStatus, setOrderStatus] = useState([])
   const [paymentStatus, setPaymentStatus] = useState([])
+  const [warehouse, setWarehouse] = useState([])
   const [orderSort, setOrderSort] = useState(0)
   const [paymentSort, setPaymentSort] = useState(0)
+  const [warehouseSort, setWarehouseSort] = useState(0)
+  const [paymentMethod, setPaymentMethod] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  const authSelector = useSelector((state) => state.auth)
 
   const toast = useToast()
 
@@ -76,6 +85,8 @@ const AdminOrder = () => {
             transaction_name: currentSearch,
             PaymentStatusId: paymentSort,
             OrderStatusId: orderSort,
+            WarehouseId: warehouseSort,
+            payment_method: paymentMethod,
             _sortBy: sortBy,
             _sortDir: sortDir,
           },
@@ -90,6 +101,7 @@ const AdminOrder = () => {
       } else {
         setOrder(response.data.data)
       }
+      setIsLoading(true)
     } catch (error) {
       console.log(error.response)
     }
@@ -108,6 +120,15 @@ const AdminOrder = () => {
     try {
       const response = await axiosInstance.get("/adminOrder/findPaymentStatus")
       setPaymentStatus(response.data.data)
+    } catch (error) {
+      console.log(error.response)
+    }
+  }
+  
+  const fetchWarehouse = async () => {
+    try {
+      const response = await axiosInstance.get("/adminOrder/findWarehouse")
+      setWarehouse(response.data.data)
     } catch (error) {
       console.log(error.response)
     }
@@ -172,7 +193,7 @@ const AdminOrder = () => {
     },
   })
 
-  const searchAdminHandler = ({ target }) => {
+  const searchHandler = ({ target }) => {
     const { name, value } = target
     formikSearch.setFieldValue(name, value)
   }
@@ -205,6 +226,16 @@ const AdminOrder = () => {
     setPaymentSort(value)
   }
 
+  const paymentMethodHandler = ({ target }) => {
+    const { value } = target
+    setPaymentMethod(value)
+  }
+
+  const warehouseHandler = ({ target }) => {
+    const { value } = target
+    setWarehouseSort(value)
+  }
+
   const sortHandler = ({ target }) => {
     const { value } = target
     setSortBy(value.split(" ")[0])
@@ -213,8 +244,6 @@ const AdminOrder = () => {
 
   useEffect(() => {
     fetchOrder()
-    fetchOrderStatus()
-    fetchPaymentStatus()
   }, [
     approve,
     reject,
@@ -223,8 +252,16 @@ const AdminOrder = () => {
     sortDir,
     sortBy,
     paymentSort,
+    paymentMethod,
     orderSort,
+    warehouseSort,
   ])
+
+  useEffect(() => {
+    fetchOrderStatus()
+    fetchPaymentStatus()
+    fetchWarehouse()
+  }, [])
   return (
     <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} h="100vh">
       <Box mb="16px">
@@ -233,96 +270,223 @@ const AdminOrder = () => {
         </Text>
       </Box>
 
-      <Grid gap="4" templateColumns={"repeat(4, 1fr)"} mt="4" mb="4">
-        <Select
-          onChange={sortHandler}
-          fontSize={"15px"}
-          fontWeight="normal"
-          color={"#6D6D6F"}
-          placeholder="Sort"
-          bgColor={"white"}
-        >
-          <option value="createdAt DESC">Latest</option>
-          <option value="createdAt ASC">Old</option>
-        </Select>
+      {authSelector.RoleId === 2 ? (
+        <Grid gap="4" templateColumns={"repeat(5, 1fr)"} mt="4" mb="4">
+          <Select
+            onChange={sortHandler}
+            fontSize={"15px"}
+            fontWeight="normal"
+            color={"#6D6D6F"}
+            placeholder="Sort"
+            bgColor={"white"}
+          >
+            <option value="createdAt DESC">Latest</option>
+            <option value="createdAt ASC">Old</option>
+          </Select>
 
-        <Select
-          fontSize={"15px"}
-          fontWeight="normal"
-          onChange={orderStatusHandler}
-          color={"#6D6D6F"}
-          placeholder="Order Status"
-          bgColor={"white"}
-        >
-          {orderStatus.map((val) => {
-            return <option value={val.id}>{val.order_status_name}</option>
-          })}
-        </Select>
+          <Select
+            fontSize={"15px"}
+            fontWeight="normal"
+            onChange={orderStatusHandler}
+            color={"#6D6D6F"}
+            placeholder="Order Status"
+            bgColor={"white"}
+          >
+            {orderStatus.map((val) => {
+              return <option value={val.id}>{val.order_status_name}</option>
+            })}
+          </Select>
 
-        <Select
-          fontSize={"15px"}
-          fontWeight="normal"
-          onChange={paymentStatusHandler}
-          color={"#6D6D6F"}
-          placeholder="Payment Status"
-          bgColor={"white"}
-        >
-          {paymentStatus.map((val) => {
-            return <option value={val.id}>{val.payment_status_name}</option>
-          })}
-        </Select>
+          <Select
+            fontSize={"15px"}
+            fontWeight="normal"
+            onChange={paymentStatusHandler}
+            color={"#6D6D6F"}
+            placeholder="Payment Status"
+            bgColor={"white"}
+          >
+            {paymentStatus.map((val) => {
+              return <option value={val.id}>{val.payment_status_name}</option>
+            })}
+          </Select>
 
-        <form onSubmit={formikSearch.handleSubmit}>
-          <FormControl>
-            <InputGroup textAlign={"right"}>
-              <Input
-                type={"text"}
-                placeholder="Search here"
-                name="search"
-                bgColor={"white"}
-                onChange={searchAdminHandler}
-                _placeholder={"halo"}
-                borderRightRadius="0"
-                value={formikSearch.values.search}
-              />
+          <Select
+            onChange={paymentMethodHandler}
+            fontSize={"15px"}
+            fontWeight="normal"
+            color={"#6D6D6F"}
+            placeholder="Payment Method"
+            bgColor={"white"}
+          >
+            <option value="BCA Virtual Account">BCA Virtual Account</option>
+            <option value="BNI Virtual Account">BNI Virtual Account</option>
+            <option value="Mandiri Virtual Account">
+              Mandiri Virtual Account
+            </option>
+          </Select>
 
-              <Button
-                borderLeftRadius={"0"}
-                type="submit"
-                bgColor={"white"}
-                border="1px solid #e2e8f0"
-                borderLeft={"0px"}
-              >
-                <TbSearch />
-              </Button>
-            </InputGroup>
-          </FormControl>
-        </form>
-      </Grid>
+          {authSelector.RoleId === 3 ? (
+            <Select
+              onChange={warehouseHandler}
+              fontSize={"15px"}
+              fontWeight="normal"
+              color={"#6D6D6F"}
+              placeholder="Warehouse"
+              bgColor={"white"}
+            >
+              {warehouse.map((val) => {
+                return <option value={val.id}>{val.warehouse_name}</option>
+              })}
+            </Select>
+          ) : null}
 
-      <Box>
-        <Table
-          variant={"striped"}
-          colorScheme={"blue"}
-          bgColor="white"
-          borderRadius="8px"
-          boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-        >
-          <Thead>
-            <Tr>
-              <Th p={"10px"}>Transaction Name</Th>
-              <Th p={"10px"}>Order Status</Th>
-              <Th p={"10px"}>Payment Status</Th>
-              <Th p={"10px"}>Payment Method</Th>
-              <Th p={"10px"}>Payment Date</Th>
-              <Th p={"10px"}>Payment Proof</Th>
+          <form onSubmit={formikSearch.handleSubmit}>
+            <FormControl>
+              <InputGroup textAlign={"right"}>
+                <Input
+                  type={"text"}
+                  placeholder="Search here"
+                  name="search"
+                  bgColor={"white"}
+                  onChange={searchHandler}
+                  borderRightRadius="0"
+                  value={formikSearch.values.search}
+                />
 
-              <Th>Total Price</Th>
-              <Th>User</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {order.map((val) => {
+                <Button
+                  borderLeftRadius={"0"}
+                  type="submit"
+                  bgColor={"white"}
+                  border="1px solid #e2e8f0"
+                  borderLeft={"0px"}
+                >
+                  <TbSearch />
+                </Button>
+              </InputGroup>
+            </FormControl>
+          </form>
+        </Grid>
+      ) : (
+        <Grid gap="4" templateColumns={"repeat(6, 1fr)"} mt="4" mb="4">
+          <Select
+            onChange={sortHandler}
+            fontSize={"15px"}
+            fontWeight="normal"
+            color={"#6D6D6F"}
+            placeholder="Sort"
+            bgColor={"white"}
+          >
+            <option value="createdAt DESC">Latest</option>
+            <option value="createdAt ASC">Old</option>
+          </Select>
+
+          <Select
+            fontSize={"15px"}
+            fontWeight="normal"
+            onChange={orderStatusHandler}
+            color={"#6D6D6F"}
+            placeholder="Order Status"
+            bgColor={"white"}
+          >
+            {orderStatus.map((val) => {
+              return <option value={val.id}>{val.order_status_name}</option>
+            })}
+          </Select>
+
+          <Select
+            fontSize={"15px"}
+            fontWeight="normal"
+            onChange={paymentStatusHandler}
+            color={"#6D6D6F"}
+            placeholder="Payment Status"
+            bgColor={"white"}
+          >
+            {paymentStatus.map((val) => {
+              return <option value={val.id}>{val.payment_status_name}</option>
+            })}
+          </Select>
+
+          <Select
+            onChange={paymentMethodHandler}
+            fontSize={"15px"}
+            fontWeight="normal"
+            color={"#6D6D6F"}
+            placeholder="Payment Method"
+            bgColor={"white"}
+          >
+            <option value="BCA Virtual Account">BCA Virtual Account</option>
+            <option value="BNI Virtual Account">BNI Virtual Account</option>
+            <option value="Mandiri Virtual Account">
+              Mandiri Virtual Account
+            </option>
+          </Select>
+
+          {authSelector.RoleId === 3 ? (
+            <Select
+              onChange={warehouseHandler}
+              fontSize={"15px"}
+              fontWeight="normal"
+              color={"#6D6D6F"}
+              placeholder="Warehouse"
+              bgColor={"white"}
+            >
+              {warehouse.map((val) => {
+                return <option value={val.id}>{val.warehouse_name}</option>
+              })}
+            </Select>
+          ) : null}
+
+          <form onSubmit={formikSearch.handleSubmit}>
+            <FormControl>
+              <InputGroup textAlign={"right"}>
+                <Input
+                  type={"text"}
+                  placeholder="Search here"
+                  name="search"
+                  bgColor={"white"}
+                  onChange={searchHandler}
+                  borderRightRadius="0"
+                  value={formikSearch.values.search}
+                />
+
+                <Button
+                  borderLeftRadius={"0"}
+                  type="submit"
+                  bgColor={"white"}
+                  border="1px solid #e2e8f0"
+                  borderLeft={"0px"}
+                >
+                  <TbSearch />
+                </Button>
+              </InputGroup>
+            </FormControl>
+          </form>
+        </Grid>
+      )}
+
+      <Table
+        variant={"striped"}
+        colorScheme={"blue"}
+        bgColor="white"
+        borderRadius="8px"
+        boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+      >
+        <Thead>
+          <Tr>
+            <Th p={"10px"}>Transaction Name</Th>
+            <Th p={"10px"}>Order Status</Th>
+            <Th p={"10px"}>Payment Status</Th>
+            <Th p={"10px"}>Payment Method</Th>
+            <Th p={"10px"}>Payment Date</Th>
+            <Th p={"10px"}>Payment Proof</Th>
+            <Th p={"10px"}>Total Price</Th>
+            <Th p={"10px"}>User</Th>
+            {authSelector.RoleId === 3 ? <Th p={"10px"}>Warehouse</Th> : null}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {isLoading &&
+            order.map((val) => {
               return (
                 <Tr>
                   <Td p={"10px "}>{val.transaction_name}</Td>
@@ -335,42 +499,66 @@ const AdminOrder = () => {
                     )}
                   </Td>
                   <Td p={"10px "}>
-                    <Image
-                      w="100px"
-                      src={`${process.env.REACT_APP_IMAGE_URL}/${val.payment_proof}`}
-                      onClick={() => setModalImage(val)}
-                    />
+                    {val.payment_proof ? (
+                      <Image
+                        w="100px"
+                        src={`${process.env.REACT_APP_IMAGE_URL}/${val.payment_proof}`}
+                        onClick={() => setModalImage(val)}
+                      />
+                    ) : (
+                      <Text>Not Uploaded</Text>
+                    )}
                   </Td>
 
                   <Td p={"10px "}>Rp. {val.total_price.toLocaleString()}</Td>
                   <Td p={"10px "}>{val.User.username}</Td>
+                  {authSelector.RoleId === 3 ? (
+                    <Td>{val.Warehouse.warehouse_name}</Td>
+                  ) : null}
                   <Td p={"10px "}>
                     {val?.PaymentStatusId == 2 ? (
-                      <>
-                        <Box display={"flex"} fontSize="40px" gap="4px">
-                          <Link>
-                            <AiFillCheckCircle
-                              type="button"
-                              onClick={() => setApprove(val)}
-                              color="#0095DA"
-                            />
-                          </Link>
-                          <Link>
-                            <AiFillCloseCircle
-                              onClick={() => setReject(val)}
-                              color="#F7931E"
-                            />
-                          </Link>
-                        </Box>
-                      </>
+                      <Box display={"flex"} fontSize="40px" gap="4px">
+                        <Link>
+                          <AiFillCheckCircle
+                            type="button"
+                            onClick={() => setApprove(val)}
+                            color="#0095DA"
+                          />
+                        </Link>
+                        <Link>
+                          <AiFillCloseCircle
+                            onClick={() => setReject(val)}
+                            color="#F7931E"
+                          />
+                        </Link>
+                      </Box>
                     ) : null}
                   </Td>
                 </Tr>
               )
             })}
-          </Tbody>
-        </Table>
-      </Box>
+        </Tbody>
+      </Table>
+      {isLoading === false ? (
+        <Skeleton
+          startColor="#bab8b8"
+          endColor="#d4d2d2"
+          height="100px"
+          borderRadius="8px"
+        />
+      ) : null}
+      {!order.length && isLoading === true ? (
+        <Box p="10px" bgColor={"#E5F9F6"}>
+          <Box mx="auto">
+            <Box display={"flex"} mx="auto" w="170px">
+              <IoIosAlert fontSize={"25px"} color="#0095DA" />
+              <Text fontWeight="medium" ml="2">
+                No orders found
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+      ) : null}
 
       <RejectForm
         formik={formik}
@@ -425,6 +613,9 @@ const AdminOrder = () => {
           >
             <AiOutlineRightCircle fontSize={"20px"} />
           </Button>
+          <Box>
+            Page: {page} of {maxPage}
+          </Box>
         </Box>
       </Box>
 

@@ -2,9 +2,11 @@ import {
   Box,
   Button,
   FormControl,
+  Grid,
   Input,
   InputGroup,
   Select,
+  Skeleton,
   Table,
   Tbody,
   Td,
@@ -21,6 +23,7 @@ import { useFormik } from "formik"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import WarehouseStock from "../../components/admin/WarehouseStock"
 import { IoIosAlert } from "react-icons/io"
+import { AiOutlineLeftCircle, AiOutlineRightCircle } from "react-icons/ai"
 
 const UpdateStock = () => {
   const [warehouse, setWarehouse] = useState([])
@@ -30,6 +33,7 @@ const UpdateStock = () => {
   const [sortBy, setSortBy] = useState("warehouse_name")
   const [sortDir, setSortDir] = useState("ASC")
   const [page, setPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate()
   const handleRowClick = (warehouse_name) => {
@@ -65,6 +69,7 @@ const UpdateStock = () => {
       } else {
         setWarehouse(response.data.data)
       }
+      setIsLoading(true)
     } catch (error) {
       console.log(error.response)
     }
@@ -80,9 +85,9 @@ const UpdateStock = () => {
         >
           <Td>{val.warehouse_name || "null"}</Td>
           <Td>{val.address_labels}</Td>
-          <Td>{val.province}</Td>
-          <Td>{val.city}</Td>
-          <Td>{val.districts}</Td>
+          <Td>
+            {val.province}, {val.city}, {val.districts}
+          </Td>
           <Td>{val.User?.username || "Not assign"}</Td>
         </Tr>
       )
@@ -114,69 +119,80 @@ const UpdateStock = () => {
     fetchAllWarehouse()
   }, [currentSearch, page, sortDir, sortBy])
   return (
-    <Box marginLeft={"230px"}>
-      <Box p="20px 0" display={"flex"} justifyContent="space-between" mr="4">
-        <Box display={"flex"} gap="4" my={"auto"}>
-          <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
-            Update Stock
-          </Text>
-        </Box>
-
-        <Box gap="4" display={"flex"}>
-          <Text my="auto">Sort</Text>
-          <Select
-            onChange={sortCategoryHandler}
-            fontSize={"15px"}
-            fontWeight="normal"
-            fontFamily="serif"
-            width={"137px"}
-            color={"#6D6D6F"}
-            _placeholder="Sort By"
-          >
-            <option value="warehouse_name ASC" selected>
-              Name A-Z
-            </option>
-            <option value="warehouse_name DESC">Name Z-A</option>
-            <option value="createdAt DESC">Latest</option>
-            <option value="createdAt ASC">Old</option>
-          </Select>
-
-          <form onSubmit={formikSearch.handleSubmit}>
-            <FormControl>
-              <InputGroup textAlign={"right"}>
-                <Input
-                  type={"text"}
-                  placeholder="Search by warehouse name"
-                  name="search"
-                  w="200px"
-                  onChange={searchAdminHandler}
-                  _placeholder={"halo"}
-                  borderRightRadius="0"
-                  value={formikSearch.values.search}
-                />
-
-                <Button borderLeftRadius={"0"} type="submit">
-                  <TbSearch />
-                </Button>
-              </InputGroup>
-            </FormControl>
-          </form>
-        </Box>
+    <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} h="100vh">
+      <Box mb="16px">
+        <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
+          Update Stock
+        </Text>
       </Box>
-      <Table>
+      <Grid gap="4" templateColumns={"repeat(2, 1fr)"} mt="4" mb="4">
+        <Select
+          onChange={sortCategoryHandler}
+          fontSize={"15px"}
+          color={"#6D6D6F"}
+          placeholder="Sort"
+          bgColor={"white"}
+        >
+          <option value="warehouse_name ASC" selected>
+            Name A-Z
+          </option>
+          <option value="warehouse_name DESC">Name Z-A</option>
+          <option value="createdAt DESC">Latest</option>
+          <option value="createdAt ASC">Old</option>
+        </Select>
+
+        <form onSubmit={formikSearch.handleSubmit}>
+          <FormControl>
+            <InputGroup textAlign={"right"}>
+              <Input
+                type={"text"}
+                placeholder="Search by warehouse name"
+                name="search"
+                onChange={searchAdminHandler}
+                borderRightRadius="0"
+                value={formikSearch.values.search}
+                bgColor="white"
+              />
+
+              <Button
+                borderLeftRadius={"0"}
+                type="submit"
+                bgColor={"white"}
+                border="1px solid #e2e8f0"
+                borderLeft={"0px"}
+              >
+                <TbSearch />
+              </Button>
+            </InputGroup>
+          </FormControl>
+        </form>
+      </Grid>
+      <Table
+        variant={"striped"}
+        colorScheme={"blue"}
+        bgColor="white"
+        borderRadius="8px"
+        boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+      >
         <Thead>
           <Tr>
             <Th>Warehouse Name</Th>
             <Th>Address Labels</Th>
-            <Th>Province</Th>
-            <Th>City</Th>
-            <Th>Districs</Th>
+            <Th>Address</Th>
             <Th>Warehouse Admin</Th>
           </Tr>
         </Thead>
-        <Tbody>{renderWarehouse()}</Tbody>
+        <Tbody>{isLoading && renderWarehouse()}</Tbody>
       </Table>
-      {!warehouse.length ? (
+      {isLoading === false ? (
+        <Skeleton
+          startColor="#bab8b8"
+          endColor="#d4d2d2"
+          height="60px"
+          borderRadius="8px"
+        />
+      ) : null}
+      {!warehouse.length && isLoading === true ? (
         <Box p="10px" bgColor={"#E5F9F6"}>
           <Box mx="auto">
             <Box display={"flex"} mx="auto" w="170px">
@@ -188,22 +204,30 @@ const UpdateStock = () => {
           </Box>
         </Box>
       ) : null}
-      <Box p="20px">
-        <Box>
-          {page === 1 ? null : (
-            <Button onClick={previousPage} disabled={page === 1 ? true : null}>
-              {"<"}
-            </Button>
-          )}
-          {page >= maxPage ? null : (
-            <Button
-              onClick={nextPage}
-              ml="10px"
-              disabled={page >= maxPage ? true : null}
-            >
-              {">"}
-            </Button>
-          )}
+      <Box p="20px" fontSize={"16px"}>
+        <Box textAlign={"center"}>
+          <Button
+            onClick={previousPage}
+            disabled={page === 1 ? true : null}
+            _hover={false}
+            _active={false}
+          >
+            <AiOutlineLeftCircle fontSize={"20px"} />
+          </Button>
+
+          <Box display={"inline"}>{page}</Box>
+
+          <Button
+            onClick={nextPage}
+            disabled={page >= maxPage ? true : null}
+            _hover={false}
+            _active={false}
+          >
+            <AiOutlineRightCircle fontSize={"20px"} />
+          </Button>
+          <Box>
+            Page: {page} of {maxPage}
+          </Box>
         </Box>
       </Box>
     </Box>

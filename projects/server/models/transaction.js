@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       Transaction.belongsTo(models.Order_status)
       Transaction.belongsTo(models.Payment_status)
       Transaction.hasMany(models.TransactionItem)
+      Transaction.belongsTo(models.Warehouse)
       Transaction.belongsTo(models.Address)
     }
   }
@@ -61,3 +62,4 @@ module.exports = (sequelize, DataTypes) => {
   )
   return Transaction
 }
+
