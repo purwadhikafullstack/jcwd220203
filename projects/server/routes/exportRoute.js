@@ -24,25 +24,7 @@ const connection = mysql.createConnection({
 
 
 // Getter API
-router.get("/stock/csv", (req, res) => {
-    connection.query("SELECT SJ.*, TJ.name, TJ.type, P.product_name FROM journals AS SJ LEFT JOIN Type_journals AS TJ ON SJ.TypeJournalId = TJ.id JOIN Products AS P ON SJ.ProductId = P.id", function (err, data) {
-      if (err) throw err;
-  
-      //JSON
-      const jsonData = JSON.parse(JSON.stringify(data));
-    //   console.log("jsonData", jsonData);
-  
-      //csv
-      fastcsv
-        .write(jsonData, { headers: true })
-        .on("finish", function () {
-          console.log("Write to product_stock.csv successfully in server folder!");
-        })
-        .pipe(ws);
-
-        res.send("All process is done!")
-    });
-  });
+router.get("/stock/csv", exportController.exportcsv);
 
 // End of exporting stuff
 
