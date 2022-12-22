@@ -49,6 +49,7 @@ const adminOrderController = {
                 transaction_name: {
                   [Op.like]: `%${transaction_name}%`,
                 },
+                WarehouseId: findAdmin.WarehouseId,
               },
               include: [
                 {
@@ -63,9 +64,6 @@ const adminOrderController = {
                 { model: db.Payment_status },
                 {
                   model: db.Warehouse,
-                  where: {
-                    id: findAdmin.WarehouseId,
-                  },
                 },
               ],
             })
@@ -95,6 +93,7 @@ const adminOrderController = {
                   PaymentStatusId,
                   OrderStatusId,
                 },
+                WarehouseId: findAdmin.WarehouseId,
               },
               include: [
                 {
@@ -107,12 +106,6 @@ const adminOrderController = {
                 },
                 { model: db.Order_status },
                 { model: db.Payment_status },
-                {
-                  model: db.Warehouse,
-                  where: {
-                    id: findAdmin.WarehouseId,
-                  },
-                },
               ],
             })
 
@@ -136,6 +129,7 @@ const adminOrderController = {
                   PaymentStatusId,
                   OrderStatusId,
                 },
+                WarehouseId: findAdmin.WarehouseId,
               },
               include: [
                 {
@@ -148,12 +142,6 @@ const adminOrderController = {
                 },
                 { model: db.Order_status },
                 { model: db.Payment_status },
-                {
-                  model: db.Warehouse,
-                  where: {
-                    id: findAdmin.WarehouseId,
-                  },
-                },
               ],
             })
 
@@ -177,6 +165,7 @@ const adminOrderController = {
                   payment_method,
                   OrderStatusId,
                 },
+                WarehouseId: findAdmin.WarehouseId,
               },
               include: [
                 {
@@ -189,12 +178,6 @@ const adminOrderController = {
                 },
                 { model: db.Order_status },
                 { model: db.Payment_status },
-                {
-                  model: db.Warehouse,
-                  where: {
-                    id: findAdmin.WarehouseId,
-                  },
-                },
               ],
             })
 
@@ -226,16 +209,11 @@ const adminOrderController = {
                     username: {
                       [Op.like]: `%${username}%`,
                     },
+                    WarehouseId: findAdmin.WarehouseId,
                   },
                 },
                 { model: db.Order_status },
                 { model: db.Payment_status },
-                {
-                  model: db.Warehouse,
-                  where: {
-                    id: findAdmin.WarehouseId,
-                  },
-                },
               ],
             })
 
@@ -271,12 +249,6 @@ const adminOrderController = {
               },
               { model: db.Order_status },
               { model: db.Payment_status },
-              {
-                model: db.Warehouse,
-                where: {
-                  id: findAdmin.WarehouseId,
-                },
-              },
             ],
           })
 
@@ -291,16 +263,13 @@ const adminOrderController = {
           offset: (_page - 1) * _limit,
           limit: Number(_limit),
           order: [[_sortBy, _sortDir]],
+          where: {
+            WarehouseId: findAdmin.WarehouseId,
+          },
           include: [
             { model: db.User },
             { model: db.Order_status },
             { model: db.Payment_status },
-            {
-              model: db.Warehouse,
-              where: {
-                id: findAdmin.WarehouseId,
-              },
-            },
           ],
         })
 
@@ -584,13 +553,14 @@ const adminOrderController = {
               { model: db.Warehouse },
             ],
           })
-
+          
           return res.status(200).json({
             message: "Waiting Confrimation And atas bet",
             data: response.rows,
             dataCount: response.count,
           })
         }
+
 
         if (payment_method && Number(OrderStatusId)) {
           const response = await db.Transaction.findAndCountAll({
@@ -620,7 +590,7 @@ const adminOrderController = {
               { model: db.Warehouse },
             ],
           })
-
+          
           return res.status(200).json({
             message: "Waiting Confrimation And",
             data: response.rows,
@@ -659,6 +629,114 @@ const adminOrderController = {
 
           return res.status(200).json({
             message: "Waiting Confrimation And",
+            data: response.rows,
+            dataCount: response.count,
+          })
+        }
+
+        if (Number(PaymentStatusId) && Number(WarehouseId)) {
+          const response = await db.Transaction.findAndCountAll({
+            limit: Number(_limit),
+            offset: (_page - 1) * _limit,
+            order: [[_sortBy, _sortDir]],
+            where: {
+              transaction_name: {
+                [Op.like]: `%${transaction_name}%`,
+              },
+              [Op.and]: {
+                PaymentStatusId,
+                WarehouseId,
+              },
+            },
+            include: [
+              {
+                model: db.User,
+                where: {
+                  username: {
+                    [Op.like]: `%${username}%`,
+                  },
+                },
+              },
+              { model: db.Order_status },
+              { model: db.Payment_status },
+              { model: db.Warehouse },
+            ],
+          })
+
+          return res.status(200).json({
+            message: "Waiting Confrimation And 1",
+            data: response.rows,
+            dataCount: response.count,
+          })
+        }
+
+        if (Number(WarehouseId) && Number(OrderStatusId)) {
+          const response = await db.Transaction.findAndCountAll({
+            limit: Number(_limit),
+            offset: (_page - 1) * _limit,
+            order: [[_sortBy, _sortDir]],
+            where: {
+              transaction_name: {
+                [Op.like]: `%${transaction_name}%`,
+              },
+              [Op.and]: {
+                WarehouseId,
+                OrderStatusId,
+              },
+            },
+            include: [
+              {
+                model: db.User,
+                where: {
+                  username: {
+                    [Op.like]: `%${username}%`,
+                  },
+                },
+              },
+              { model: db.Order_status },
+              { model: db.Payment_status },
+              { model: db.Warehouse },
+            ],
+          })
+
+          return res.status(200).json({
+            message: "Waiting Confrimation And 2",
+            data: response.rows,
+            dataCount: response.count,
+          })
+        }
+
+        if (Number(WarehouseId) && payment_method) {
+          const response = await db.Transaction.findAndCountAll({
+            limit: Number(_limit),
+            offset: (_page - 1) * _limit,
+            order: [[_sortBy, _sortDir]],
+            where: {
+              transaction_name: {
+                [Op.like]: `%${transaction_name}%`,
+              },
+              [Op.and]: {
+                payment_method,
+                WarehouseId,
+              },
+            },
+            include: [
+              {
+                model: db.User,
+                where: {
+                  username: {
+                    [Op.like]: `%${username}%`,
+                  },
+                },
+              },
+              { model: db.Order_status },
+              { model: db.Payment_status },
+              { model: db.Warehouse },
+            ],
+          })
+
+          return res.status(200).json({
+            message: "Waiting Confrimation And 3",
             data: response.rows,
             dataCount: response.count,
           })
@@ -882,6 +960,7 @@ const adminOrderController = {
     try {
       const { id } = req.params
       const findTransaction = await db.Transaction.findOne({
+        include: [{ model: db.Warehouse }],
         where: {
           id: id,
         },
@@ -892,6 +971,17 @@ const adminOrderController = {
           message: "Transaction not found",
         })
       }
+
+      // Jurnal Function
+      // const addOrAdd = (stock_before, stock_after) => {
+      //   const count = Math.max(stock_before, stock_after)
+      //   if (count === stock_before) {
+      //     return false
+      //   } else {
+      //     return true
+      //   }
+      // }
+
       await db.Transaction.update(
         {
           OrderStatusId: 2,
@@ -904,38 +994,251 @@ const adminOrderController = {
         }
       )
 
+      // Find items on Transaction
+      const findItems = await db.TransactionItem.findAll({
+        where: {
+          TransactionId: id,
+        },
+      })
+
+      const transactionItemId = findItems.map((val) => val.id)
+      const productId = findItems.map((val) => val.ProductId)
+      const quantity = findItems.map((val) => val.quantity)
+
+      // Make item to an Object
+      const reqstock = quantity.map((val, i) => {
+        return {
+          id: transactionItemId[i],
+          productId: productId[i],
+          stock: val,
+        }
+      })
+
+      // Find item stock by ProductId and warehouseId from transaction
+      const totalStock = []
+      for (let i = 0; i < productId.length; i++) {
+        const findStock = await db.Total_Stock.findAll({
+          where: {
+            WarehouseId: findTransaction.WarehouseId,
+            ProductId: productId[i],
+          },
+        })
+        totalStock.push(findStock[0].stock)
+      }
+
+      // find items that are less than the total stock
+      const arr = []
+      for (let i = 0; i < totalStock.length; i++) {
+        let result = 0
+        result = totalStock[i] - quantity[i]
+        arr.push(result)
+      }
+
+      // Make an object
+      const arr1 = arr.map((val, i) => {
+        return {
+          transactionItemId: transactionItemId[i],
+          productId: productId[i],
+          quantity: quantity[i],
+          stock: val,
+        }
+      })
+
+      const stockMutation = arr1.filter((val) => {
+        return val.stock < 0
+      })
+
+      const selisih = stockMutation.map((val) => val.stock * -1)
+
+      const ProductMutationId = stockMutation.map((val) => val.productId)
+
+      const findTransactionItem = stockMutation.map(
+        (val) => val.transactionItemId
+      )
+
+      const findClosestWarehouse = await db.Warehouse.findAll()
+
+      function toRad(Value) {
+        return (Value * Math.PI) / 180
+      }
+
+      function calcCrow(lat1, lon1, lat2, lon2) {
+        var R = 6371 // km
+        var dLat = toRad(lat2 - lat1)
+        var dLon = toRad(lon2 - lon1)
+        var lat1 = toRad(lat1)
+        var lat2 = toRad(lat2)
+
+        var a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.sin(dLon / 2) *
+            Math.sin(dLon / 2) *
+            Math.cos(lat1) *
+            Math.cos(lat2)
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        var d = R * c
+        return d
+      }
+
+      const chooseOne = []
+      const tempDist = []
+      for (var i = 0; i < findClosestWarehouse.length; i++) {
+        const tempNum = calcCrow(
+          findTransaction.Warehouse.latitude,
+          findClosestWarehouse[i].latitude,
+          findTransaction.Warehouse.longitude,
+          findClosestWarehouse[i].longitude
+        )
+        tempDist.push(tempNum)
+        chooseOne.push({
+          warehouse: findClosestWarehouse[i],
+          distance: tempNum,
+        })
+      }
+      const minDist = Math.min(...tempDist)
+      const sortDist = chooseOne.sort((a, b) => a.distance - b.distance)
+      const closestCity = sortDist.filter((x) => x.distance == minDist)
+      const palingDeket = closestCity
+        .map((val) => val.warehouse.id)
+        .filter((val) => val != findTransaction.WarehouseId)
+
+      const minusStock = []
+      for (let i = 0; i < ProductMutationId.length; i++) {
+        const findTotalStockProduct = await db.Total_Stock.findAll({
+          where: {
+            WarehouseId: palingDeket[0],
+            ProductId: ProductMutationId[i],
+          },
+        })
+
+        minusStock.push(
+          findTotalStockProduct.map((val) => val.stock - selisih[i])
+        )
+      }
+
+      const plushStock = []
+      for (let i = 0; i < ProductMutationId.length; i++) {
+        const findTotalStockProduct = await db.Total_Stock.findAll({
+          where: {
+            WarehouseId: findTransaction.WarehouseId,
+            ProductId: ProductMutationId[i],
+          },
+        })
+
+        plushStock.push(
+          findTotalStockProduct.map((val) => val.stock + selisih[i])
+        )
+      }
+
+      for (let i = 0; i < findTransactionItem.length; i++) {
+        await db.Mutation.create({
+          from_warehouse: findTransaction.WarehouseId,
+          to_warehouse: palingDeket[0],
+          quantity: selisih[i],
+          mutation_status: "Approve",
+          ProductId: ProductMutationId[i],
+          TransactionId: id,
+        })
+        await db.Total_Stock.update(
+          {
+            stock: minusStock[i],
+          },
+          {
+            where: {
+              WarehouseId: palingDeket[0],
+              ProductId: ProductMutationId[i],
+            },
+          }
+        )
+        await db.Total_Stock.update(
+          {
+            stock: plushStock[i],
+          },
+          {
+            where: {
+              WarehouseId: findTransaction.WarehouseId,
+              ProductId: ProductMutationId[i],
+            },
+          }
+        )
+      }
+
+      const finalStock = []
+      for (let i = 0; i < productId.length; i++) {
+        const findTotalStockProduct = await db.Total_Stock.findAll({
+          where: {
+            WarehouseId: findTransaction.WarehouseId,
+            ProductId: productId[i],
+          },
+        })
+
+        finalStock.push(
+          findTotalStockProduct.map((val) => val.stock - quantity[i])
+        )
+      }
+
+      for (let i = 0; i < productId.length; i++) {
+        await db.Total_Stock.update(
+          {
+            stock: finalStock[i],
+          },
+          {
+            where: {
+              ProductId: productId[i],
+              WarehouseId: findTransaction.WarehouseId,
+            },
+          }
+        )
+      }
+
+      // const journal = await db.Type_Journal.create({
+      //   name: "Mutation Stock",
+      //   type: addOrAdd(stock_before, stock_after),
+      //   stock_after: findData.dataValues.stock,
+      //   ProductId: findData.ProductId,
+      // })
+
+      // const findTypeId = await db.Type_Journal.findByPk(journal.id)
+
+      // await db.Journal.create({
+      //   stock_before: findBeforeStock.dataValues.stock,
+      //   stock_after: findData.dataValues.stock,
+      //   ProductId: findData.ProductId,
+      //   TypeJournalId: findTypeId.dataValues.id,
+      // })
+
       const findApproveTrasanction = await db.Transaction.findOne({
         where: {
           id: id,
         },
-        include: [{ model: db.User }],
+        include: [{ model: db.User }, { model: db.Warehouse }],
       })
 
-      const totalBill = findApproveTrasanction.total_price
-      const paymentDate = moment(findApproveTrasanction.payment_date).format(
-        "dddd, DD MMMM YYYY, HH:mm:ss"
-      )
-      const transactionLink = `${process.env.BASE_URL_FE}transaction-list`
+      // const totalBill = findApproveTrasanction.total_price
+      // const paymentDate = moment(findApproveTrasanction.payment_date).format(
+      //   "dddd, DD MMMM YYYY, HH:mm:ss"
+      // )
+      // const transactionLink = `${process.env.BASE_URL_FE}transaction-list`
 
-      const rawHTML = fs.readFileSync("templates/approvePayment.html", "utf-8")
+      // const rawHTML = fs.readFileSync("templates/approvePayment.html", "utf-8")
 
-      const compiledHTML = handlebars.compile(rawHTML)
+      // const compiledHTML = handlebars.compile(rawHTML)
 
-      const htmlResult = compiledHTML({
-        username: findApproveTrasanction.User.username,
-        totalBill: totalBill.toLocaleString(),
-        paymentMethod: findApproveTrasanction.payment_method,
-        dateAndTime: `${paymentDate} WIB`,
-        transactionListLink: transactionLink,
-        shopediaLink: process.env.BASE_URL_FE,
-      })
+      // const htmlResult = compiledHTML({
+      //   username: findApproveTrasanction.User.username,
+      //   totalBill: totalBill.toLocaleString(),
+      //   paymentMethod: findApproveTrasanction.payment_method,
+      //   dateAndTime: `${paymentDate} WIB`,
+      //   transactionListLink: transactionLink,
+      //   shopediaLink: process.env.BASE_URL_FE,
+      // })
 
-      await emailer({
-        to: findApproveTrasanction.User.email,
-        html: htmlResult,
-        subject: "Payment Verified",
-        text: "Thank You",
-      })
+      // await emailer({
+      //   to: findApproveTrasanction.User.email,
+      //   html: htmlResult,
+      //   subject: "Payment Verified",
+      //   text: "Thank You",
+      // })
 
       return res.status(200).json({
         message: "Payment Approved",

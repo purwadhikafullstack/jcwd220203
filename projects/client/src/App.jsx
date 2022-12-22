@@ -237,7 +237,6 @@ function App() {
                         </AdminRoute>
                     }
                 />
-
                 <Route
                     path="/admin/order-history"
                     element={
