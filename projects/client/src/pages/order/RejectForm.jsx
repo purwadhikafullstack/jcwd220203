@@ -24,7 +24,7 @@ const RejectForm = ({ isOpen, onClose, onOpen, formik, header }) => {
       isOpen={isOpen}
       onClose={onClose}
       motionPreset="slideInBottom"
-      size={"3xl"}
+      size={"2xl"}
     >
       <form>
         <ModalOverlay />
@@ -42,7 +42,11 @@ const RejectForm = ({ isOpen, onClose, onOpen, formik, header }) => {
           <ModalCloseButton _hover={false} mt="10px" />
 
           <ModalBody maxH="529px" p="24px 40px" fontSize={"14px"}>
-            <Box mt="24px" mb="24px">
+            <Text fontSize={"18px"} fontWeight="bold">
+              Send messagge to user
+            </Text>
+
+            <Box mt="18px" mb="24px">
               <FormLabel mb={"8px"}>Message</FormLabel>
               <FormControl isInvalid={formik.errors.message}>
                 <Textarea

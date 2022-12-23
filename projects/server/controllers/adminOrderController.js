@@ -4,6 +4,7 @@ const fs = require("fs")
 const handlebars = require("handlebars")
 const { Op } = require("sequelize")
 const moment = require("moment")
+const schedule = require("node-schedule")
 
 const adminOrderController = {
   waitingConfirmation: async (req, res) => {
@@ -553,14 +554,13 @@ const adminOrderController = {
               { model: db.Warehouse },
             ],
           })
-          
+
           return res.status(200).json({
             message: "Waiting Confrimation And atas bet",
             data: response.rows,
             dataCount: response.count,
           })
         }
-
 
         if (payment_method && Number(OrderStatusId)) {
           const response = await db.Transaction.findAndCountAll({
@@ -590,7 +590,7 @@ const adminOrderController = {
               { model: db.Warehouse },
             ],
           })
-          
+
           return res.status(200).json({
             message: "Waiting Confrimation And",
             data: response.rows,
@@ -1214,31 +1214,31 @@ const adminOrderController = {
         include: [{ model: db.User }, { model: db.Warehouse }],
       })
 
-      // const totalBill = findApproveTrasanction.total_price
-      // const paymentDate = moment(findApproveTrasanction.payment_date).format(
-      //   "dddd, DD MMMM YYYY, HH:mm:ss"
-      // )
-      // const transactionLink = `${process.env.BASE_URL_FE}transaction-list`
+      const totalBill = findApproveTrasanction.total_price
+      const paymentDate = moment(findApproveTrasanction.payment_date).format(
+        "dddd, DD MMMM YYYY, HH:mm:ss"
+      )
+      const transactionLink = `${process.env.BASE_URL_FE}transaction-list`
 
-      // const rawHTML = fs.readFileSync("templates/approvePayment.html", "utf-8")
+      const rawHTML = fs.readFileSync("templates/approvePayment.html", "utf-8")
 
-      // const compiledHTML = handlebars.compile(rawHTML)
+      const compiledHTML = handlebars.compile(rawHTML)
 
-      // const htmlResult = compiledHTML({
-      //   username: findApproveTrasanction.User.username,
-      //   totalBill: totalBill.toLocaleString(),
-      //   paymentMethod: findApproveTrasanction.payment_method,
-      //   dateAndTime: `${paymentDate} WIB`,
-      //   transactionListLink: transactionLink,
-      //   shopediaLink: process.env.BASE_URL_FE,
-      // })
+      const htmlResult = compiledHTML({
+        username: findApproveTrasanction.User.username,
+        totalBill: totalBill.toLocaleString(),
+        paymentMethod: findApproveTrasanction.payment_method,
+        dateAndTime: `${paymentDate} WIB`,
+        transactionListLink: transactionLink,
+        shopediaLink: process.env.BASE_URL_FE,
+      })
 
-      // await emailer({
-      //   to: findApproveTrasanction.User.email,
-      //   html: htmlResult,
-      //   subject: "Payment Verified",
-      //   text: "Thank You",
-      // })
+      await emailer({
+        to: findApproveTrasanction.User.email,
+        html: htmlResult,
+        subject: "Payment Verified",
+        text: "Thank You",
+      })
 
       return res.status(200).json({
         message: "Payment Approved",
@@ -1312,6 +1312,52 @@ const adminOrderController = {
       return res.status(200).json({
         message: "Payment Rejected",
         data: findTransaction,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        message: "Server Error",
+      })
+    }
+  },
+  sendOrder: async (req, res) => {
+    try {
+      const { id } = req.params
+
+      await db.Transaction.update(
+        {
+          OrderStatusId: 3,
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      )
+
+      schedule
+
+      const dueDateConfirm = moment()
+        .add(7, "days")
+        .format("YYYY-MM-DD HH:mm:ss")
+
+      schedule.scheduleJob(
+        dueDateConfirm,
+        async () =>
+          await db.Transaction.update(
+            {
+              OrderStatusId: 4,
+            },
+            {
+              where: {
+                id: id,
+              },
+            }
+          )
+      )
+
+      return res.status(200).json({
+        message: "Order Send",
       })
     } catch (error) {
       console.log(error)

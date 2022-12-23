@@ -10,5 +10,5 @@ router.get("/findPaymentStatus", adminOrderController.findPaymentStatus)
 router.get("/findWarehouse", adminOrderController.findWarehouse)
 router.patch("/approvePayment/:id", adminOrderController.approvePayment)
 router.patch("/rejectPayment/:id", adminOrderController.rejectPayment)
-
+router.patch("/sendOrder/:id", adminOrderController.sendOrder)
 module.exports = router

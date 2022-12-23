@@ -25,7 +25,12 @@ import {
 import { useFormik } from "formik"
 import React, { useEffect } from "react"
 import { useState } from "react"
-import { TbSearch } from "react-icons/tb"
+import {
+  TbArrowWaveLeftDown,
+  TbCircleCheck,
+  TbCircleMinus,
+  TbSearch,
+} from "react-icons/tb"
 import { axiosInstance } from "../../api"
 import Alert from "../../components/profile/Alert"
 import RejectForm from "../order/RejectForm"
@@ -43,6 +48,8 @@ import { useSelector } from "react-redux"
 const AdminOrder = () => {
   const [order, setOrder] = useState([])
   const [approve, setApprove] = useState(null)
+  const [send, setSend] = useState(null)
+  console.log(send)
   const [reject, setReject] = useState(null)
   const [modalImage, setModalImage] = useState(null)
   const [currentSearch, setCurrentSearch] = useState("")
@@ -124,7 +131,7 @@ const AdminOrder = () => {
       console.log(error.response)
     }
   }
-  
+
   const fetchWarehouse = async () => {
     try {
       const response = await axiosInstance.get("/adminOrder/findWarehouse")
@@ -138,16 +145,36 @@ const AdminOrder = () => {
     try {
       await axiosInstance.patch(`/adminOrder/approvePayment/${approve.id}`)
 
-      fetchOrder()
-
       toast({
         title: "Payment Approved",
         status: "success",
       })
+      fetchOrder()
     } catch (error) {
       console.log(error.response)
       toast({
         title: "Payment Approved Failed",
+        status: "error",
+        description: error.response.data.message,
+      })
+    }
+  }
+
+  const sendOrderBtnHandler = async () => {
+    try {
+      const response = await axiosInstance.patch(
+        `/adminOrder/sendOrder/${send.id}`
+      )
+
+      toast({
+        title: "Order Send",
+        status: "success",
+      })
+      fetchOrder()
+    } catch (error) {
+      console.log(error.response)
+      toast({
+        title: "Send Order Failed",
         status: "error",
         description: error.response.data.message,
       })
@@ -206,6 +233,11 @@ const AdminOrder = () => {
   const doubleOnClick1 = () => {
     formik.handleSubmit()
     onCloseAlert()
+  }
+
+  const doubleOnClick2 = () => {
+    sendOrderBtnHandler(send.id)
+    setSend(null)
   }
 
   const nextPage = () => {
@@ -482,6 +514,7 @@ const AdminOrder = () => {
             <Th p={"10px"}>Total Price</Th>
             <Th p={"10px"}>User</Th>
             {authSelector.RoleId === 3 ? <Th p={"10px"}>Warehouse</Th> : null}
+            <Th p={"10px"}>Action</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -517,20 +550,59 @@ const AdminOrder = () => {
                   ) : null}
                   <Td p={"10px "}>
                     {val?.PaymentStatusId == 2 ? (
-                      <Box display={"flex"} fontSize="40px" gap="4px">
-                        <Link>
-                          <AiFillCheckCircle
-                            type="button"
-                            onClick={() => setApprove(val)}
-                            color="#0095DA"
-                          />
-                        </Link>
-                        <Link>
-                          <AiFillCloseCircle
-                            onClick={() => setReject(val)}
-                            color="#F7931E"
-                          />
-                        </Link>
+                      <>
+                        <Text textAlign={"center"} fontSize="12px">
+                          Approve Payment?
+                        </Text>
+                        <Box
+                          display={"flex"}
+                          fontSize="40px"
+                          gap="4px"
+                          mx="auto"
+                          justifyContent={"center"}
+                        >
+                          <Link>
+                            <TbCircleCheck
+                              type="button"
+                              onClick={() => setApprove(val)}
+                              color="#0095DA"
+                            />
+                          </Link>
+                          <Link>
+                            <TbCircleMinus
+                              onClick={() => setReject(val)}
+                              color="#F7931E"
+                            />
+                          </Link>
+                        </Box>
+                      </>
+                    ) : null}
+                    {val?.PaymentStatusId == 3 && val?.OrderStatusId == 2 ? (
+                      <Box>
+                        <Text textAlign={"center"} fontSize="12px">
+                          Send Order?
+                        </Text>
+                        <Box
+                          display={"flex"}
+                          fontSize="40px"
+                          gap="4px"
+                          mx="auto"
+                          justifyContent={"center"}
+                        >
+                          <Link>
+                            <TbCircleCheck
+                              type="button"
+                              onClick={() => setSend(val)}
+                              color="lightgreen"
+                            />
+                          </Link>
+                          <Link>
+                            <TbCircleMinus
+                              // onClick={() => setReject(val)}
+                              color="red"
+                            />
+                          </Link>
+                        </Box>
                       </Box>
                     ) : null}
                   </Td>
@@ -562,7 +634,7 @@ const AdminOrder = () => {
 
       <RejectForm
         formik={formik}
-        header={"send message to user"}
+        header={"Reject Payment"}
         isOpen={reject}
         onClose={() => setReject(null)}
         onOpen={onOpenAlert}
@@ -570,7 +642,7 @@ const AdminOrder = () => {
 
       <Alert
         header={"Payment reject"}
-        body={"Is data that you entered is correct"}
+        body={"Reject this Payment?"}
         cancelRef={cancelRef}
         isOpen={isOpenAlert}
         leftButton={"Cancel"}
@@ -582,13 +654,25 @@ const AdminOrder = () => {
 
       <Alert
         header={"Payment approve"}
-        body={"Is data that you entered is correct"}
+        body={"Approve this payment?"}
         cancelRef={cancelRef}
         isOpen={approve}
         leftButton={"Cancel"}
         onClose={() => setApprove(null)}
         rightButton={"Approve Payment"}
         onSubmit={() => doubleOnClick()}
+        color={"#0095DA"}
+      />
+
+      <Alert
+        header={"Send Order"}
+        body={"Send the order?"}
+        cancelRef={cancelRef}
+        isOpen={send}
+        leftButton={"Cancel"}
+        onClose={() => setSend(null)}
+        rightButton={"Send"}
+        onSubmit={() => doubleOnClick2()}
         color={"#0095DA"}
       />
 
