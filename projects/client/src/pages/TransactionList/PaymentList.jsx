@@ -6,14 +6,15 @@ import PaymentListItem from "./PaymentListItem"
 import emptyStroll from "../../assets/emptyStroll.jpg"
 
 const PaymentList = () => {
-
     const [unpaidTransaction, setUnpaidTransaction] = useState([])
     const [isLoading, setIsloading] = useState(false)
     const [count, setCount] = useState(1)
 
     const fetchUnpaidTransaction = async () => {
         try {
-            const response = await axiosInstance.get("/transactions/unpaid-transaction")
+            const response = await axiosInstance.get(
+                "/transactions/unpaid-transaction"
+            )
 
             setCount(response.data.dataCount)
 
@@ -46,78 +47,115 @@ const PaymentList = () => {
 
     useEffect(() => {
         fetchUnpaidTransaction()
-    }, [])
+    }, [isLoading, unpaidTransaction])
 
     return (
         <>
-            <Box mt={'70px'}>
+            <Box mt={"70px"}>
                 <Link to="/transaction-list">
-                    <Box pt={'12px'} mt={"-10px"}>
-                        <Button bgColor={'white'} fontSize={'35px'} _hover={"none"} pb={'5px'} >
+                    <Box pt={"12px"} mt={"-10px"}>
+                        <Button
+                            bgColor={"white"}
+                            fontSize={"35px"}
+                            _hover={"none"}
+                            pb={"5px"}
+                        >
                             ←
                         </Button>
                     </Box>
                 </Link>
             </Box>
-            <Box mt={'38px'} mx={'auto'} maxW={'1080px'} w={'763px'} minH={count === 0 ? '505px' : '1042.94px'} h={count === 0 ? '505px' : '1042.94px'} p={'16px'} border={'1px solid #99d5f0'} boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%)"} borderRadius={"15px"}>
+            <Box
+                mt={"38px"}
+                mx={"auto"}
+                maxW={"1080px"}
+                w={"763px"}
+                minH={count === 0 ? "505px" : "1042.94px"}
+                h={count === 0 ? "505px" : "1042.94px"}
+                p={"16px"}
+                border={"1px solid #99d5f0"}
+                boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%)"}
+                borderRadius={"15px"}
+            >
                 <Text
-                    color={'#31353BAD'}
-                    fontSize={'14px'}
-                    fontFamily={'Open Sauce One, sans-serif'}
-                    fontWeight={'bold'}
-                    lineHeight={'16px'}
-
+                    color={"#31353BAD"}
+                    fontSize={"14px"}
+                    fontFamily={"Open Sauce One, sans-serif"}
+                    fontWeight={"bold"}
+                    lineHeight={"16px"}
                 >
                     Awaiting For Payment
                 </Text>
                 {isLoading === false ? (
-                    <Box w={'763px'} h={'400px'} display={'flex'} justifyContent={'center'} alignItems={'center'} alignContent={'center'}>
-                        <CircularProgress isIndeterminate color='#F7931E' thickness='160px' size='100px' />
+                    <Box
+                        w={"763px"}
+                        h={"400px"}
+                        display={"flex"}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                        alignContent={"center"}
+                    >
+                        <CircularProgress
+                            isIndeterminate
+                            color="#F7931E"
+                            thickness="160px"
+                            size="100px"
+                        />
                     </Box>
                 ) : null}
                 {count === 0 ? (
-                    <Box m={'32px 214.5px'} w={'300px'} h={'342.59px'} display={'flex'} justifyContent={'center'} flexDir={'column'} alignContent={'center'} alignItems={'center'}>
+                    <Box
+                        m={"32px 214.5px"}
+                        w={"300px"}
+                        h={"342.59px"}
+                        display={"flex"}
+                        justifyContent={"center"}
+                        flexDir={"column"}
+                        alignContent={"center"}
+                        alignItems={"center"}
+                    >
                         <Image
                             src={emptyStroll}
-                            p={'0px'}
-                            m={'0px'}
-                            w={'250px'}
-                            h={'187.5px'}
+                            p={"0px"}
+                            m={"0px"}
+                            w={"250px"}
+                            h={"187.5px"}
                         />
                         <Text
-                            textAlign={'center'}
-                            fontSize={'16px'}
-                            color={'#31353BAD'}
-                            m={'14px 3.5px'}
-                            fontFamily={'Open Sauce One, sans-serif'}
-                            fontWeight={'bold'}
-                            lineHeight={'16px'}
+                            textAlign={"center"}
+                            fontSize={"16px"}
+                            color={"#31353BAD"}
+                            m={"14px 3.5px"}
+                            fontFamily={"Open Sauce One, sans-serif"}
+                            fontWeight={"bold"}
+                            lineHeight={"16px"}
                         >
                             No transactions yet
                         </Text>
                         <Text
-                            textAlign={'center'}
-                            fontSize={'14px'}
-                            color={'#31353BAD'}
-                            m={'3.5px 3.5px 28px'}
-                            fontFamily={'Open Sauce One, sans-serif'}
-                            fontWeight={'unset'}
-                            lineHeight={'16px'}
+                            textAlign={"center"}
+                            fontSize={"14px"}
+                            color={"#31353BAD"}
+                            m={"3.5px 3.5px 28px"}
+                            fontFamily={"Open Sauce One, sans-serif"}
+                            fontWeight={"unset"}
+                            lineHeight={"16px"}
                         >
-                            Come on, start shopping and fulfill your various needs at Shopedia.
+                            Come on, start shopping and fulfill your various
+                            needs at Shopedia.
                         </Text>
-                        <Link to={'/'}>
+                        <Link to={"/"}>
                             <Button
-                                borderRadius={'8px'}
-                                minH={'48px'}
-                                textAlign={'center'}
-                                fontSize={'16px'}
-                                lineHeight={'22px'}
+                                borderRadius={"8px"}
+                                minH={"48px"}
+                                textAlign={"center"}
+                                fontSize={"16px"}
+                                lineHeight={"22px"}
                                 fontWeight={600}
-                                fontFamily={'Open Sauce One, sans-serif'}
-                                color={'#fff'}
-                                bgColor={'#0095DA'}
-                                w={'300px'}
+                                fontFamily={"Open Sauce One, sans-serif"}
+                                color={"#fff"}
+                                bgColor={"#0095DA"}
+                                w={"300px"}
                                 _hover={{
                                     bgColor: "#0370A2",
                                 }}
@@ -131,11 +169,7 @@ const PaymentList = () => {
                     </Box>
                 ) : (
                     <Box>
-                        {isLoading && (
-                            <Box>
-                                {renderPaymentListItem()}
-                            </Box>
-                        )}
+                        {isLoading && <Box>{renderPaymentListItem()}</Box>}
                     </Box>
                 )}
             </Box>
