@@ -4,8 +4,6 @@ import {
     FormControl,
     FormHelperText,
     Input,
-    InputGroup,
-    InputRightElement,
     Link,
     Text,
     useToast,
@@ -77,7 +75,7 @@ const RequestResetPassword = () => {
 
     return (
         <Box >
-            <Link to="/">
+            <Link to="/transaction-list">
                 <Box pt={'12px'} mt={"-10px"}>
                     <Button bgColor={'white'} fontSize={'35px'} _hover={"none"} pb={'5px'} >
                         ←
@@ -89,19 +87,18 @@ const RequestResetPassword = () => {
                 <Box
                     w="500px"
                     boxShadow={"0 0 10px 3px rgb(0 0 0 / 10%)"}
-                    // border="1px solid var(--N75,#0095DA)"
                     borderRadius={"10px"}
                     p="24px 40px 32px "
                     textAlign={"center"}
                     bgColor={'white'}
                 >
                     <Text fontSize="22px" fontWeight={"bold"} textAlign={'left'} color={'#0095DA'}
-                        fontFamily="Open Sauce One',sans-serif"
+                        fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                     >
                         Reset Password
                     </Text>
                     <Box mt="8px" fontSize={"14px"} textAlign="left" color={'#9d9db7'}>
-                        <Text display={"inline"} mr="1" color={'#31353b'}>
+                        <Text display={"inline"} mr="1" color={'#31353b'} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
                             Enter your registered e-mail or phone number. We will send you a verification code to reset password.
                         </Text>
                     </Box>
@@ -110,28 +107,15 @@ const RequestResetPassword = () => {
                     <form onSubmit={formik.handleSubmit}>
                         <Box m="20px 0 8px">
                             <FormControl isInvalid={formik.errors.email}>
-                                <InputGroup>
-                                    <Input
-                                        value={formik.values.email}
-                                        name="email"
-                                        onChange={formChangeHandler}
-                                        // border={"1px solid #e2e8f0"}
-                                        focusBorderColor='#F7931E'
-                                        placeholder={'Email'}
-                                        variant='flushed'
-                                    />
-                                    <InputRightElement width={'4.5rem'}>
-                                        <Button
-                                            mt={'-2px'}
-                                            ml={'19px'}
-                                            size={'md'}
-                                            bg={'white'}
-
-                                            color={'#F37121'}
-                                        >
-                                        </Button>
-                                    </InputRightElement>
-                                </InputGroup>
+                                <Input
+                                    value={formik.values.email}
+                                    name="email"
+                                    onChange={formChangeHandler}
+                                    focusBorderColor='#F7931E'
+                                    placeholder={'Email'}
+                                    variant='flushed'
+                                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                />
                                 {emailMatch ? (
                                     <FormHelperText color={"red"} fontSize={'12px'} textAlign={'left'}>
                                         Email not registered
@@ -148,6 +132,7 @@ const RequestResetPassword = () => {
                             color={"white"}
                             isDisabled={!formik.values.email}
                             type={'submit'}
+                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                         >
                             <Text fontWeight={"bold"}>Next</Text>
                         </Button>

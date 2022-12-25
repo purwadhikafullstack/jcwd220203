@@ -135,12 +135,12 @@ const ResetPasswordConfirmation = () => {
                     bgColor={'white'}
                 >
                     <Text fontSize="22px" fontWeight={"bold"} textAlign={'left'} color={'#0095DA'}
-                        fontFamily="Open Sauce One',sans-serif"
+                        fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                     >
                         New Password
                     </Text>
                     <Box mt="8px" fontSize={"14px"} textAlign="left" color={'#9d9db7'}>
-                        <Text display={"inline"} mr="1" color={'#31353b'}>
+                        <Text display={"inline"} mr="1" color={'#31353b'} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
                             Create a strong password for an account with e-mail reset <span style={{ color: "#F7931E" }}>{resetSelector.email}</span>
                         </Text>
                     </Box>
@@ -158,6 +158,7 @@ const ResetPasswordConfirmation = () => {
                                         focusBorderColor='#F7931E'
                                         placeholder={'New Password'}
                                         variant='flushed'
+                                        fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                                     />
                                     <InputRightElement width={'4.5rem'}>
                                         <Button
@@ -175,7 +176,7 @@ const ResetPasswordConfirmation = () => {
                                 {passwordFalse ? (
                                     <FormErrorMessage fontSize={'11px'}>{formik.errors.newPassword}</FormErrorMessage>
                                 ) : (
-                                    <Text fontSize={'11px'} color={'#31353b'} textAlign={'left'}>
+                                    <Text fontSize={'11px'} color={'#31353b'} textAlign={'left'} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
                                         Must Contain 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Case Character
                                     </Text>
                                 )}
@@ -189,7 +190,7 @@ const ResetPasswordConfirmation = () => {
                                             type={showConfirmNewPassword ? 'text' : 'password'}
                                             onChange={formChangeHandler}
                                             focusBorderColor='#F7931E'
-                                            // border={"1px solid #e2e8f0"}
+                                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                                             placeholder={'Retype New Password'}
                                             variant='flushed'
                                         />
@@ -219,7 +220,7 @@ const ResetPasswordConfirmation = () => {
                             borderRadius={'10px'}
                             bgColor={'#FFE0C4'}
                         >
-                            <Text textAlign={'justify'} color={'black'} fontSize={'12px'} p={'10px 16px 12px 12px'}>
+                            <Text textAlign={'justify'} color={'black'} fontSize={'12px'} p={'10px 16px 12px 12px'} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
                                 Once the password has been changed, please log in again with the new password on all your devices.
                             </Text>
                         </Box>
@@ -228,13 +229,15 @@ const ResetPasswordConfirmation = () => {
                             w="100%"
                             bgColor={"#0095DA"}
                             _hover={false}
-                            m="16px 0"
+                            mt="16px"
                             color={"white"}
                             isDisabled={!formik.values.newPassword}
                             type={'submit'}
                             onClick={passwordNotMatch}
                         >
-                            <Text fontWeight={"bold"}>CONFIRM</Text>
+                            <Text fontWeight={"bold"} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                Confirm Change
+                            </Text>
                         </Button>
                     </form>
                 </Box>
