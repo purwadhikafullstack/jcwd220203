@@ -218,14 +218,12 @@ const transactionsController = {
 
             const { payment_proof } = req.body
 
-            const payment_date = moment().add().format("YYYY-MM-DD HH:mm:ss")
-
             await Transaction.update(
                 {
                     payment_proof: payment_proof,
                     PaymentStatusId: 2,
+                    OrderStatusId: 1,
                     is_paid: true,
-                    payment_date: payment_date
                 },
                 {
                     where:

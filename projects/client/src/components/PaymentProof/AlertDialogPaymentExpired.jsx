@@ -1,5 +1,6 @@
-import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogOverlay, Box, Button, Text } from "@chakra-ui/react"
+import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogOverlay, Box, Button, Image, Text } from "@chakra-ui/react"
 import { Link } from "react-router-dom"
+import timeOut from "../../assets/timeOut.jpg"
 
 const AlertDialogPaymentExpired = ({ expIsOpen, expOnOpen, expOnClose, onClose }) => {
     return (
@@ -13,15 +14,18 @@ const AlertDialogPaymentExpired = ({ expIsOpen, expOnOpen, expOnClose, onClose }
                 <AlertDialogContent
                     w={'400px'}
                     borderRadius={'25px'}
-                    mt={'-50px'}
+                    mt={'-40px'}
                 >
                     <AlertDialogBody>
                         <Text
                             fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                             fontSize="lg" fontWeight="bold" color={'#F7931E'} pt={'20px'} textAlign={'center'}
                         >
-                            Payment TimeOut!
+                            Payment Expired!
                         </Text>
+                        <Image
+                            src={timeOut}
+                        />
                         <Box
                             display={'flex'}
                             flexDirection={'row'}

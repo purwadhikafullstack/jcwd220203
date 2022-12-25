@@ -1,4 +1,4 @@
-import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogOverlay, Box, Button, Text } from "@chakra-ui/react"
+import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogOverlay, Box, Button, Image, Text } from "@chakra-ui/react"
 
 const AlertDialogConfirmation = ({ confirmIsOpen, confirmOnOpen, confirmOnClose, confirmPayment }) => {
 
@@ -10,17 +10,32 @@ const AlertDialogConfirmation = ({ confirmIsOpen, confirmOnOpen, confirmOnClose,
                 bg="blackAlpha.700"
             >
                 <AlertDialogContent
-                    w={'400px'}
-                    borderRadius={'30px'}
-                    mt={'-50px'}
+                    mt={'-10px'} w={'400px'} h={'197.5px'} borderRadius={'20px'}
                 >
-                    <AlertDialogBody>
-                        <Text
-                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                            fontSize="lg" fontWeight="bold" color={'#31353BAD'} pt={'25px'} textAlign={'center'}
-                        >
-                            Your payment will be processed, are you sure?
-                        </Text>
+                    <AlertDialogBody p={'32px 32px 24px'}>
+                        <Box display={'flex'} flexDir={'column'} alignItems={'center'} alignContent={'center'}>
+                            <Text
+                                color={'#31353BF5'}
+                                fontSize={'24px'}
+                                fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                mb={'14px'}
+                                fontWeight={700}
+                                lineHeight={'28px'}
+                                letterSpacing={'-0,2px'}
+                                textAlign={'center'}
+                            >
+                                Your payment will be processed, are you sure?
+                            </Text>
+                            <Text
+                                fontSize={'14px'}
+                                fontFamily={'Open Sauce One, sans-serif'}
+                                // mb={'14px'}
+                                color={'#0000008A'}
+                                lineHeight={'1.15'}
+                            >
+                                Confirm Your Payment
+                            </Text>
+                        </Box>
                         <Box
                             display={'flex'}
                             flexDirection={'row'}
@@ -33,7 +48,7 @@ const AlertDialogConfirmation = ({ confirmIsOpen, confirmOnOpen, confirmOnClose,
                             <Button
                                 borderRadius={'20px'}
                                 mt={'16px'}
-                                width={'120px'}
+                                width={'150px'}
                                 colorScheme="blue"
                                 onClick={confirmPayment}
                                 fontSize={'14px'}
@@ -50,7 +65,7 @@ const AlertDialogConfirmation = ({ confirmIsOpen, confirmOnOpen, confirmOnClose,
                                 fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                                 borderRadius={'20px'}
                                 mt={'16px'}
-                                width={'120px'}
+                                width={'150px'}
                                 bgColor={'#fff'}
                                 color={'#F7931E'}
                                 onClick={() => confirmOnClose()}

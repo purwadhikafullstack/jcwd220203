@@ -24,15 +24,16 @@ const ModalUploadPaymentProof = ({ doubleOnClick, selectedImage, setSelectImage,
                         </Text>
                         <Box
                             m={'8px 0px'}
-                            p={'8px 16px'}
+                            p={'8px 25px'}
                             bgColor={'#E5F9F6'}
                             borderRadius={'10px'}
                             display={'flex'}
                             flexDir={'row'}
+                            justifyContent={'center'}
                         >
-                            <IoAlertCircleSharp style={{ color: '#0095DA', fontSize: '30px', marginLeft: '-5px' }} />
+                            <IoAlertCircleSharp style={{ color: '#F7931E', fontSize: '30px', marginLeft: '-5px' }} />
                             <Text
-                                pl={'5px'}
+                                pl={'15px'}
                                 fontSize={'13px'}
                                 lineHeight={'16px'}
                                 fontWeight={'unset'}

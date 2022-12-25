@@ -1,11 +1,11 @@
-import { Box, Button, Image, Text, useDisclosure, useToast } from "@chakra-ui/react"
+import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogOverlay, Box, Button, FormControl, FormErrorMessage, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useDisclosure, useToast } from "@chakra-ui/react"
 import { useRef, useState } from "react"
 import mandiri from "../assets/BankLogo/mandiri.png"
 import BNI from "../assets/BankLogo/BNI.png"
 import BCA from "../assets/BankLogo/BCA.png"
 import { CgCopy } from "react-icons/cg"
 import { IoAlertCircleSharp } from "react-icons/io5"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { axiosInstance } from "../api"
 import { useEffect } from "react"
 import uploadPH from "../assets/uploadPlaceHolder.png"
@@ -17,7 +17,6 @@ import AlertDialogConfirmation from "../components/PaymentProof/AlertDialogConfi
 import AlertDialogPaymentExpired from "../components/PaymentProof/AlertDialogPaymentExpired"
 import ModalUploadPaymentProof from "../components/PaymentProof/ModalUploadPaymentProof"
 import ModalDetailTransaction from "../components/PaymentProof/Modal Detail Transaction"
-
 
 const PaymentProof = () => {
     const [virtualAccount, setVirtualAccount] = useState("")
@@ -90,15 +89,6 @@ const PaymentProof = () => {
         }
     }
 
-    const fetchMyCart = async () => {
-        try {
-            await axiosInstance.get("/carts/me")
-
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
     const copyVirtualAccountNumber = () => {
         toast({
             title: 'Virtual Account Number has been copied.',
@@ -142,7 +132,6 @@ const PaymentProof = () => {
                     status: "success",
                 })
 
-                fetchMyCart()
             } catch (err) {
                 console.log(err)
                 toast({
@@ -253,21 +242,17 @@ const PaymentProof = () => {
     }
 
     useEffect(() => {
-        if (compareCur > compareExp) {
-            paymentExpired()
-            openAlert()
-        }
-
         if (paymentStatus === 2) {
             openVerify()
-        } else if (paymentStatus === 3) {
+        } else if (paymentStatus === 3 || paymentStatus === 5) {
             navigate('/transaction-list')
         } else if (paymentStatus === 4) {
             openAlert()
+        } else if (compareCur > compareExp && paymentStatus === 1) {
+            paymentExpired()
+            openAlert()
         }
-
         fetchTransactionByName()
-        fetchMyCart()
     }, [transaction, paymentStatus])
 
     return (
