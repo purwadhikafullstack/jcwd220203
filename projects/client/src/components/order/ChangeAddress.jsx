@@ -93,9 +93,9 @@ const ChangeAddress = ({ defaultAddressUser }) => {
         description: response.data.message,
         status: "success",
       })
-
       fetchAllAddress()
       fetchAddress()
+      // refreshPage()
     } catch (error) {
       console.log(error.response)
       toast({
@@ -188,8 +188,6 @@ const ChangeAddress = ({ defaultAddressUser }) => {
       recipients_name,
       phone_number,
       address_labels,
-      province,
-      city,
       districts,
       full_address,
     }) => {

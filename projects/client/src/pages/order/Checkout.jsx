@@ -46,7 +46,8 @@ const Checkout = () => {
   const [shippingFee, setShippingFee] = useState(0)
   const [shippingError, setShippingError] = useState(false)
   const [defaultAddressId, setDefaultAddressId] = useState(0)
-  const [courirDuration, setCourirDuration] = useState("");
+  const [courirDuration, setCourirDuration] = useState("")
+  const [closestWarehouse, setClosestWarehouse] = useState(null)
 
   const BCARadio = () => {
     setBCAChecked(true)
@@ -133,7 +134,8 @@ const Checkout = () => {
         payment_method: paymentMethod,
         total_price: totalPrice,
         AddressId: defaultAddressId,
-        courir_duration: courirDuration
+        courir_duration: courirDuration,
+        WarehouseId: closestWarehouse
       })
 
       navigate(`/payment/thank-you/shopedia/${response.data.data.transaction_name}`)
@@ -148,10 +150,13 @@ const Checkout = () => {
       console.log(err)
       toast({
         title: "payment failed",
+        description: err.response.data.message,
         status: "error",
       })
     }
   }
+
+  // console.log(closestWarehouse)
 
   const totalBill = Number(shippingFee) + Number(cartSelector.totalPrice)
   const transactionFee = 1000
@@ -213,7 +218,7 @@ const Checkout = () => {
                 <Box pt={'19px'} minH={'232px'}>
                   <Grid templateColumns='.55fr .45fr' gap={1}>
                     <CheckoutCartItems />
-                    <ShippingComponent selectedCourir={setCourirDuration} shippingFeePay={setShippingFee} productWeight={productWeight} shippingError={shippingError} setShippingError={setShippingError} />
+                    <ShippingComponent closestWarehouseTransaction={setClosestWarehouse} selectedCourir={setCourirDuration} shippingFeePay={setShippingFee} productWeight={productWeight} shippingError={shippingError} setShippingError={setShippingError} />
                   </Grid>
                 </Box >
                 <Box h={'1px'} bgColor={'#fcd4a5'} w={'100%'}></Box>
@@ -245,7 +250,6 @@ const Checkout = () => {
               </Box>
             </Box>
           </Box>
-
           {/* Shopping Summary */}
           <Box w="350px" mt="85px">
             <Box>
@@ -364,6 +368,7 @@ const Checkout = () => {
         onClose={onClose}
         onSubmit={() => navigate("/cart")}
       />
+
 
       <Modal isOpen={paymentIsOpen} onClose={paymentOnclose} closeOnOverlayClick={false}>
         <ModalOverlay bg='blackAlpha.900' />

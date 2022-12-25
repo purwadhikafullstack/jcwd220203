@@ -3,6 +3,7 @@ import {
   Text,
   Button,
   GridItem,
+  CircularProgress,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import { MdKeyboardArrowUp } from "react-icons/md";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import moment from "moment"
 
-const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, shippingError, setShippingError }) => {
+const ShippingComponent = ({ closestWarehouseTransaction, shippingFeePay, selectedCourir, productWeight, shippingError, setShippingError }) => {
   const [userData, setUserData] = useState({});
   const [warehouseData, setWarehouseData] = useState({});
   const [courirDuration, setCourirDuration] = useState("");
@@ -21,9 +22,12 @@ const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, ship
   const [shippingCourir, setShippingCourir] = useState("")
   const [shippingDetails, setShippingDetails] = useState(false)
   const [shippingDate, setShippingDate] = useState("")
+  const [closestWarehouse, setClosestWarehouse] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   shippingFeePay(shippingFee)
   selectedCourir(courirDuration)
+  closestWarehouseTransaction(closestWarehouse)
 
   const fetchUserData = async () => {
     try {
@@ -39,7 +43,7 @@ const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, ship
     try {
       const fetchWarehouse = await axiosInstance.get(
         "/shipment/warehouseAddress"
-      );
+      )
       setWarehouseData(fetchWarehouse.data.data);
     } catch (error) {
       console.log(error);
@@ -63,14 +67,14 @@ const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, ship
         }
 
         const response = await axiosInstance.post("/shipment/query", costForm)
-
+        setClosestWarehouse(closestCity[0].warehouse.id)
         setResults(response)
-
+        setIsLoading(true)
       } catch (error) {
         console.log("Server error creating cost query")
       }
     },
-  });
+  })
 
   const shipmentButton = () => {
     setOpenSelect(false)
@@ -82,7 +86,7 @@ const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, ship
         <Box value={val.cost[0].value} cursor={'pointer'} _hover={{ bgColor: "#E5F9F6" }} onClick={() => setShippingFee(val.cost[0].value)} >
           <Box onClick={shipmentButton} h={'56px'} >
             <Box h={'56px'} onClick={() => setShippingDate(Number(val.cost[0].etd) === 1 ? "tomorrow" : moment().add('days', Number(val.cost[0].etd)).format("DD MMM"))}>
-              <Box h={'56px'} onClick={() => setCourirDuration(`${val.service} at ${Number(val.cost[0].etd) === 1 ? "tomorrow" : moment().add('days', Number(val.cost[0].etd)).format("DD MMM")}`)}>
+              <Box h={'56px'} onClick={() => setCourirDuration(`${val.service} at ${Number(val.cost[0].etd) === 1 ? "tomorrow" : moment().add('days', Number(val.cost[0].etd)).format("DD MMM YYYY")}`)}>
                 <Box h={'56px'} p={'12px 15px'} alignItems={'center'} onClick={() => setShippingCourir(val.service)}>
                   <Box display={'flex'} justifyContent={'space-between'} fontSize={'12px'}>
                     <Text
@@ -132,8 +136,6 @@ const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, ship
     })
   }
 
-
-
   function distanceBetweenTwoPlace(
     firstLat,
     firstLon,
@@ -172,12 +174,12 @@ const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, ship
       warehouseData[i].latitude,
       warehouseData[i].longitude,
       "K"
-    );
+    )
     tempDist.push(tempNum)
     chooseOne.push({
       warehouse: warehouseData[i],
       distance: tempNum,
-    });
+    })
 
   }
   const minDist = Math.min(...tempDist)
@@ -252,7 +254,16 @@ const ShippingComponent = ({ shippingFeePay, selectedCourir, productWeight, ship
             border={'1px solid #e6e6e6'}
             borderRadius={'8px'}
           >
-            {mapCosts()}
+            {isLoading &&
+              mapCosts()}
+            {isLoading === false ? (
+              <Box w={'300px'} h={'168px'} display={'flex'} justifyContent={'center'} alignItems={'center'} alignContent={'center'}>
+                <CircularProgress isIndeterminate color='#F7931E' thickness='16px' size='60px' />
+              </Box>
+            ) : (
+              null
+            )}
+
           </Box>
         ) : null}
         {shippingFee && shippingDetails === true ? (

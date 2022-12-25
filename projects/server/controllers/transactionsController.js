@@ -39,7 +39,7 @@ const transactionsController = {
     },
     createNewTransaction: async (req, res) => {
         try {
-            const { payment_method, shipping_fee, total_price, AddressId, courir_duration } = req.body
+            const { payment_method, shipping_fee, total_price, AddressId, courir_duration, WarehouseId } = req.body
 
             const getCheckedCartItems = await Cart.findAll({
                 where: {
@@ -73,6 +73,9 @@ const transactionsController = {
                 group by c.id;`
             )
 
+            const productNameArr = getTotal[0].map((val) => val.product_name)
+            console.log(getTotal[0].map((val) => val.product_name))
+
             const stockProduct = getTotal[0]
 
             const arrProductStock = stockProduct.map((val) => Number(val.totalStock))
@@ -80,9 +83,10 @@ const transactionsController = {
             const arrCartQuantity = stockProduct.map((val) => val.quantity)
 
             for (let i = 0; i < arrProductStock.length; i++) {
+
                 if (arrProductStock[i] < arrCartQuantity[i]) {
                     return res.status(400).json({
-                        message: "Insufficient product stock"
+                        message: `Insufficient product stock ${productNameArr[i]}`
                     })
                 }
             }
@@ -108,6 +112,8 @@ const transactionsController = {
 
             const total_quantity = totalQuantity
 
+            const payment_date = moment().add().format("YYYY-MM-DD HH:mm:ss")
+
             const expDate = moment().add(1, 'days').format("YYYY-MM-DD HH:mm:ss")
 
             const createTransaction = await Transaction.create({
@@ -117,10 +123,12 @@ const transactionsController = {
                 shipping_fee: shipping_fee,
                 payment_method: `${payment_method} Virtual Account`,
                 payment_expired_date: expDate,
-                OrderStatusId: 1,
+                OrderStatusId: 0,
                 PaymentStatusId: 1,
                 AddressId: AddressId,
-                courir_duration: courir_duration
+                courir_duration: courir_duration,
+                payment_date: payment_date,
+                WarehouseId: WarehouseId
             })
 
             await Transaction.update(
