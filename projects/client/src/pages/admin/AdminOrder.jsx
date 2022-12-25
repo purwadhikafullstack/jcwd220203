@@ -51,6 +51,7 @@ const AdminOrder = () => {
   const [send, setSend] = useState(null)
   console.log(send)
   const [reject, setReject] = useState(null)
+  const [cancel, setCancel] = useState(null)
   const [modalImage, setModalImage] = useState(null)
   const [currentSearch, setCurrentSearch] = useState("")
   const [totalCount, setTotalCount] = useState(0)
@@ -181,6 +182,27 @@ const AdminOrder = () => {
     }
   }
 
+  const cancelOrderBtnHandler = async () => {
+    try {
+      const response = await axiosInstance.patch(
+        `/adminOrder/cancelOrder/${cancel.id}`
+      )
+
+      toast({
+        title: "Cancel Send",
+        status: "success",
+      })
+      fetchOrder()
+    } catch (error) {
+      console.log(error.response)
+      toast({
+        title: "Cancel Order Failed",
+        status: "error",
+        description: error.response.data.message,
+      })
+    }
+  }
+
   const formik = useFormik({
     initialValues: {
       message: "",
@@ -240,6 +262,11 @@ const AdminOrder = () => {
     setSend(null)
   }
 
+  const doubleOnClick3 = () => {
+    cancelOrderBtnHandler(cancel.id)
+    setSend(null)
+  }
+
   const nextPage = () => {
     setPage(page + 1)
   }
@@ -295,7 +322,7 @@ const AdminOrder = () => {
     fetchWarehouse()
   }, [])
   return (
-    <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} h="100vh">
+    <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} height="100%">
       <Box mb="16px">
         <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
           Order List
@@ -521,7 +548,7 @@ const AdminOrder = () => {
           {isLoading &&
             order.map((val) => {
               return (
-                <Tr>
+                <Tr height={"140px"}>
                   <Td p={"10px "}>{val.transaction_name}</Td>
                   <Td p={"10px "}>{val.Order_status?.order_status_name}</Td>
                   <Td p={"10px "}>{val.Payment_status?.payment_status_name}</Td>
@@ -546,7 +573,7 @@ const AdminOrder = () => {
                   <Td p={"10px "}>Rp. {val.total_price.toLocaleString()}</Td>
                   <Td p={"10px "}>{val.User.username}</Td>
                   {authSelector.RoleId === 3 ? (
-                    <Td>{val.Warehouse.warehouse_name}</Td>
+                    <Td>{val.Warehouse?.warehouse_name}</Td>
                   ) : null}
                   <Td p={"10px "}>
                     {val?.PaymentStatusId == 2 ? (
@@ -598,7 +625,7 @@ const AdminOrder = () => {
                           </Link>
                           <Link>
                             <TbCircleMinus
-                              // onClick={() => setReject(val)}
+                              onClick={() => setCancel(val)}
                               color="red"
                             />
                           </Link>
@@ -673,6 +700,18 @@ const AdminOrder = () => {
         onClose={() => setSend(null)}
         rightButton={"Send"}
         onSubmit={() => doubleOnClick2()}
+        color={"#0095DA"}
+      />
+
+      <Alert
+        header={"Cancel Order"}
+        body={"Cancel the order?"}
+        cancelRef={cancelRef}
+        isOpen={cancel}
+        leftButton={"Cancel"}
+        onClose={() => setCancel(null)}
+        rightButton={"Cancel Order"}
+        onSubmit={() => doubleOnClick3()}
         color={"#0095DA"}
       />
 

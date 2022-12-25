@@ -28,259 +28,6 @@ const adminOrderController = {
         },
       })
 
-      if (findAdmin.RoleId === 2) {
-        if (
-          _sortBy === "createdAt" ||
-          username ||
-          transaction_name ||
-          payment_method ||
-          PaymentStatusId ||
-          OrderStatusId
-        ) {
-          if (
-            !Number(PaymentStatusId) &&
-            !Number(OrderStatusId) &&
-            !payment_method
-          ) {
-            const response = await db.Transaction.findAndCountAll({
-              limit: Number(_limit),
-              offset: (_page - 1) * _limit,
-              order: [[_sortBy, _sortDir]],
-              where: {
-                transaction_name: {
-                  [Op.like]: `%${transaction_name}%`,
-                },
-                WarehouseId: findAdmin.WarehouseId,
-              },
-              include: [
-                {
-                  model: db.User,
-                  where: {
-                    username: {
-                      [Op.like]: `%${username}%`,
-                    },
-                  },
-                },
-                { model: db.Order_status },
-                { model: db.Payment_status },
-                {
-                  model: db.Warehouse,
-                },
-              ],
-            })
-
-            return res.status(200).json({
-              message: "Waiting Confrimation By Search",
-              data: response.rows,
-              dataCount: response.count,
-            })
-          }
-
-          if (
-            Number(OrderStatusId) &&
-            Number(PaymentStatusId) &&
-            payment_method
-          ) {
-            const response = await db.Transaction.findAndCountAll({
-              limit: Number(_limit),
-              offset: (_page - 1) * _limit,
-              order: [[_sortBy, _sortDir]],
-              where: {
-                transaction_name: {
-                  [Op.like]: `%${transaction_name}%`,
-                },
-                [Op.and]: {
-                  payment_method,
-                  PaymentStatusId,
-                  OrderStatusId,
-                },
-                WarehouseId: findAdmin.WarehouseId,
-              },
-              include: [
-                {
-                  model: db.User,
-                  where: {
-                    username: {
-                      [Op.like]: `%${username}%`,
-                    },
-                  },
-                },
-                { model: db.Order_status },
-                { model: db.Payment_status },
-              ],
-            })
-
-            return res.status(200).json({
-              message: "Waiting Confrimation And",
-              data: response.rows,
-              dataCount: response.count,
-            })
-          }
-
-          if (Number(PaymentStatusId) && Number(OrderStatusId)) {
-            const response = await db.Transaction.findAndCountAll({
-              limit: Number(_limit),
-              offset: (_page - 1) * _limit,
-              order: [[_sortBy, _sortDir]],
-              where: {
-                transaction_name: {
-                  [Op.like]: `%${transaction_name}%`,
-                },
-                [Op.and]: {
-                  PaymentStatusId,
-                  OrderStatusId,
-                },
-                WarehouseId: findAdmin.WarehouseId,
-              },
-              include: [
-                {
-                  model: db.User,
-                  where: {
-                    username: {
-                      [Op.like]: `%${username}%`,
-                    },
-                  },
-                },
-                { model: db.Order_status },
-                { model: db.Payment_status },
-              ],
-            })
-
-            return res.status(200).json({
-              message: "Waiting Confrimation And",
-              data: response.rows,
-              dataCount: response.count,
-            })
-          }
-
-          if (payment_method && Number(OrderStatusId)) {
-            const response = await db.Transaction.findAndCountAll({
-              limit: Number(_limit),
-              offset: (_page - 1) * _limit,
-              order: [[_sortBy, _sortDir]],
-              where: {
-                transaction_name: {
-                  [Op.like]: `%${transaction_name}%`,
-                },
-                [Op.and]: {
-                  payment_method,
-                  OrderStatusId,
-                },
-                WarehouseId: findAdmin.WarehouseId,
-              },
-              include: [
-                {
-                  model: db.User,
-                  where: {
-                    username: {
-                      [Op.like]: `%${username}%`,
-                    },
-                  },
-                },
-                { model: db.Order_status },
-                { model: db.Payment_status },
-              ],
-            })
-
-            return res.status(200).json({
-              message: "Waiting Confrimation And",
-              data: response.rows,
-              dataCount: response.count,
-            })
-          }
-
-          if (Number(PaymentStatusId) && payment_method) {
-            const response = await db.Transaction.findAndCountAll({
-              limit: Number(_limit),
-              offset: (_page - 1) * _limit,
-              order: [[_sortBy, _sortDir]],
-              where: {
-                transaction_name: {
-                  [Op.like]: `%${transaction_name}%`,
-                },
-                [Op.and]: {
-                  payment_method,
-                  PaymentStatusId,
-                },
-              },
-              include: [
-                {
-                  model: db.User,
-                  where: {
-                    username: {
-                      [Op.like]: `%${username}%`,
-                    },
-                    WarehouseId: findAdmin.WarehouseId,
-                  },
-                },
-                { model: db.Order_status },
-                { model: db.Payment_status },
-              ],
-            })
-
-            return res.status(200).json({
-              message: "Waiting Confrimation And",
-              data: response.rows,
-              dataCount: response.count,
-            })
-          }
-
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.or]: {
-                PaymentStatusId,
-                OrderStatusId,
-                payment_method,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation Or",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        const response = await db.Transaction.findAndCountAll({
-          offset: (_page - 1) * _limit,
-          limit: Number(_limit),
-          order: [[_sortBy, _sortDir]],
-          where: {
-            WarehouseId: findAdmin.WarehouseId,
-          },
-          include: [
-            { model: db.User },
-            { model: db.Order_status },
-            { model: db.Payment_status },
-          ],
-        })
-
-        return res.status(200).json({
-          message: "Waiting Confrimation",
-          data: response.rows,
-          dataCount: response.count,
-        })
-      }
-
       if (
         _sortBy === "createdAt" ||
         username ||
@@ -327,529 +74,6 @@ const adminOrderController = {
           })
         }
 
-        if (
-          Number(PaymentStatusId) &&
-          Number(OrderStatusId) &&
-          Number(WarehouseId) &&
-          payment_method
-        ) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                payment_method,
-                PaymentStatusId,
-                OrderStatusId,
-                WarehouseId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (
-          Number(OrderStatusId) &&
-          Number(PaymentStatusId) &&
-          payment_method
-        ) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                payment_method,
-                PaymentStatusId,
-                OrderStatusId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (
-          Number(OrderStatusId) &&
-          Number(PaymentStatusId) &&
-          Number(WarehouseId)
-        ) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                WarehouseId,
-                PaymentStatusId,
-                OrderStatusId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(OrderStatusId) && Number(WarehouseId) && payment_method) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                payment_method,
-                WarehouseId,
-                OrderStatusId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(WarehouseId) && Number(PaymentStatusId) && payment_method) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                WarehouseId,
-                PaymentStatusId,
-                payment_method,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(PaymentStatusId) && Number(OrderStatusId)) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                PaymentStatusId,
-                OrderStatusId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And atas bet",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (payment_method && Number(OrderStatusId)) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                payment_method,
-                OrderStatusId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(PaymentStatusId) && payment_method) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                payment_method,
-                PaymentStatusId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(PaymentStatusId) && Number(WarehouseId)) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                PaymentStatusId,
-                WarehouseId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And 1",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(WarehouseId) && Number(OrderStatusId)) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                WarehouseId,
-                OrderStatusId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And 2",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(WarehouseId) && payment_method) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                payment_method,
-                WarehouseId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And 3",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(PaymentStatusId) && Number(WarehouseId)) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                PaymentStatusId,
-                WarehouseId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And 1",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(WarehouseId) && Number(OrderStatusId)) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                WarehouseId,
-                OrderStatusId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And 2",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
-        if (Number(WarehouseId) && payment_method) {
-          const response = await db.Transaction.findAndCountAll({
-            limit: Number(_limit),
-            offset: (_page - 1) * _limit,
-            order: [[_sortBy, _sortDir]],
-            where: {
-              transaction_name: {
-                [Op.like]: `%${transaction_name}%`,
-              },
-              [Op.and]: {
-                payment_method,
-                WarehouseId,
-              },
-            },
-            include: [
-              {
-                model: db.User,
-                where: {
-                  username: {
-                    [Op.like]: `%${username}%`,
-                  },
-                },
-              },
-              { model: db.Order_status },
-              { model: db.Payment_status },
-              { model: db.Warehouse },
-            ],
-          })
-
-          return res.status(200).json({
-            message: "Waiting Confrimation And 3",
-            data: response.rows,
-            dataCount: response.count,
-          })
-        }
-
         const response = await db.Transaction.findAndCountAll({
           limit: Number(_limit),
           offset: (_page - 1) * _limit,
@@ -859,6 +83,133 @@ const adminOrderController = {
               [Op.like]: `%${transaction_name}%`,
             },
             [Op.or]: {
+              ...(Number(PaymentStatusId) &&
+              Number(OrderStatusId) &&
+              Number(WarehouseId) &&
+              payment_method
+                ? {
+                    [Op.and]: {
+                      payment_method,
+                      PaymentStatusId,
+                      OrderStatusId,
+                      WarehouseId,
+                    },
+                  }
+                : {}),
+              ...(Number(OrderStatusId) &&
+              Number(PaymentStatusId) &&
+              payment_method
+                ? {
+                    [Op.and]: {
+                      payment_method,
+                      PaymentStatusId,
+                      OrderStatusId,
+                    },
+                  }
+                : {}),
+              ...(Number(OrderStatusId) &&
+              Number(PaymentStatusId) &&
+              Number(WarehouseId)
+                ? {
+                    [Op.and]: {
+                      WarehouseId,
+                      PaymentStatusId,
+                      OrderStatusId,
+                    },
+                  }
+                : {}),
+              ...(Number(OrderStatusId) && Number(WarehouseId) && payment_method
+                ? {
+                    [Op.and]: {
+                      payment_method,
+                      WarehouseId,
+                      OrderStatusId,
+                    },
+                  }
+                : {}),
+              ...(Number(WarehouseId) &&
+              Number(PaymentStatusId) &&
+              payment_method
+                ? {
+                    [Op.and]: {
+                      PaymentStatusId,
+                      WarehouseId,
+                      payment_method,
+                    },
+                  }
+                : {}),
+              ...(Number(PaymentStatusId) && Number(OrderStatusId)
+                ? {
+                    [Op.and]: {
+                      PaymentStatusId,
+                      OrderStatusId,
+                    },
+                  }
+                : {}),
+              ...(payment_method && Number(OrderStatusId)
+                ? {
+                    [Op.and]: {
+                      payment_method,
+                      OrderStatusId,
+                    },
+                  }
+                : {}),
+              ...(Number(PaymentStatusId) && payment_method
+                ? {
+                    [Op.and]: {
+                      PaymentStatusId,
+                      payment_method,
+                    },
+                  }
+                : {}),
+              ...(Number(PaymentStatusId) && Number(WarehouseId)
+                ? {
+                    [Op.and]: {
+                      PaymentStatusId,
+                      WarehouseId,
+                    },
+                  }
+                : {}),
+              ...(Number(WarehouseId) && Number(OrderStatusId)
+                ? {
+                    [Op.and]: {
+                      OrderStatusId,
+                      WarehouseId,
+                    },
+                  }
+                : {}),
+              ...(Number(WarehouseId) && payment_method
+                ? {
+                    [Op.and]: {
+                      WarehouseId,
+                      payment_method,
+                    },
+                  }
+                : {}),
+              ...(Number(PaymentStatusId) && Number(WarehouseId)
+                ? {
+                    [Op.and]: {
+                      PaymentStatusId,
+                      WarehouseId,
+                    },
+                  }
+                : {}),
+              ...(Number(WarehouseId) && Number(OrderStatusId)
+                ? {
+                    [Op.and]: {
+                      WarehouseId,
+                      OrderStatusId,
+                    },
+                  }
+                : {}),
+              ...(Number(WarehouseId) && payment_method
+                ? {
+                    [Op.and]: {
+                      WarehouseId,
+                      payment_method,
+                    },
+                  }
+                : {}),
               PaymentStatusId,
               OrderStatusId,
               payment_method,
@@ -972,15 +323,21 @@ const adminOrderController = {
         })
       }
 
+      if (!findTransaction.payment_proof) {
+        return res.status(400).json({
+          message: "Payment Proof not found",
+        })
+      }
+
       // Jurnal Function
-      // const addOrAdd = (stock_before, stock_after) => {
-      //   const count = Math.max(stock_before, stock_after)
-      //   if (count === stock_before) {
-      //     return false
-      //   } else {
-      //     return true
-      //   }
-      // }
+      const addOrAdd = (stock_before, stock_after) => {
+        const count = Math.max(stock_before, stock_after)
+        if (count == stock_before) {
+          return false
+        } else {
+          return true
+        }
+      }
 
       await db.Transaction.update(
         {
@@ -994,7 +351,7 @@ const adminOrderController = {
         }
       )
 
-      // Find items on Transaction
+      // Cari semua item dari 1 transaksi
       const findItems = await db.TransactionItem.findAll({
         where: {
           TransactionId: id,
@@ -1005,8 +362,8 @@ const adminOrderController = {
       const productId = findItems.map((val) => val.ProductId)
       const quantity = findItems.map((val) => val.quantity)
 
-      // Make item to an Object
-      const reqstock = quantity.map((val, i) => {
+      // Bikin sebuah objek
+      const transactionItemData = quantity.map((val, i) => {
         return {
           id: transactionItemId[i],
           productId: productId[i],
@@ -1014,7 +371,7 @@ const adminOrderController = {
         }
       })
 
-      // Find item stock by ProductId and warehouseId from transaction
+      // Cari total stock dari tiap produk
       const totalStock = []
       for (let i = 0; i < productId.length; i++) {
         const findStock = await db.Total_Stock.findAll({
@@ -1026,7 +383,7 @@ const adminOrderController = {
         totalStock.push(findStock[0].stock)
       }
 
-      // find items that are less than the total stock
+      // cari produk quantity yg lebih dari total stok
       const arr = []
       for (let i = 0; i < totalStock.length; i++) {
         let result = 0
@@ -1034,7 +391,7 @@ const adminOrderController = {
         arr.push(result)
       }
 
-      // Make an object
+      // di jadiin array
       const arr1 = arr.map((val, i) => {
         return {
           transactionItemId: transactionItemId[i],
@@ -1044,18 +401,23 @@ const adminOrderController = {
         }
       })
 
+      // filter barang yg total stock nya kurang dari 0
       const stockMutation = arr1.filter((val) => {
         return val.stock < 0
       })
 
-      const selisih = stockMutation.map((val) => val.stock * -1)
+      // di jadikan bilangan positif
+      const difference = stockMutation.map((val) => val.stock * -1)
 
+      // ambil id product
       const ProductMutationId = stockMutation.map((val) => val.productId)
 
+      // ambil id transaction item
       const findTransactionItem = stockMutation.map(
         (val) => val.transactionItemId
       )
 
+      // mencari warehouse terdekat
       const findClosestWarehouse = await db.Warehouse.findAll()
 
       function toRad(Value) {
@@ -1081,42 +443,54 @@ const adminOrderController = {
       }
 
       const chooseOne = []
-      const tempDist = []
       for (var i = 0; i < findClosestWarehouse.length; i++) {
-        const tempNum = calcCrow(
+        const nearestWarehouse = calcCrow(
           findTransaction.Warehouse.latitude,
-          findClosestWarehouse[i].latitude,
           findTransaction.Warehouse.longitude,
+          findClosestWarehouse[i].latitude,
           findClosestWarehouse[i].longitude
         )
-        tempDist.push(tempNum)
+
+        if (findClosestWarehouse[i].id === findTransaction.Warehouse.id) {
+          continue
+        }
+
         chooseOne.push({
           warehouse: findClosestWarehouse[i],
-          distance: tempNum,
+          distance: nearestWarehouse,
         })
       }
-      const minDist = Math.min(...tempDist)
-      const sortDist = chooseOne.sort((a, b) => a.distance - b.distance)
-      const closestCity = sortDist.filter((x) => x.distance == minDist)
-      const palingDeket = closestCity
-        .map((val) => val.warehouse.id)
-        .filter((val) => val != findTransaction.WarehouseId)
 
+      const warehouseSort = chooseOne
+        .sort((a, b) => a.distance - b.distance)
+        .map((val) => val.warehouse.id)
+
+      // ambil product stock dari warehouse terdekat
       const minusStock = []
+      const closesStock = []
       for (let i = 0; i < ProductMutationId.length; i++) {
         const findTotalStockProduct = await db.Total_Stock.findAll({
           where: {
-            WarehouseId: palingDeket[0],
+            WarehouseId: warehouseSort[0],
             ProductId: ProductMutationId[i],
           },
         })
 
+        if (findTotalStockProduct.map((val) => val.stock) < difference[i]) {
+          return res.status(200).json({
+            message: `Warehouse ${warehouseSort[0]} out of stock`,
+          })
+        }
+
         minusStock.push(
-          findTotalStockProduct.map((val) => val.stock - selisih[i])
+          findTotalStockProduct.map((val, idx) => val.stock - difference[idx])
         )
+        closesStock.push(findTotalStockProduct.map((val) => val.stock))
       }
 
+      // tambah stock ke warehouseId transaction
       const plushStock = []
+      const beforeMut = []
       for (let i = 0; i < ProductMutationId.length; i++) {
         const findTotalStockProduct = await db.Total_Stock.findAll({
           where: {
@@ -1126,15 +500,16 @@ const adminOrderController = {
         })
 
         plushStock.push(
-          findTotalStockProduct.map((val) => val.stock + selisih[i])
+          findTotalStockProduct.map((val) => val.stock + difference[i])
         )
+        beforeMut.push(findTotalStockProduct.map((val) => val.stock))
       }
 
       for (let i = 0; i < findTransactionItem.length; i++) {
         await db.Mutation.create({
           from_warehouse: findTransaction.WarehouseId,
-          to_warehouse: palingDeket[0],
-          quantity: selisih[i],
+          to_warehouse: warehouseSort[0],
+          quantity: difference[i],
           mutation_status: "Approve",
           ProductId: ProductMutationId[i],
           TransactionId: id,
@@ -1145,11 +520,29 @@ const adminOrderController = {
           },
           {
             where: {
-              WarehouseId: palingDeket[0],
+              WarehouseId: warehouseSort[0],
               ProductId: ProductMutationId[i],
             },
           }
         )
+        const journal = await db.Type_Journal.create({
+          name: "Mutation Stock",
+          type: addOrAdd(closesStock[i], minusStock[i]),
+          stock_after: minusStock[i],
+          ProductId: productId[i],
+        })
+
+        const findTypeId = await db.Type_Journal.findByPk(journal.id)
+
+        await db.Journal.create({
+          stock_before: closesStock[i],
+          stock_after: minusStock[i],
+          ProductId: productId[i],
+          TypeJournalId: findTypeId.dataValues.id,
+        })
+      }
+
+      for (let i = 0; i < findTransactionItem.length; i++) {
         await db.Total_Stock.update(
           {
             stock: plushStock[i],
@@ -1161,9 +554,26 @@ const adminOrderController = {
             },
           }
         )
+        const journal = await db.Type_Journal.create({
+          name: "Mutation Stock",
+          type: addOrAdd(beforeMut[i], plushStock[i]),
+          stock_after: plushStock[i],
+          ProductId: productId[i],
+        })
+
+        const findTypeId = await db.Type_Journal.findByPk(journal.id)
+
+        await db.Journal.create({
+          stock_before: beforeMut[i],
+          stock_after: plushStock[i],
+          ProductId: productId[i],
+          TypeJournalId: findTypeId.dataValues.id,
+        })
       }
 
+      // stock di kurang dari WarehouseId yg sudah mutasi stock
       const finalStock = []
+      const stockBefore = []
       for (let i = 0; i < productId.length; i++) {
         const findTotalStockProduct = await db.Total_Stock.findAll({
           where: {
@@ -1175,6 +585,7 @@ const adminOrderController = {
         finalStock.push(
           findTotalStockProduct.map((val) => val.stock - quantity[i])
         )
+        stockBefore.push(findTotalStockProduct.map((val) => val.stock))
       }
 
       for (let i = 0; i < productId.length; i++) {
@@ -1189,23 +600,23 @@ const adminOrderController = {
             },
           }
         )
+
+        const journal = await db.Type_Journal.create({
+          name: "Order Stock",
+          type: addOrAdd(stockBefore[i], finalStock[i]),
+          stock_after: finalStock[i],
+          ProductId: productId[i],
+        })
+
+        const findTypeId = await db.Type_Journal.findByPk(journal.id)
+
+        await db.Journal.create({
+          stock_before: stockBefore[i],
+          stock_after: finalStock[i],
+          ProductId: productId[i],
+          TypeJournalId: findTypeId.dataValues.id,
+        })
       }
-
-      // const journal = await db.Type_Journal.create({
-      //   name: "Mutation Stock",
-      //   type: addOrAdd(stock_before, stock_after),
-      //   stock_after: findData.dataValues.stock,
-      //   ProductId: findData.ProductId,
-      // })
-
-      // const findTypeId = await db.Type_Journal.findByPk(journal.id)
-
-      // await db.Journal.create({
-      //   stock_before: findBeforeStock.dataValues.stock,
-      //   stock_after: findData.dataValues.stock,
-      //   ProductId: findData.ProductId,
-      //   TypeJournalId: findTypeId.dataValues.id,
-      // })
 
       const findApproveTrasanction = await db.Transaction.findOne({
         where: {
@@ -1256,13 +667,14 @@ const adminOrderController = {
       const { id } = req.params
       const { message } = req.body
 
-      const findTransactionList = await db.Transaction.findOne({
+      const findTransaction = await db.Transaction.findOne({
         where: {
           id: id,
         },
+        include: [{ model: db.User }],
       })
 
-      if (!findTransactionList) {
+      if (!findTransaction) {
         return res.status(400).json({
           message: "Transaction not found",
         })
@@ -1279,13 +691,6 @@ const adminOrderController = {
           },
         }
       )
-
-      const findTransaction = await db.Transaction.findOne({
-        where: {
-          id: id,
-        },
-        include: [{ model: db.User }],
-      })
 
       const uploadLink = `${process.env.BASE_URL_FE}payment/thank-you/shopedia/${findTransaction.transaction_name}`
 
@@ -1324,6 +729,19 @@ const adminOrderController = {
     try {
       const { id } = req.params
 
+      const findTransaction = await db.Transaction.findOne({
+        where: {
+          id: id,
+        },
+        include: [{ model: db.User }],
+      })
+
+      if (!findTransaction) {
+        return res.status(400).json({
+          message: "Transaction not found",
+        })
+      }
+
       await db.Transaction.update(
         {
           OrderStatusId: 3,
@@ -1335,8 +753,6 @@ const adminOrderController = {
         }
       )
 
-      schedule
-
       const dueDateConfirm = moment()
         .add(7, "days")
         .format("YYYY-MM-DD HH:mm:ss")
@@ -1346,7 +762,7 @@ const adminOrderController = {
         async () =>
           await db.Transaction.update(
             {
-              OrderStatusId: 4,
+              OrderStatusId: 5,
             },
             {
               where: {
@@ -1356,12 +772,158 @@ const adminOrderController = {
           )
       )
 
+      const rawHTML = fs.readFileSync("templates/orderSend.html", "utf-8")
+
+      const compiledHTML = handlebars.compile(rawHTML)
+
+      const htmlResult = compiledHTML({
+        username: findTransaction.User.username,
+        shopediaLink: process.env.BASE_URL_FE,
+      })
+
+      await emailer({
+        to: findTransaction.User.email,
+        html: htmlResult,
+        subject: "Order Send",
+        text: "Please make your new order",
+      })
+
       return res.status(200).json({
         message: "Order Send",
       })
     } catch (error) {
       console.log(error)
       return res.status(500).json({
+        message: "Server Error",
+      })
+    }
+  },
+  cancelOrder: async (req, res) => {
+    try {
+      const { id } = req.params
+
+      const findTransaction = await db.Transaction.findOne({
+        where: {
+          id: id,
+          OrderStatusId: 2,
+        },
+        include: [{ model: db.TransactionItem }, { model: db.User }],
+      })
+
+      if (!findTransaction) {
+        return res.status(400).json({
+          message: "Transaction invalid",
+        })
+      }
+
+      await db.Transaction.update(
+        {
+          OrderStatusId: 6,
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      )
+
+      const quantity = findTransaction.TransactionItems.map(
+        (val) => val.quantity
+      )
+
+      const ProductId = findTransaction.TransactionItems.map(
+        (val) => val.ProductId
+      )
+
+      const returnStock = []
+      const stock_before = []
+      for (let i = 0; i < ProductId.length; i++) {
+        const stockBefore = await db.Total_Stock.findAll({
+          where: {
+            WarehouseId: findTransaction.WarehouseId,
+            ProductId: ProductId[i],
+          },
+        })
+        stock_before.push(stockBefore.map((val) => val.stock))
+        returnStock.push(stockBefore.map((val) => val.stock + quantity[i]))
+      }
+
+      for (let i = 0; i < ProductId.length; i++) {
+        await db.Total_Stock.update(
+          {
+            ProductId: ProductId[i],
+            stock: returnStock[i],
+          },
+          {
+            where: {
+              WarehouseId: findTransaction.WarehouseId,
+              ProductId: ProductId[i],
+            },
+          }
+        )
+      }
+
+      const stock_after = []
+      for (let i = 0; i < ProductId.length; i++) {
+        const findData = await db.Total_Stock.findAll({
+          where: {
+            WarehouseId: findTransaction.WarehouseId,
+            ProductId: ProductId[i],
+          },
+        })
+        stock_after.push(findData.map((val) => val.stock))
+      }
+
+      const addOrAdd = (stock_before, stock_after) => {
+        const count = Math.max(stock_before, stock_after)
+        if (count === stock_before) {
+          return false
+        } else {
+          return true
+        }
+      }
+
+      for (let i = 0; i < ProductId.length; i++) {
+        const journal = await db.Type_Journal.create({
+          name: "Cancel Stock",
+          type: addOrAdd(stock_before[i], stock_after[i]),
+          stock_after: stock_after[i],
+          ProductId: ProductId[i],
+        })
+
+        const findTypeId = await db.Type_Journal.findByPk(journal.id)
+
+        await db.Journal.create({
+          stock_before: stock_before[i],
+          stock_after: stock_after[i],
+          ProductId: ProductId[i],
+          TypeJournalId: findTypeId.id,
+        })
+      }
+
+      const rawHTML = fs.readFileSync("templates/orderCancel.html", "utf-8")
+
+      const compiledHTML = handlebars.compile(rawHTML)
+
+      const htmlResult = compiledHTML({
+        username: findTransaction.User.username,
+        shopediaLink: process.env.BASE_URL_FE,
+      })
+
+      await emailer({
+        to: findTransaction.User.email,
+        html: htmlResult,
+        subject: "Cancel Order",
+        text: "Please make your new order",
+      })
+
+      return res.status(200).json({
+        message: "Order Canceled",
+        data: findTransaction,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(200).json({
         message: "Server Error",
       })
     }
