@@ -27,7 +27,7 @@ const ProtectedRoute = ({ children }) => {
 
     if (authSelector.id) {
         return (children)
-    } else if (!authSelector.id)
+    } else if (!authSelector.id) {
         return (
             <>
                 <AlertDialog isCentered closeOnOverlayClick={false} isOpen={isOpen} onClose={backToLogin} size={"sm"}
@@ -77,6 +77,7 @@ const ProtectedRoute = ({ children }) => {
                 </AlertDialog>
             </>
         )
+    }
 }
 
 export default ProtectedRoute
