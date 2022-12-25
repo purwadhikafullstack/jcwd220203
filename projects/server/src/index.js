@@ -26,7 +26,7 @@ const userProfileRoute = require("../routes/userProfileRoute")
 const transactionsRoute = require("../routes/transactionsRoute")
 const exportRoute = require("../routes/exportRoute")
 const stockMutationRoute = require("../routes/stockMutationRoute")
-
+const salesReportRoute = require("../routes/salesReportRoute")
 const adminOrderRoute = require("../routes/adminOrderRoute")
 const adminOrderHistoryRoute = require("../routes/adminOrderHistoryRoute")
 const PORT = process.env.PORT || 8000
@@ -71,6 +71,7 @@ app.use("/export", verifyToken, exportRoute)
 app.use("/adminOrder", verifyToken, adminOrderRoute)
 app.use("/stock-mutation", verifyToken, stockMutationRoute)
 app.use("/admin/order-history", adminOrderHistoryRoute)
+app.use("/admin/sales-report", salesReportRoute)
 
 app.get("/api", (req, res) => {
     res.send(`Hello, this is my API`)
