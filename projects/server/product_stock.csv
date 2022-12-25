@@ -1,0 +1,4 @@
+id,stock_before,stock_after,createdAt,updatedAt,ProductId,TypeJournalId,name,type,product_name
+10,870,100,2022-12-15T00:54:10.000Z,2022-12-15T00:54:10.000Z,1,10,Update Stock,0,Demon Slayer
+11,100,55,2022-12-15T00:54:34.000Z,2022-12-15T00:54:34.000Z,1,11,Update Stock,0,Demon Slayer
+12,55,75,2022-12-10T00:54:40.000Z,2022-12-10T00:54:40.000Z,1,12,Update Stock,1,Demon Slayer

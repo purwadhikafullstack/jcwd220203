@@ -18,6 +18,8 @@ import {
   AlertTitle,
   HStack,
   useDisclosure,
+  InputGroup,
+  Select,
 } from "@chakra-ui/react";
 // import { useSelector } from "react-redux";
 import { axiosInstance } from "../../api";
@@ -27,6 +29,7 @@ import * as Yup from "yup";
 import { useCallback } from "react";
 import React, { useEffect, useState } from "react";
 import { CgChevronLeft, CgChevronRight } from "react-icons/cg";
+import { TbSearch } from "react-icons/tb";
 import WarehouseAddress from "../../components/admin/WarehouseAddress";
 import WarehouseAddressEdit from "../../components/admin/WarehouseAddressEdit";
 
@@ -40,7 +43,6 @@ const WarehouseManagement = () => {
   const [rows, setRows] = useState(0);
   const [pages, setPages] = useState(0);
   const [maxPage, setMaxPage] = useState(0);
-  const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [keywordHandler, setKeywordHandler] = useState("");
   const maxItemsPage = 5;
@@ -50,13 +52,15 @@ const WarehouseManagement = () => {
   const [selectedEditProvince, setSelectedEditProvince] = useState(0);
   const [selectedEditCity, setSelectedEditCity] = useState(0);
 
+  const [totalCount, setTotalCount] = useState(0);
+  const [sortBy, setSortBy] = useState("id");
+  const [sortDir, setSortDir] = useState("ASC");
+
   const {
     isOpen: isOpenEditWarehouseAddress,
     onOpen: onOpenEditWarehouseAddress,
     onClose: onCloseEditWarehouseAddress,
   } = useDisclosure();
-
-  const { onOpen, isOpen, onClose } = useDisclosure();
 
   const {
     isOpen: isOpenAddNewWarehouseAddress,
@@ -71,22 +75,19 @@ const WarehouseManagement = () => {
           _keywordHandler: keyword,
           _page: pages,
           _limit: maxItemsPage,
+          _sortBy: sortBy,
+          _sortDir: sortDir,
         },
       });
       setData(fetchingWH.data.data);
+      setTotalCount(fetchingWH.data.totalRows);
       setIsLoading(true);
       setRows(fetchingWH.data.totalRows - maxItemsPage);
       setMaxPage(Math.ceil(fetchingWH.data.totalRows / maxItemsPage));
-      // editFormik.setFieldValue("warehouse_name", openedEdit.warehouse_name)
-      // editFormik.setFieldValue("address_labels", openedEdit.address_labels)
-      // editFormik.setFieldValue("province", openedEdit.province)
-      // editFormik.setFieldValue("city", openedEdit.city)
-      // editFormik.setFieldValue("districts", openedEdit.districts)
-      // editFormik.setFieldValue("full_address", openedEdit.full_address)
     } catch (error) {
       console.log(error);
     }
-  }, [pages, keyword]);
+  }, [pages, keyword, sortBy, sortDir]);
 
   const nextPage = () => {
     setPages(pages + 1);
@@ -94,11 +95,6 @@ const WarehouseManagement = () => {
 
   const prevPage = () => {
     setPages(pages - 1);
-  };
-
-  const searchKey = () => {
-    setPages(0);
-    setKeyword(keywordHandler);
   };
 
   const deleteBtnHandler = async (id) => {
@@ -132,9 +128,8 @@ const WarehouseManagement = () => {
           districts: values.districts,
           full_address: values.full_address,
         };
-      
-        const response = await axiosInstance.post(`/warehouse`, addWarehouse);
-        // console.log(response)
+
+        await axiosInstance.post(`/warehouse`, addWarehouse);
 
         toast({ title: "Warehouse added", status: "success" });
         fetchWarehouse();
@@ -251,9 +246,20 @@ const WarehouseManagement = () => {
     });
   };
 
+  const searchKey = () => {
+    setPages(0);
+    setKeyword(keywordHandler);
+  };
+
+  const sortCategoryHandler = ({ target }) => {
+    const { value } = target;
+    setSortBy(value.split(" ")[0]);
+    setSortDir(value.split(" ")[1]);
+  };
+
   useEffect(() => {
     fetchWarehouse();
-  }, [openedEdit, page, pages]);
+  }, [openedEdit, pages, sortBy, sortDir, keyword, keywordHandler]);
 
   useEffect(() => {
     if (openedEdit) {
@@ -267,46 +273,81 @@ const WarehouseManagement = () => {
   }, [openedEdit]);
 
   return (
-    <Box marginBottom={"50px"} ml="275px" mt="65px">
-      <HStack justifyContent={"space-between"}>
-      <Text fontSize={"30px"} fontWeight="bold" color="#0095DA">
-        Warehouse Data
-      </Text>
-      <Button
-          colorScheme={"green"}
-          marginLeft="64%"
-          marginTop={"5%"}
-          onClick={() => onOpenAddNewWarehouseAddress()}
-          w="100px"
-        >
-          Add
-        </Button>
-        </HStack>
-      <HStack mt="5px">
-          <FormControl>
-            <Input
-              name="input"
-              value={keywordHandler}
-              onChange={(event) => setKeywordHandler(event.target.value)}
-            />
-          </FormControl>
-
-          <Button onClick={searchKey} mr={0} bgColor="#F7931E" color="white">
-            Search
+    <Box marginBottom={"50px"} ml="275px" mt="25px">
+        <HStack justifyContent="space-between">
+          <Box>
+            <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
+              Warehouse List
+            </Text>
+            <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
+              Total Warehouses:{totalCount}
+            </Text>
+          </Box>
+          <Button
+            bgColor={"#F7931E"}
+            color="white"
+            marginTop={"5%"}
+            onClick={() => onOpenAddNewWarehouseAddress()}
+            w="200px"
+            marginRight="40px"
+          >
+            Add New
           </Button>
         </HStack>
+        <HStack mt="5px" justifyContent="right">
+          <Box gap="4" display={"flex"}>
+            <Text my="auto">Sort</Text>
+            <Select
+              onChange={sortCategoryHandler}
+              fontSize={"15px"}
+              fontWeight="normal"
+              fontFamily="serif"
+              width={"250px"}
+              color={"#6D6D6F"}
+              _placeholder="Sort By"
+            >
+              <option value="id ASC" selected>
+                ID Ascending
+              </option>
+              <option value="id DESC">ID Descending</option>
+              <option value="createdAt DESC">Latest</option>
+              <option value="createdAt ASC">Old</option>
+            </Select>
+
+            <FormControl>
+              <InputGroup textAlign={"right"}>
+                <Input
+                  type="text"
+                  placeholder="Search by WH Name"
+                  name="search"
+                  w="200px"
+                  onChange={(event) => setKeywordHandler(event.target.value)}
+                  borderRightRadius="0"
+                  value={keywordHandler}
+                />
+
+                <Button
+                  borderLeftRadius={"0"}
+                  type="submit"
+                  onClick={searchKey}
+                >
+                  <TbSearch />
+                </Button>
+              </InputGroup>
+            </FormControl>
+          </Box>
+        </HStack>
+
       <Table>
         <Thead>
           <Tr>
             <Th>ID</Th>
-            <Th>product_name</Th>
+            <Th>Warehouse Name</Th>
             <Th>Full Address</Th>
             <Th>Province</Th>
             <Th>City</Th>
             <Th>District</Th>
             <Th>User</Th>
-            {/* <Th>Latitude</Th>
-            <Th>Longitude</Th> */}
             <Th>Action</Th>
           </Tr>
         </Thead>
@@ -341,7 +382,6 @@ const WarehouseManagement = () => {
         </GridItem>
       </Grid>
       <Divider />
-
 
       {/* Modal nambah data */}
       <WarehouseAddress

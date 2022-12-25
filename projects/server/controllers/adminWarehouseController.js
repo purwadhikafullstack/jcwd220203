@@ -8,6 +8,8 @@ const { Op } = require("sequelize")
 const adminWarehouseController = {
   getAllWarehouseData: async (req, res) => {
     try {
+      const _sortBy = req.query._sortBy
+      const _sortDir = req.query._sortDir
       const page = parseInt(req.query._page) || 0
       const limit = parseInt(req.query._limit) || 20
       const search = req.query._keywordHandler || ""
@@ -32,6 +34,7 @@ const adminWarehouseController = {
             { address_labels: { [Op.like]: "%" + search + "%" } },
           ],
         },
+        order: [[_sortBy, _sortDir]],
         include: [{ model: db.User }],
         offset: offset,
         limit: limit,

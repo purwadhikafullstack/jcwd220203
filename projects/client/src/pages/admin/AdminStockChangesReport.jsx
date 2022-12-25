@@ -1,7 +1,4 @@
 import {
-  AlertIcon,
-  AlertTitle,
-  Avatar,
   Box,
   Button,
   FormControl,
@@ -17,7 +14,6 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
@@ -29,7 +25,6 @@ import { IoIosAlert } from "react-icons/io";
 
 const AdminStockChangesReport = () => {
   const [stockData, setStockData] = useState([]);
-  const cancelRef = React.useRef();
   const [currentSearch, setCurrentSearch] = useState("");
   const [totalCount, setTotalCount] = useState(0);
   const [sortBy, setSortBy] = useState("id");
@@ -55,6 +50,7 @@ const AdminStockChangesReport = () => {
           endTime: endTime,
         },
       });
+      console.log(currentTime, endTime);
 
       setTotalCount(response.data.dataCount);
       setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage));
@@ -72,7 +68,7 @@ const AdminStockChangesReport = () => {
           <Td>{val.stock_before}</Td>
           <Td>{val.stock_after}</Td>
           <Td>{val.Type_Journal?.name}</Td>
-          <Td>{val.Type_Journal?.type == 0 ? "Minus" : "Added"}</Td>
+          <Td>{val.Type_Journal?.type === 0 ? "Minus" : "Added"}</Td>
           <Td>{val.Product?.product_name}</Td>
         </Tr>
       );
@@ -129,12 +125,23 @@ const AdminStockChangesReport = () => {
 
   const downloadCSV = async () => {
     try {
-      await axiosInstance.get('export/stock/csv')
-      toast({title: "Successfully exported CSV in your Server folder", status: "success"})
+      await axiosInstance.get("export/stock/csv", {
+        params: {
+          id: currentSearch,
+          _sortBy: sortBy,
+          _sortDir: sortDir,
+          currentTime: currentTime,
+          endTime: endTime,
+        },
+      });
+      toast({
+        title: "Successfully exported CSV in your Server folder",
+        status: "success",
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchAdminData();
@@ -143,82 +150,87 @@ const AdminStockChangesReport = () => {
   return (
     <Box marginLeft={"230px"}>
       <Box p="20px 0" display={"flex"} justifyContent="space-between" mr="2">
-        <Box display={"flex"} gap="4" my={"auto"}>
-          <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
-            Stock Changes Report
-          </Text>
-          <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
-            Total Changes:{totalCount}
-          </Text>
-        </Box>
+        <HStack>
+          <Box>
+            <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
+              Stock Changes Report
+            </Text>
+            <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
+              Total Changes:{totalCount}
+            </Text>
+          </Box>
+        </HStack>
 
-        <Box gap="4" display={"flex"}>
-          <Text my="auto">Sort</Text>
-          <Select
-            onChange={sortCategoryHandler}
-            fontSize={"15px"}
-            fontWeight="normal"
-            fontFamily="serif"
-            width={"137px"}
-            color={"#6D6D6F"}
-            _placeholder="Sort By"
-          >
-            <option value="ID ASC" selected>
-              ID Ascending
-            </option>
-            <option value="ID DESC">ID Descending</option>
-            <option value="createdAt DESC">Latest</option>
-            <option value="createdAt ASC">Old</option>
-          </Select>
+        <HStack mt="5px" justifyContent="center">
+          <Box gap="4" display={"flex"}>
+            <Text my="auto">Sort</Text>
+            <Select
+              onChange={sortCategoryHandler}
+              fontSize={"15px"}
+              fontWeight="normal"
+              fontFamily="serif"
+              width={"137px"}
+              color={"#6D6D6F"}
+              _placeholder="Sort By"
+            >
+              <option value="ID ASC" selected>
+                ID Ascending
+              </option>
+              <option value="ID DESC">ID Descending</option>
+              <option value="createdAt DESC">Latest</option>
+              <option value="createdAt ASC">Old</option>
+            </Select>
 
-          <form onSubmit={formikSearch.handleSubmit}>
-            <FormControl>
-              <InputGroup textAlign={"right"}>
-                <Input
-                  type="text"
-                  placeholder="Search by ID"
-                  name="search"
-                  w="200px"
-                  onChange={searchAdminHandler}
-                  borderRightRadius="0"
-                  value={formikSearch.values.search}
-                />
+            <form onSubmit={formikSearch.handleSubmit}>
+              <FormControl>
+                <InputGroup textAlign={"right"}>
+                  <Input
+                    type="text"
+                    placeholder="Search by ID"
+                    name="search"
+                    w="200px"
+                    onChange={searchAdminHandler}
+                    borderRightRadius="0"
+                    value={formikSearch.values.search}
+                  />
 
-                <Button borderLeftRadius={"0"} type="submit">
-                  <TbSearch />
-                </Button>
-              </InputGroup>
-            </FormControl>
-          </form>
-        </Box>
+                  <Button borderLeftRadius={"0"} type="submit">
+                    <TbSearch />
+                  </Button>
+                </InputGroup>
+              </FormControl>
+            </form>
+          </Box>
+        </HStack>
         <br />
         <br />
-
-        <Box>
-          <FormLabel for="start">Start date:</FormLabel>
-          <Input
-            type="date"
-            id="start"
-            name="start"
-            onChange={currentTimeHandler}
-            value={formikDate.values.start}
-            defaultValue="2022-01-01"
-            min="2020-01-01"
-            max="2022-12-31"
-          ></Input>
-          <br />
-          <FormLabel for="end">End date:</FormLabel>
-          <Input
-            type="date"
-            id="end"
-            name="end"
-            onChange={endTimeHandler}
-            value={formikDate.values.end}
-            defaultValue="2022-12-31"
-            min="2020-01-01"
-            max="2022-12-31"
-          ></Input>
-        </Box>
+        <HStack>
+          <Box>
+            <FormLabel for="start">Start date:</FormLabel>
+            <Input
+              type="date"
+              id="start"
+              name="start"
+              onChange={currentTimeHandler}
+              value={formikDate.values.start}
+              defaultValue="2022-01-01"
+              min="2020-01-01"
+              max="2022-12-31"
+            ></Input>
+            <br />
+            <FormLabel for="end">End date:</FormLabel>
+            <Input
+              type="date"
+              id="end"
+              name="end"
+              onChange={endTimeHandler}
+              value={formikDate.values.end}
+              defaultValue="2022-12-31"
+              min="2020-01-01"
+              max="2022-12-31"
+            ></Input>
+          </Box>
+        </HStack>
       </Box>
       <Table>
         <Thead>
@@ -267,14 +279,10 @@ const AdminStockChangesReport = () => {
 
       <Box>
         <HStack justifyContent="right">
-        <Button 
-        onClick={downloadCSV} 
-        bgColor="#0095DA"
-        mr="20px"
-        >
-          Export to CSV
+          <Button onClick={downloadCSV} bgColor="#0095DA" mr="20px">
+            Export to CSV
           </Button>
-          </HStack>
+        </HStack>
       </Box>
     </Box>
   );

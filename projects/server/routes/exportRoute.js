@@ -5,7 +5,6 @@ const fastcsv = require("fast-csv");
 const mysql = require("mysql");
 
 const fs = require("fs")
-const ws = fs.createWriteStream("product_stock.csv");
 
 
 router.get("/stock", exportController.showAllStockData)

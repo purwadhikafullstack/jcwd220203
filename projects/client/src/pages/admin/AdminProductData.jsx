@@ -27,8 +27,8 @@ import {
   AlertIcon,
   AlertTitle,
   Image,
-  Avatar,
   Select,
+  InputGroup,
 } from "@chakra-ui/react";
 import { axiosInstance } from "../../api/index";
 import { useEffect, useRef, useState } from "react";
@@ -37,7 +37,8 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { CgChevronLeft, CgChevronRight } from "react-icons/cg";
 import { TbCameraPlus } from "react-icons/tb";
-import upload from "../../assets/upload.png"
+import upload from "../../assets/upload.png";
+import { TbSearch } from "react-icons/tb";
 
 const AdminProductData = () => {
   const [data, setData] = useState({});
@@ -56,6 +57,9 @@ const AdminProductData = () => {
   const inputFileRef = useRef();
 
   const [category, setCategory] = useState({});
+  const [totalCount, setTotalCount] = useState(0);
+  const [sortBy, setSortBy] = useState("id");
+  const [sortDir, setSortDir] = useState("ASC");
 
   const fetchProductData = async () => {
     try {
@@ -64,11 +68,14 @@ const AdminProductData = () => {
           _keywordHandler: keyword,
           _page: pages,
           _limit: maxItemsPage,
+          _sortBy: sortBy,
+          _sortDir: sortDir,
         },
       });
       setData(productData.data.data);
+      setTotalCount(productData.data.totalRows);
       setAdmin(productData.data.data);
-      console.log(productData.data.data);
+      // console.log(productData.data.data);
       // console.warn(productData.data.data.Image_Urls);
       // console.warn(data.Image_Urls);
       setRows(productData.data.totalRows - maxItemsPage);
@@ -181,7 +188,7 @@ const AdminProductData = () => {
 
   const formikAddProduct = useFormik({
     initialValues: {
-      image_url:{},
+      image_url: {},
       product_name: "",
       description: "",
       price: "",
@@ -198,7 +205,7 @@ const AdminProductData = () => {
         const data = new FormData();
 
         if (image_url) {
-          console.log(image_url)
+          console.log(image_url);
           data.append("image_url", image_url);
         }
         if (product_name) {
@@ -206,7 +213,7 @@ const AdminProductData = () => {
         }
         if (description) {
           data.append("description", description);
-          console.log(description)
+          console.log(description);
         }
         if (price) {
           data.append("price", price);
@@ -214,10 +221,8 @@ const AdminProductData = () => {
         if (CategoryId) {
           data.append("CategoryId", CategoryId);
         }
-        console.warn(data.image_url)
-        const response = await axiosInstance.post("/admin/product/", 
-          data
-        );
+        console.warn(data.image_url);
+        const response = await axiosInstance.post("/admin/product/", data);
 
         toast({
           title: "Registration Success",
@@ -297,10 +302,17 @@ const AdminProductData = () => {
     formikAddProduct.handleSubmit();
     onCloseAddNewProduct();
   };
+
+  const sortCategoryHandler = ({ target }) => {
+    const { value } = target;
+    setSortBy(value.split(" ")[0]);
+    setSortDir(value.split(" ")[1]);
+  };
+
   useEffect(() => {
     fetchProductData();
     // fetchCategory();
-  }, [openedEdit, pages, setPages, keyword]);
+  }, [openedEdit, pages, keyword, sortBy, sortDir]);
 
   useEffect(() => {
     if (openedEdit) {
@@ -314,11 +326,16 @@ const AdminProductData = () => {
 
   return (
     <>
-      <Box marginLeft="250px" marginTop="65px">
+      <Box marginLeft="250px" marginTop="25px">
         <HStack justifyContent="space-between">
-          <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
-            Product Data
-          </Text>
+          <Box>
+            <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
+              Product Data
+            </Text>
+            <Text fontSize={"2xl"} fontWeight="bold" color={"#0095DA"}>
+              Total Products:{totalCount}
+            </Text>
+          </Box>
           <br />
           <Button
             bgColor={"#F7931E"}
@@ -329,18 +346,49 @@ const AdminProductData = () => {
             Add New Product
           </Button>
         </HStack>
-        <HStack mt="5px">
-          <FormControl>
-            <Input
-              name="input"
-              value={keywordHandler}
-              onChange={(event) => setKeywordHandler(event.target.value)}
-            />
-          </FormControl>
+        <HStack mt="5px" justifyContent="right">
+          <Box gap="4" display={"flex"}>
+            <Text my="auto">Sort</Text>
+            <Select
+              onChange={sortCategoryHandler}
+              fontSize={"15px"}
+              fontWeight="normal"
+              fontFamily="serif"
+              width={"250px"}
+              color={"#6D6D6F"}
+              _placeholder="Sort By"
+            >
+              <option value="ID ASC" selected>
+                ID Ascending
+              </option>
+              <option value="ID DESC">ID Descending</option>
+              <option value="createdAt DESC">Latest</option>
+              <option value="createdAt ASC">Old</option>
+            </Select>
 
-          <Button onClick={searchKey} mr={0} bgColor="#F7931E" color="white">
-            Search
-          </Button>
+            {/* <form onSubmit={formikSearch.handleSubmit}> */}
+            <FormControl>
+              <InputGroup textAlign={"right"}>
+                <Input
+                  type="text"
+                  placeholder="Search Product Name or Desc"
+                  name="search"
+                  w="250px"
+                  onChange={(event) => setKeywordHandler(event.target.value)}
+                  borderRightRadius="0"
+                  value={keywordHandler}
+                />
+
+                <Button
+                  borderLeftRadius={"0"}
+                  type="submit"
+                  onClick={searchKey}
+                >
+                  <TbSearch />
+                </Button>
+              </InputGroup>
+            </FormControl>
+          </Box>
         </HStack>
         <Table>
           <Thead>
@@ -411,12 +459,7 @@ const AdminProductData = () => {
                     border="3px solid"
                     color={"#0095DA"}
                     mx="auto"
-                    src={
-                      selectedImage
-                        ? selectedImage
-                        : upload
-
-                    }
+                    src={selectedImage ? selectedImage : upload}
                   />
                   <Button
                     borderRadius={"50%"}
@@ -439,7 +482,7 @@ const AdminProductData = () => {
                     fontWeight="bold"
                     bgColor={"white"}
                     onChange={(e) => {
-                      console.log(e.target.files[0].File)
+                      console.log(e.target.files[0].File);
                       formikAddProduct.setFieldValue(
                         "image_url",
                         e.target.files[0]

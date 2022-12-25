@@ -6,6 +6,8 @@ const Product = db.Product;
 const adminProductController = {
   getProduct: async (req, res) => {
     try {
+      const _sortBy = req.query._sortBy
+      const _sortDir = req.query._sortDir
       const page = parseInt(req.query._page) || 0;
       const limit = parseInt(req.query._limit) || 5;
       const search = req.query._keywordHandler || "";
@@ -29,6 +31,7 @@ const adminProductController = {
             { description: { [Op.like]: "%" + search + "%" } },
           ],
         },
+        order: [[_sortBy, _sortDir]],
         include: [{ model: db.Image_Url }, { model: db.Category }],
         offset: offset,
         limit: limit,
@@ -74,7 +77,6 @@ const adminProductController = {
         });
       }
       
-      console.log("test berhasil ga");
       return res.status(200).json({
         message: "Successfully added product data",
         data: addProductData,
