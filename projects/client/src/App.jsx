@@ -49,13 +49,12 @@ import TransactionList from "./pages/TransactionList/TransactionList"
 import PaymentList from "./pages/TransactionList/PaymentList"
 import AdminSalesReport from "./pages/admin/AdminSalesReport"
 
-
 function App() {
-  const [message, setMessage] = useState("")
-  const authSelector = useSelector((state) => state.auth)
+    const [message, setMessage] = useState("")
+    const authSelector = useSelector((state) => state.auth)
 
     useEffect(() => {
-        ; (async () => {
+        ;(async () => {
             const { data } = await axios.get(
                 `${process.env.REACT_APP_API_BASE_URL}/api/greetings`
             )
@@ -63,212 +62,214 @@ function App() {
         })()
     }, [])
 
-  const [authCheck, setAuthCheck] = useState(false)
+    const [authCheck, setAuthCheck] = useState(false)
 
-  const dispatch = useDispatch()
+    const dispatch = useDispatch()
 
-  const location = useLocation()
+    const location = useLocation()
 
-  const keepUserLoggedIn = async () => {
-    try {
-      const auth_token = localStorage.getItem("auth_token")
+    const keepUserLoggedIn = async () => {
+        try {
+            const auth_token = localStorage.getItem("auth_token")
 
-      if (!auth_token) {
-        setAuthCheck(true)
-        return
-      }
+            if (!auth_token) {
+                setAuthCheck(true)
+                return
+            }
 
-      const response = await axiosInstance.get("/auth/refresh-token")
+            const response = await axiosInstance.get("/auth/refresh-token")
 
-      dispatch(login(response.data.data))
+            dispatch(login(response.data.data))
 
-      localStorage.setItem("auth_token", response.data.token)
-      setAuthCheck(true)
-    } catch (err) {
-      console.log(err)
-      setAuthCheck(true)
-    } finally {
-      setAuthCheck(true)
+            localStorage.setItem("auth_token", response.data.token)
+            setAuthCheck(true)
+        } catch (err) {
+            console.log(err)
+            setAuthCheck(true)
+        } finally {
+            setAuthCheck(true)
+        }
     }
-  }
 
-  const userResetData = async () => {
-    try {
-      const reset_token = localStorage.getItem("reset_token")
+    const userResetData = async () => {
+        try {
+            const reset_token = localStorage.getItem("reset_token")
 
-      if (!reset_token) {
-        setAuthCheck(true)
-        return
-      }
+            if (!reset_token) {
+                setAuthCheck(true)
+                return
+            }
 
-      const response = await axiosInstance.get("/auth/refresh-token")
+            const response = await axiosInstance.get("/auth/refresh-token")
 
-      dispatch(attach(response.data.data))
+            dispatch(attach(response.data.data))
 
-      localStorage.setItem("reset_token", response.data.token)
-      setAuthCheck(true)
-    } catch (err) {
-      console.log(err)
-      setAuthCheck(true)
-    } finally {
-      setAuthCheck(true)
+            localStorage.setItem("reset_token", response.data.token)
+            setAuthCheck(true)
+        } catch (err) {
+            console.log(err)
+            setAuthCheck(true)
+        } finally {
+            setAuthCheck(true)
+        }
     }
-  }
 
-  useEffect(() => {
-    keepUserLoggedIn()
-    userResetData()
-  }, [])
+    useEffect(() => {
+        keepUserLoggedIn()
+        userResetData()
+    }, [])
 
-  if (!authCheck) {
+    if (!authCheck) {
+        return (
+            <Box textAlign={"center"}>
+                <Box mt={"240px"}>
+                    <Text p="4" fontWeight={"light"} fontSize="4xl">
+                        <Text
+                            fontSize={"30px"}
+                            fontWeight="bold"
+                            color={"#0095DA"}
+                            display="inline"
+                        >
+                            Shop
+                        </Text>
+                        <Text
+                            pl={"0"}
+                            fontSize={"30px"}
+                            fontWeight="bold"
+                            color={"#F7931E"}
+                            display="inline"
+                        >
+                            edia
+                        </Text>
+                    </Text>
+                    <Spinner
+                        thickness="5px"
+                        speed="0.9s"
+                        emptyColor="#F7931E"
+                        color="#0095DA"
+                        size="xl"
+                    />
+                    <Text mt="70px" fontWeight={"semibold"} fontSize="15px">
+                        Feel the convenience of transactions on Shopedia
+                    </Text>
+                </Box>
+            </Box>
+        )
+    }
+
     return (
-      <Box textAlign={"center"}>
-        <Box mt={"240px"}>
-          <Text p="4" fontWeight={"light"} fontSize="4xl">
-            <Text
-              fontSize={"30px"}
-              fontWeight="bold"
-              color={"#0095DA"}
-              display="inline"
-            >
-              Shop
-            </Text>
-            <Text
-              pl={"0"}
-              fontSize={"30px"}
-              fontWeight="bold"
-              color={"#F7931E"}
-              display="inline"
-            >
-              edia
-            </Text>
-          </Text>
-          <Spinner
-            thickness="5px"
-            speed="0.9s"
-            emptyColor="#F7931E"
-            color="#0095DA"
-            size="xl"
-          />
-          <Text mt="70px" fontWeight={"semibold"} fontSize="15px">
-            Feel the convenience of transactions on Shopedia
-          </Text>
-        </Box>
-      </Box>
-    )
-  }
+        <>
+            {authSelector.RoleId === 3 || authSelector.RoleId === 2 ? (
+                <SideNavBar />
+            ) : null}
 
-  return (
-    <>
-      {authSelector.RoleId === 3 || authSelector.RoleId === 2 ? (
-        <SideNavBar />
-      ) : null}
+            {location.pathname === "/login" ||
+            location.pathname === "/register" ||
+            location.pathname === "/reset-password-confirmation" ||
+            location.pathname === "/request-reset-password" ||
+            location.pathname === "/cart/shipment" ||
+            authSelector.RoleId === 3 ||
+            authSelector.RoleId === 2 ? null : (
+                <Box>
+                    <Navbar />
+                </Box>
+            )}
 
-      {location.pathname === "/login" ||
-      location.pathname === "/register" ||
-      location.pathname === "/reset-password-confirmation" ||
-      location.pathname === "/request-reset-password" ||
-      location.pathname === "/cart/shipment" ||
-      authSelector.RoleId === 3 ||
-      authSelector.RoleId === 2 ? null : (
-        <Box>
-          <Navbar />
-        </Box>
-      )}
+            <Routes>
+                <Route path="/*" element={<NotFound />} />
+                <Route path="/" element={<HomePage />} />
+                <Route
+                    path="/login"
+                    element={
+                        <GuestRoute>
+                            <LoginPage />
+                        </GuestRoute>
+                    }
+                />
+                <Route
+                    path="/reset-password-confirmation"
+                    element={<ResetPasswordConfirmation />}
+                />
 
-      <Routes>
-        <Route path="/*" element={<NotFound />} />
-        <Route path="/" element={<HomePage />} />
-        <Route
-          path="/login"
-          element={
-            <GuestRoute>
-              <LoginPage />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/reset-password-confirmation"
-          element={<ResetPasswordConfirmation />}
-        />
+                <Route
+                    path="/admin/manage-admin-data"
+                    element={
+                        <AdminRoute>
+                            <ManageAdminData />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path="/admin/manage-user-data"
+                    element={
+                        <AdminRoute>
+                            <ManageUserData />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path={
+                        authSelector.RoleId === 3 ? "/admin/update-stock" : null
+                    }
+                    element={
+                        <AdminRoute>
+                            <UpdateStock />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path={
+                        authSelector.RoleId === 2
+                            ? "/admin/update-stock"
+                            : "/admin/update-stock/:id"
+                    }
+                    element={
+                        <AdminRoute>
+                            <WarehouseStock />
+                        </AdminRoute>
+                    }
+                />
 
-        <Route
-          path="/admin/manage-admin-data"
-          element={
-            <AdminRoute>
-              <ManageAdminData />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/manage-user-data"
-          element={
-            <AdminRoute>
-              <ManageUserData />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path={authSelector.RoleId === 3 ? "/admin/update-stock" : null}
-          element={
-            <AdminRoute>
-              <UpdateStock />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path={
-            authSelector.RoleId === 2
-              ? "/admin/update-stock"
-              : "/admin/update-stock/:id"
-          }
-          element={
-            <AdminRoute>
-              <WarehouseStock />
-            </AdminRoute>
-          }
-        />
+                <Route
+                    path="/request-reset-password"
+                    element={
+                        <GuestRoute>
+                            <RequestResetPassword />
+                        </GuestRoute>
+                    }
+                />
+                <Route path="/register" element={<Register />} />
+                <Route
+                    path="/register/verification"
+                    element={<RegisterVerification />}
+                />
 
-        <Route
-          path="/request-reset-password"
-          element={
-            <GuestRoute>
-              <RequestResetPassword />
-            </GuestRoute>
-          }
-        />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/register/verification"
-          element={<RegisterVerification />}
-        />
+                <Route
+                    path="/cart"
+                    element={
+                        <ProtectedRoute>
+                            <Cart />
+                        </ProtectedRoute>
+                    }
+                />
 
-        <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          }
-        />
+                <Route
+                    path="/admin/dashboard"
+                    element={
+                        <AdminRoute>
+                            <AdminDashboard />
+                        </AdminRoute>
+                    }
+                />
 
-        <Route
-          path="/admin/dashboard"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/category"
-          element={
-            <AdminRoute>
-              <AdminCategory />
-            </AdminRoute>
-          }
-        />
+                <Route
+                    path="/admin/category"
+                    element={
+                        <AdminRoute>
+                            <AdminCategory />
+                        </AdminRoute>
+                    }
+                />
                 <Route
                     path="/admin/sales-report"
                     element={
@@ -277,7 +278,14 @@ function App() {
                         </AdminRoute>
                     }
                 />
-
+                <Route
+                    path="/admin/order-history"
+                    element={
+                        <AdminRoute>
+                            <AdminOrderHistory />
+                        </AdminRoute>
+                    }
+                />
                 {/* Profiling Route */}
                 <Route
                     path="/user/profile"
@@ -458,16 +466,19 @@ function App() {
                 />
                 {/* Product Route */}
                 <Route path="/product" element={<Product />} />
-                <Route path="/product/:id/:product_name" element={<ProductDetail />} />
+                <Route
+                    path="/product/:id/:product_name"
+                    element={<ProductDetail />}
+                />
             </Routes>
 
             {location.pathname === "/login" ||
-                location.pathname === "/register" ||
-                location.pathname === "/reset-password-confirmation" ||
-                location.pathname === "/request-reset-password" ||
-                location.pathname === "/cart/shipment" ||
-                authSelector.RoleId === 3 ||
-                authSelector.RoleId === 2 ? null : (
+            location.pathname === "/register" ||
+            location.pathname === "/reset-password-confirmation" ||
+            location.pathname === "/request-reset-password" ||
+            location.pathname === "/cart/shipment" ||
+            authSelector.RoleId === 3 ||
+            authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Footer />
                 </Box>
