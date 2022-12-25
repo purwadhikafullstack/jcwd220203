@@ -13,10 +13,26 @@ router.post(
         acceptedFileTypes: ["png", "jpeg", "jpg"],
         filePrefix: "PROOF",
     }).single("payment_proof"),
-    transactionsController.paymentProofUpload)
-router.patch("/payment-expired/:transaction_name", transactionsController.setPaymentExpired)
+    transactionsController.paymentProofUpload
+)
+router.patch(
+    "/payment-expired/:transaction_name",
+    transactionsController.setPaymentExpired
+)
 router.get("/all-transaction-list", transactionsController.getAllMyTransaction)
 router.get("/transaction-list", transactionsController.getMyTransactionList)
 router.get("/unpaid-transaction", transactionsController.getUnpaidTransaction)
-router.patch("/finish-order/:transaction_name", transactionsController.finishTransactionHandler)
-module.exports = router 
+router.patch(
+    "/finish-order/:transaction_name",
+    transactionsController.finishTransactionHandler
+)
+
+router.patch(
+    "/cancel-unpaid-transaction/:transaction_name",
+    transactionsController.cancelUnpaidTransactionHandler
+)
+router.patch(
+    "/cancel-paid-transaction/:transaction_name",
+    transactionsController.cancelPaidTransactionHandler
+)
+module.exports = router
