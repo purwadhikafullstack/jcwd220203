@@ -2,7 +2,7 @@ import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, Al
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai"
 import { RiDeleteBin6Line } from "react-icons/ri"
 import { useEffect, useState } from "react"
-import { axiosInstance } from "../api"
+import { axiosInstance } from "../../api"
 import { ImCross, ImCheckmark } from "react-icons/im"
 import { useFormik } from "formik"
 import { useNavigate } from "react-router-dom"
@@ -195,6 +195,7 @@ const CartItems = ({ productName, price, productImage, quantity, CartId, fetchMy
                                 minHeight={'69px'}
                                 maxW={'69px'}
                                 maxH={'69px'}
+                                borderRadius={'6px'}
                             />
                         </Box>
                         <Box pl={'4px'} height={'71.8px'} onClick={productBtnHandler} cursor={'pointer'}>

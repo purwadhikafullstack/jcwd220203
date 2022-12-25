@@ -29,7 +29,7 @@ import ManageUserData from "./pages/admin/ManageUserData"
 import ManageAdminData from "./pages/admin/ManageAdminData"
 import AdminCategory from "./pages/admin/AdminCategory"
 import NotFound from "./components/404Page"
-import Cart from "./pages/Cart"
+import Cart from "./pages/Cart/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AdminProductData from "./pages/admin/AdminProductData"
 import AdminProductDataDetail from "./pages/admin/AdminProductDataDetail"
@@ -51,7 +51,7 @@ function App() {
     const authSelector = useSelector((state) => state.auth)
 
     useEffect(() => {
-        ;(async () => {
+        ; (async () => {
             const { data } = await axios.get(
                 `${process.env.REACT_APP_API_BASE_URL}/api/greetings`
             )
@@ -123,12 +123,12 @@ function App() {
             ) : null}
 
             {location.pathname === "/login" ||
-            location.pathname === "/register" ||
-            location.pathname === "/reset-password-confirmation" ||
-            location.pathname === "/request-reset-password" ||
-            location.pathname === "/cart/shipment" ||
-            authSelector.RoleId === 3 ||
-            authSelector.RoleId === 2 ? null : (
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password-confirmation" ||
+                location.pathname === "/request-reset-password" ||
+                location.pathname === "/cart/shipment" ||
+                authSelector.RoleId === 3 ||
+                authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Navbar />
                 </Box>
@@ -328,99 +328,99 @@ function App() {
                         </AdminRoute>
                     }
                 />
-        <Route
-          path="/admin/order"
-          element={
-            <AdminRoute>
-              <AdminOrder />
-            </AdminRoute>
-          }
-        />
-        {/* Profiling Route */}
-        <Route
-          path="/user/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/user/profile/change-password"
-          element={
-            <ProtectedRoute>
-              <ChangePassword />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/user/profile/address"
-          element={
-            <ProtectedRoute>
-              <AddressList />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/shipment"
-          element={
-            <ProtectedRoute>
-              <Shipment />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/shipment-component"
-          element={
-            <ProtectedRoute>
-              <ShippingComponent2 />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cart/shipment"
-          element={
-            <ProtectedRoute>
-              <Checkout />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/payment/thank-you/shopedia/:transaction_name"
-          element={
-            <ProtectedRoute>
-              <PaymentProof />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/product"
-          element={
-            <AdminRoute>
-              <AdminProductData />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/product/detail/:id"
-          element={
-            <AdminRoute>
-              <AdminProductDataDetail />
-            </AdminRoute>
-          }
-        />
-        {/* Product Route */}
-        <Route path="/product" element={<Product />} />
-        <Route path="/product/:id/:product_name" element={<ProductDetail />} />
-      </Routes>
+                <Route
+                    path="/admin/order"
+                    element={
+                        <AdminRoute>
+                            <AdminOrder />
+                        </AdminRoute>
+                    }
+                />
+                {/* Profiling Route */}
+                <Route
+                    path="/user/profile"
+                    element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/user/profile/change-password"
+                    element={
+                        <ProtectedRoute>
+                            <ChangePassword />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/user/profile/address"
+                    element={
+                        <ProtectedRoute>
+                            <AddressList />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shipment"
+                    element={
+                        <ProtectedRoute>
+                            <Shipment />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shipment-component"
+                    element={
+                        <ProtectedRoute>
+                            <ShippingComponent2 />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/cart/shipment"
+                    element={
+                        <ProtectedRoute>
+                            <Checkout />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/payment/thank-you/shopedia/:transaction_name"
+                    element={
+                        <ProtectedRoute>
+                            <PaymentProof />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/product"
+                    element={
+                        <AdminRoute>
+                            <AdminProductData />
+                        </AdminRoute>
+                    }
+                />
+                <Route
+                    path="/admin/product/detail/:id"
+                    element={
+                        <AdminRoute>
+                            <AdminProductDataDetail />
+                        </AdminRoute>
+                    }
+                />
+                {/* Product Route */}
+                <Route path="/product" element={<Product />} />
+                <Route path="/product/:id/:product_name" element={<ProductDetail />} />
+            </Routes>
 
             {location.pathname === "/login" ||
-            location.pathname === "/register" ||
-            location.pathname === "/reset-password-confirmation" ||
-            location.pathname === "/request-reset-password" ||
-            location.pathname === "/cart/shipment" ||
-            authSelector.RoleId === 3 ||
-            authSelector.RoleId === 2 ? null : (
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password-confirmation" ||
+                location.pathname === "/request-reset-password" ||
+                location.pathname === "/cart/shipment" ||
+                authSelector.RoleId === 3 ||
+                authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Footer />
                 </Box>

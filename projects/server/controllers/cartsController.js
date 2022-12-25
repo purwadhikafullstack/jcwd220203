@@ -225,9 +225,34 @@ const cartsController = {
                 order: [["createdAt", "DESC"]],
             })
 
+            const getAllMyCheckedCartItems = await Cart.findAll({
+                where: {
+                    UserId: req.user.id,
+                    is_checked: true
+                },
+                include: [
+                    {
+                        model: db.Product,
+                        include: [
+                            {
+                                model: db.Image_Url,
+                            },
+                            {
+                                model: db.Total_Stock
+                            }
+                        ],
+                    },
+                ],
+                order: [["createdAt", "DESC"]],
+            })
+
+            const cartCheckedCount = getAllMyCheckedCartItems.map((val) => val.id)
+            const checkedDataCount = cartCheckedCount.length
+
             return res.status(200).json({
                 message: "showMyItemCart",
-                data: getAllMyCartItems
+                data: getAllMyCartItems,
+                checkedDataCount: checkedDataCount
             })
 
         } catch (err) {
@@ -412,7 +437,8 @@ const cartsController = {
         try {
             await Cart.destroy({
                 where: {
-                    UserId: req.user.id
+                    UserId: req.user.id,
+                    is_checked: true
                 },
             })
             return res.status(200).json({

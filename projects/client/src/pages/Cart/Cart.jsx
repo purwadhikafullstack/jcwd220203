@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Grid,
   GridItem,
   Image,
@@ -17,22 +18,24 @@ import {
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { axiosInstance } from "../api"
-import { fillCart, getTotalQuantity } from "../redux/features/cartSlice"
-import CartItems from "../components/CartItems"
-import { getTotalPrice } from "../redux/features/cartSlice"
-import emptyCart from "../assets/emptyCart.png"
+import { axiosInstance } from "../../api"
+import { fillCart, getTotalQuantity } from "../../redux/features/cartSlice"
+import CartItems from "./CartItems"
+import { getTotalPrice } from "../../redux/features/cartSlice"
+import emptyCart from "../../assets/emptyCart.png"
 import { Link, useNavigate } from "react-router-dom"
 import * as Yup from "yup"
 import { useFormik } from "formik"
-import FormAddress from "../components/profile/FormAddress"
-import Alert from "../components/profile/Alert"
+import FormAddress from "../../components/profile/FormAddress"
+import Alert from "../../components/profile/Alert"
 
 const Cart = () => {
   const [allChecked, setAllChecked] = useState(false)
   const [address, setAddress] = useState([])
   const [selectedNewProvince, setSelectedNewProvince] = useState(0)
   const [selectedNewCity, setSelectedNewCity] = useState(0)
+  const [selectedCart, setSelectedCart] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
 
   const cancelRef = React.useRef()
 
@@ -63,6 +66,8 @@ const Cart = () => {
       const response = await axiosInstance.get("/carts/me")
       dispatch(fillCart(response.data.data))
 
+      setSelectedCart(response.data.checkedDataCount)
+
       const cartChecked = response.data.data.map((val) => val.is_checked)
 
       if (!cartChecked.includes(false)) {
@@ -70,6 +75,7 @@ const Cart = () => {
       } else {
         setAllChecked(false)
       }
+      setIsLoading(true)
     } catch (err) {
       console.log(err)
     }
@@ -275,7 +281,14 @@ const Cart = () => {
   }, [])
 
   // if cart empty
-  if (!cartSelector.cart.length) {
+
+  if (!cartSelector.cart.length && isLoading === false) {
+    return (
+      <Box w={'1583px'} h={'700px'} display={'flex'} justifyContent={'center'} alignItems={'center'} alignContent={'center'}>
+        <CircularProgress isIndeterminate color='#0095DA' thickness='160px' size='100px' />
+      </Box>
+    )
+  } else if (!cartSelector.cart.length && isLoading === true) {
     return (
       <Box mt={"140px"} mb={"70px"} textAlign={"center"} display={"block"}>
         <Image src={emptyCart} width={"200px"} margin={"auto auto 20px"} />
@@ -390,7 +403,7 @@ const Cart = () => {
                       Select All
                     </Text>
                   </Checkbox>
-                  {allChecked !== true ? null : (
+                  {selectedCart === 0 ? null : (
                     <Text
                       textAlign={"end"}
                       fontSize={"14px"}
@@ -408,7 +421,9 @@ const Cart = () => {
                 </Box>
                 {/* cart item list */}
                 <Box width={"650px"} h={"5px"} bgColor={"#f7931E"} />
-                {renderCartItems()}
+                <Box>
+                  {isLoading && renderCartItems()}
+                </Box>
                 <Box pb={"50px"}></Box>
               </Box>
             </GridItem>
@@ -439,7 +454,7 @@ const Cart = () => {
                 <Box
                   display={"flex"}
                   justifyContent={"space-between"}
-                  borderBottom={"1px solid #E5E7E9"}
+                  borderBottom={"1px solid #fcd4a5"}
                   pb={"16px"}
                 >
                   <Text
@@ -586,7 +601,7 @@ const Cart = () => {
                 lineHeight={"28px"}
                 p={"0px"}
               >
-                Remove {cartSelector.cart.length} items?
+                Remove {selectedCart} items?
               </AlertDialogHeader>
 
               <AlertDialogBody
