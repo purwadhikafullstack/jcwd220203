@@ -15,4 +15,8 @@ router.post(
     }).single("payment_proof"),
     transactionsController.paymentProofUpload)
 router.patch("/payment-expired/:transaction_name", transactionsController.setPaymentExpired)
+router.get("/all-transaction-list", transactionsController.getAllMyTransaction)
+router.get("/transaction-list", transactionsController.getMyTransactionList)
+router.get("/unpaid-transaction", transactionsController.getUnpaidTransaction)
+router.patch("/finish-order/:transaction_name", transactionsController.finishTransactionHandler)
 module.exports = router 

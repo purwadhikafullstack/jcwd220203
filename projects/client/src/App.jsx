@@ -45,7 +45,10 @@ import AdminOrder from "./pages/admin/AdminOrder"
 import PaymentProof from "./pages/PaymentProof"
 import AdminMutationStock from "./pages/admin/AdminMutationStock"
 import AdminOrderHistory from "./pages/admin/AdminOrderHistory"
+import TransactionList from "./pages/TransactionList/TransactionList"
+import PaymentList from "./pages/TransactionList/PaymentList"
 import AdminSalesReport from "./pages/admin/AdminSalesReport"
+
 
 function App() {
     const [message, setMessage] = useState("")
@@ -400,6 +403,22 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <PaymentProof />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/transaction-list"
+                    element={
+                        <ProtectedRoute>
+                            <TransactionList />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/transaction/payment-list"
+                    element={
+                        <ProtectedRoute>
+                            <PaymentList />
                         </ProtectedRoute>
                     }
                 />

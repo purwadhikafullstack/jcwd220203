@@ -43,6 +43,7 @@ import status1 from "../assets/transactionStatusLogo/awaiting.png"
 import status2 from "../assets/transactionStatusLogo/processed2.png"
 import status3 from "../assets/transactionStatusLogo/Delivered.png"
 import status4 from "../assets/transactionStatusLogo/Shipping.png"
+import { fillTrans } from "../redux/features/transSlice"
 
 const Navbar = ({ onChange, onClick, onKeyDown }) => {
     const authSelector = useSelector((state) => state.auth)
@@ -52,12 +53,41 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
     const [showCategory, setShowCategory] = useState([])
     const [totalCartQuantity, setTotalCartQuantity] = useState(0)
     const [cartData, setCartData] = useState([])
+    const [transData, setTransData] = useState([])
+    const [unpaidTransaction, setUnpaidTransaction] = useState([])
 
     const dispatch = useDispatch()
     const toast = useToast()
     const navigate = useNavigate()
     const apiImg = process.env.REACT_APP_IMAGE_URL
     const location = useLocation()
+
+    const transSelector = useSelector((state) => state.trans)
+    const statusOrder = transSelector.trans.map((val) => val.OrderStatusId)
+
+    let StatusOrderActive = []
+    let AwaitingConfirmation = []
+    let Processed = []
+    let Shipping = []
+    let Delivered = []
+
+    for (let i = 0; i < statusOrder.length; i++) {
+
+        if (statusOrder[i] === 1) {
+            AwaitingConfirmation.push(statusOrder[i])
+        } else if (statusOrder[i] === 2) {
+            Processed.push(statusOrder[i])
+        } else if (statusOrder[i] === 3) {
+            Shipping.push(statusOrder[i])
+        } else if (statusOrder[i] === 4) {
+            Delivered.push(statusOrder[i])
+        }
+    }
+    for (let i = 0; i < statusOrder.length; i++) {
+        if (statusOrder[i] === 1 || statusOrder[i] === 2 || statusOrder[i] === 3 || statusOrder[i] === 4) {
+            StatusOrderActive.push(statusOrder[i])
+        }
+    }
 
     const refreshPage = () => {
         window.location.reload(false)
@@ -78,6 +108,26 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
             }
 
             setTotalCartQuantity(Total)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const fetchAllTransaction = async () => {
+        try {
+            const response = await axiosInstance.get('/transactions/all-transaction-list')
+            dispatch(fillTrans(response.data.data))
+            setTransData(response.data.data)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const fetchUnpaidTransaction = async () => {
+        try {
+            const response = await axiosInstance.get("/transactions/unpaid-transaction")
+
+            setUnpaidTransaction(response.data.data)
         } catch (err) {
             console.log(err)
         }
@@ -119,7 +169,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
 
         if (
             location.pathname === "/cart" ||
-            location.pathname === "/transaction" ||
+            location.pathname === "/transaction-list" ||
             location.pathname === "/user/profile" ||
             location.pathname === "/user/profile/change-password" ||
             location.pathname === "/user/profile/address"
@@ -195,7 +245,8 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                     }
                                 >
                                     {val.quantity}{" "}
-                                    {val.quantity > 1 ? "items" : "item"}
+                                    {val.quantity > 1 ? "items" : "item"}{" "}
+                                    ({val.Product.product_weight}gr)
                                 </Text>
                             </Box>
                         </Box>
@@ -229,6 +280,22 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
         })
     }
 
+    const goToAwaitingConfirmation = () => {
+        navigate('/transaction-list?status=Awaiting+Confirmation')
+    }
+
+    const goToProcessed = () => {
+        navigate('/transaction-list?status=Processed')
+    }
+
+    const goToDelivered = () => {
+        navigate('/transaction-list?status=Delivered')
+    }
+
+    const goToShipping = () => {
+        navigate('/transaction-list?status=Shipping')
+    }
+
     useEffect(() => {
         setSearchValue(searchParam.get("name"))
     }, [])
@@ -236,7 +303,12 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
     useEffect(() => {
         fetchMyCart()
         fetchCategory()
-    }, [cartData, authSelector])
+    }, [cartData])
+
+    useEffect(() => {
+        fetchUnpaidTransaction()
+        fetchAllTransaction()
+    }, [transData])
 
     return (
         <>
@@ -382,15 +454,39 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         color: "orange",
                                                     }}
                                                 >
-                                                    <IoIosNotifications
-                                                        fontSize={"22px"}
-                                                    />
+                                                    <Box display={'flex'} flexDir={'row'}>
+                                                        <IoIosNotifications
+                                                            fontSize={"22px"}
+                                                        />
+                                                        {transSelector.trans.length &&
+                                                            authSelector.id ? (
+                                                            <sup>
+                                                                <Box
+                                                                    fontSize={
+                                                                        "11px"
+                                                                    }
+                                                                    backgroundColor={
+                                                                        "#EF144A"
+                                                                    }
+                                                                    borderRadius={
+                                                                        "50%"
+                                                                    }
+                                                                    m={'-2px -9px 0px -8px'}
+                                                                    p={'7px 6px 8px 5px'}
+                                                                    color={"white"}
+                                                                    fontWeight={700}
+                                                                >
+                                                                    {StatusOrderActive.length + unpaidTransaction.length}
+                                                                </Box>
+                                                            </sup>
+                                                        ) : null}
+                                                    </Box>
                                                 </Stack>
                                             </Box>
                                         </PopoverTrigger>
                                         <PopoverContent
                                             bgColor={"#E5F9F6"}
-                                            width={"340px"}
+                                            width={"310px"}
                                             height={"270px"}
                                             borderRadius={"20px"}
                                         >
@@ -425,14 +521,14 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                     <Text
                                                         fontSize={"15px"}
                                                         fontWeight={600}
-                                                        ml={"40px"}
+                                                        ml={"25px"}
                                                         fontFamily={
                                                             "Open Sauce One,Nunito Sans, sans-serif"
                                                         }
                                                     >
                                                         Transaction
                                                     </Text>
-                                                    <Link to={"/transaction"}>
+                                                    <Link to={"/transaction-list"}>
                                                         <Text
                                                             color={"#F7931E"}
                                                             fontSize={"12px"}
@@ -464,21 +560,47 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         mb={"7px"}
                                                     />
                                                 </Box>
-                                                <Box pl={"8px"} pr={"8px"}>
+                                                <Box pl={"8px"} pr={"8px"} mt={'4px'}>
                                                     <Box
-                                                        fontSize={"13px"}
-                                                        fontWeight={400}
-                                                        mt={"7px"}
-                                                        fontFamily={
-                                                            "Open Sauce One,Nunito Sans, sans-serif"
-                                                        }
-                                                    >
-                                                        Transaction Status
+                                                        _hover={{
+                                                            bgColor: "#f3f4f5"
+                                                        }}
+                                                        display={'flex'}
+                                                        w={'284px'}
+                                                        flexDir={'row'}
+                                                        justifyContent={'space-between'}
+                                                        border={'1px solid #99d5f0'}
+                                                        borderRadius={'10px'}
+                                                        p={'5px 8px 5px 8px'}
+                                                        alignItems={'center'}
+                                                        ml={'-8px'}
+                                                        onClick={() => navigate('/transaction/payment-list')}>
+                                                        <Text
+                                                            color={'#31353BAD'}
+                                                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                                            fontSize={"11px"}
+                                                            fontWeight={400}
+                                                        >
+                                                            Waiting For Payment
+                                                        </Text>
+                                                        <Text
+                                                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                                            fontWeight={500}
+                                                            textAlign={'center'}
+                                                            borderRadius={'8px'}
+                                                            color={'#fff'}
+                                                            bgColor={unpaidTransaction.length === 0 ? null : '#ef144a'}
+                                                            p={'0px 1px'}
+                                                            fontSize={'10px '}
+                                                            w={'15px'}
+                                                        >
+                                                            {unpaidTransaction.length === 0 ? null : unpaidTransaction.length}
+                                                        </Text>
                                                     </Box>
                                                     <Grid
                                                         templateColumns="repeat(4, 1fr)"
                                                         gap={"4px"}
-                                                        mt={"15px"}
+                                                        mt={"19px"}
                                                         display={"flex"}
                                                         justifyContent={
                                                             "space-between"
@@ -490,13 +612,42 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                             alignItems={
                                                                 "center"
                                                             }
+                                                            onClick={goToAwaitingConfirmation}
                                                         >
-                                                            <Image
-                                                                margin={"auto"}
-                                                                w={"47px"}
-                                                                h={"47px"}
-                                                                src={status1}
-                                                            />
+                                                            <Box display={'flex'}>
+                                                                <Image
+                                                                    margin={"auto"}
+                                                                    minW={"35px"}
+                                                                    minH={"35px"}
+                                                                    h={'35px'}
+                                                                    w={'35px'}
+                                                                    maxH={'35px'}
+                                                                    maxW={'35px'}
+                                                                    src={status1}
+                                                                    ml={'17px'}
+                                                                />
+                                                                {!AwaitingConfirmation.length ? null : (
+                                                                    <sup>
+                                                                        <Box
+                                                                            fontSize={
+                                                                                "11px"
+                                                                            }
+                                                                            backgroundColor={
+                                                                                "#EF144A"
+                                                                            }
+                                                                            borderRadius={
+                                                                                "50%"
+                                                                            }
+                                                                            m={'3px 11px 0px -8px'}
+                                                                            p={'6px 5px 8px 5px'}
+                                                                            color={"white"}
+                                                                            fontWeight={700}
+                                                                        >
+                                                                            {AwaitingConfirmation.length}
+                                                                        </Box>
+                                                                    </sup>
+                                                                )}
+                                                            </Box>
                                                             <Text
                                                                 mt={"8px"}
                                                                 textAlign={
@@ -517,14 +668,43 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         <GridItem
                                                             w="60px"
                                                             h="10"
+                                                            onClick={goToProcessed}
                                                         >
-                                                            <Image
-                                                                mt={"8px"}
-                                                                margin={"auto"}
-                                                                w={"47px"}
-                                                                h={"47px"}
-                                                                src={status2}
-                                                            />
+                                                            <Box display={'flex'}>
+                                                                <Image
+                                                                    mt={"8px"}
+                                                                    margin={"auto"}
+                                                                    minW={"35px"}
+                                                                    minH={"35px"}
+                                                                    h={'35px'}
+                                                                    w={'35px'}
+                                                                    maxH={'35px'}
+                                                                    maxW={'35px'}
+                                                                    src={status2}
+                                                                    ml={'13px'}
+                                                                />
+                                                                {!Processed.length ? null : (
+                                                                    <sup>
+                                                                        <Box
+                                                                            fontSize={
+                                                                                "11px"
+                                                                            }
+                                                                            backgroundColor={
+                                                                                "#EF144A"
+                                                                            }
+                                                                            borderRadius={
+                                                                                "50%"
+                                                                            }
+                                                                            m={'3px 6px 0px -8px'}
+                                                                            p={'6px 5px 8px 5px'}
+                                                                            color={"white"}
+                                                                            fontWeight={700}
+                                                                        >
+                                                                            {Processed.length}
+                                                                        </Box>
+                                                                    </sup>
+                                                                )}
+                                                            </Box>
                                                             <Text
                                                                 mt={"8px"}
                                                                 textAlign={
@@ -544,15 +724,45 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         <GridItem
                                                             w="60px"
                                                             h="10"
+                                                            onClick={goToShipping}
                                                         >
-                                                            <Image
-                                                                margin={"auto"}
-                                                                src={status4}
-                                                                w={"47px"}
-                                                                h={"47px"}
-                                                            />
+                                                            <Box display={'flex'}>
+                                                                <Image
+                                                                    margin={"auto"}
+                                                                    src={status4}
+                                                                    minW={"40px"}
+                                                                    minH={"38px"}
+                                                                    h={'40px'}
+                                                                    w={'38px'}
+                                                                    maxH={'40px'}
+                                                                    maxW={'38px'}
+                                                                    ml={'8px'}
+                                                                    mt={'-3px'}
+                                                                />
+                                                                {!Shipping.length ? null : (
+                                                                    <sup>
+                                                                        <Box
+                                                                            fontSize={
+                                                                                "11px"
+                                                                            }
+                                                                            backgroundColor={
+                                                                                "#EF144A"
+                                                                            }
+                                                                            borderRadius={
+                                                                                "50%"
+                                                                            }
+                                                                            m={'5px 5px 0px -10px'}
+                                                                            p={'6px 5px 8px 5px'}
+                                                                            color={"white"}
+                                                                            fontWeight={700}
+                                                                        >
+                                                                            {Shipping.length}
+                                                                        </Box>
+                                                                    </sup>
+                                                                )}
+                                                            </Box>
                                                             <Text
-                                                                mt={"8px"}
+                                                                mt={"6px"}
                                                                 textAlign={
                                                                     "center"
                                                                 }
@@ -570,15 +780,37 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         <GridItem
                                                             w="60px"
                                                             h="10"
+                                                            onClick={goToDelivered}
                                                         >
-                                                            <Image
-                                                                margin={"auto"}
-                                                                src={status3}
-                                                                w={"47px"}
-                                                                h={"47px"}
-                                                            />
+                                                            <Box display={'flex'}>
+                                                                <Image
+                                                                    margin={"auto"}
+                                                                    src={status3}
+                                                                    minW={"40px"}
+                                                                    minH={"37px"}
+                                                                    h={'40px'}
+                                                                    w={'37px'}
+                                                                    maxH={'40px'}
+                                                                    maxW={'37px'}
+                                                                    mr={'-3px'}
+                                                                    mt={'-1px'}
+                                                                />
+                                                                <sup>
+                                                                    <Box
+                                                                        fontSize={"11px"}
+                                                                        bgColor={!Delivered.length ? "transparent" : "#EF144A"}
+                                                                        borderRadius={"50%"}
+                                                                        m={'5px 8px 0px -10px'}
+                                                                        p={'6px 5px 8px 5px'}
+                                                                        color={!Delivered.length ? "transparent" : "white"}
+                                                                        fontWeight={700}
+                                                                    >
+                                                                        {Shipping.length}
+                                                                    </Box>
+                                                                </sup>
+                                                            </Box>
                                                             <Text
-                                                                mt={"8px"}
+                                                                mt={"4px"}
                                                                 textAlign={
                                                                     "center"
                                                                 }
@@ -597,9 +829,9 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                 </Box>
                                                 <Box
                                                     width={"100%"}
-                                                    bgColor={"#e6e6e6"}
+                                                    bgColor={"#e5e7e9"}
                                                     h={"5px"}
-                                                    mt={"60px"}
+                                                    mt={"50px"}
                                                 />
                                             </PopoverBody>
                                         </PopoverContent>
@@ -642,7 +874,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         fontSize={"22px"}
                                                     />
                                                     {cartSelector.cart.length &&
-                                                    authSelector.id ? (
+                                                        authSelector.id ? (
                                                         <sup>
                                                             <Box
                                                                 fontSize={
@@ -654,13 +886,8 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                                 borderRadius={
                                                                     "50%"
                                                                 }
-                                                                mt={"-2px"}
-                                                                ml={"-8px"}
-                                                                mr={"-8px"}
-                                                                pt={"8px"}
-                                                                pr={"7px"}
-                                                                pb={"9px"}
-                                                                pl={"6px"}
+                                                                m={'-2px -8px 0px -8px'}
+                                                                p={'7px 6px 8px 5px'}
                                                                 color={"white"}
                                                                 fontWeight={700}
                                                             >
@@ -914,7 +1141,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                         </Link>
 
                                                         <Link
-                                                            to={"/transaction"}
+                                                            to={"/transaction-list"}
                                                         >
                                                             <Box
                                                                 _hover={{
@@ -926,19 +1153,19 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                                 p={"5px 4px"}
                                                             >
                                                                 <Text>
-                                                                    Transaction
+                                                                    Transaction-list
                                                                 </Text>
                                                             </Box>
                                                         </Link>
                                                         {location.pathname ===
                                                             "/cart" ||
-                                                        location.pathname ===
-                                                            "/transaction" ||
-                                                        location.pathname ===
+                                                            location.pathname ===
+                                                            "/transaction-list" ||
+                                                            location.pathname ===
                                                             "/user/profile" ||
-                                                        location.pathname ===
+                                                            location.pathname ===
                                                             "/user/profile/change-password" ||
-                                                        location.pathname ===
+                                                            location.pathname ===
                                                             "/user/profile/address" ? (
                                                             <Link
                                                                 to={"/login"}
