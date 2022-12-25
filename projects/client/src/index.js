@@ -7,12 +7,14 @@ import { ChakraProvider } from "@chakra-ui/react"
 import { Provider } from "react-redux"
 import { BrowserRouter } from "react-router-dom"
 import { store } from "./redux/store"
+import ScrollToTop from "./components/ScrollToTop"
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
     <Provider store={store}>
         <ChakraProvider>
             <BrowserRouter>
+                <ScrollToTop />
                 <App />
             </BrowserRouter>
         </ChakraProvider>

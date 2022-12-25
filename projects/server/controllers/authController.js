@@ -24,6 +24,12 @@ const authController = {
         })
       }
 
+      if (findUserByEmail.is_verify === false) {
+        return res.status(400).json({
+          message: "Unverified user",
+        })
+      }
+
       const passwordValid = bcrypt.compareSync(
         password,
         findUserByEmail.password
@@ -157,11 +163,15 @@ const authController = {
         },
       })
 
-      console.log(findUserByEmail)
-
       if (!findUserByEmail) {
         return res.status(400).json({
           message: "Email not found",
+        })
+      }
+
+      if (findUserByEmail.is_verify === false) {
+        return res.status(400).json({
+          message: "Unverified user",
         })
       }
 

@@ -239,12 +239,7 @@ const LoginPage = () => {
                 justifyContent={"center"}
             >
                 <Link to={"/"}>
-                    <Image
-                        src={logo}
-                        width={"50px"}
-                        display={"inline"}
-                        mt={"5px"}
-                    />
+                    <Image src={logo} width={"50px"} display={"inline"} mt={"5px"} />
                 </Link>
                 <Link to={"/"}>
                     <Text
@@ -252,6 +247,7 @@ const LoginPage = () => {
                         fontWeight="bold"
                         color={"#0095DA"}
                         display="inline"
+                        fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                     >
                         Shop
                     </Text>
@@ -284,17 +280,14 @@ const LoginPage = () => {
                     pr="80px"
                 >
                     <Box mt={"40px"}>
-                        <Image
-                            src={Oshop}
-                            width="480px"
-                            justifyContent={"end"}
-                        />
+                        <Image src={Oshop} width="480px" justifyContent={"end"} />
                         <Text
                             m="27px 0 8px"
                             fontSize={"22.4px"}
                             fontWeight="bold"
                             textAlign={"center"}
                             color={"#009CE2"}
+                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                         >
                             It's not complicated at Shopedia
                         </Text>
@@ -304,9 +297,9 @@ const LoginPage = () => {
                             fontWeight="semibold"
                             textAlign={"center"}
                             color={"#009CE2"}
+                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                         >
-                            Join and feel the convenience of transactions on
-                            Shopedia
+                            Join and feel the convenience of transactions on Shopedia
                         </Text>
                     </Box>
                 </Box>
@@ -329,18 +322,14 @@ const LoginPage = () => {
                             fontWeight={"bold"}
                             textAlign={"left"}
                             color={"#0095DA"}
+                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                         >
                             Log in{" "}
                         </Text>
-                        <Box
-                            mt="8px"
-                            fontSize={"12px"}
-                            textAlign="left"
-                            color={"#F7931E"}
-                        >
-                            <Text display={"inline"} mr="1" color={"#F37121"}>
-                                Welcome to Shopedia, please put your login
-                                credentials below to access our website
+                        <Box mt="8px" fontSize={"12px"} textAlign="left" color={"#F7931E"}>
+                            <Text display={"inline"} mr="1" color={"#31353BAD"} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                Welcome to Shopedia, please put your login credentials below to
+                                access our website
                             </Text>
                         </Box>
 
@@ -407,6 +396,7 @@ const LoginPage = () => {
                                                 color={"#0095DA"}
                                                 fontSize={"11px"}
                                                 mt={"5px"}
+                                                fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                                             >
                                                 Forgot password?
                                             </Text>
@@ -425,7 +415,9 @@ const LoginPage = () => {
                                 isDisabled={!formik.values.email}
                                 type={"submit"}
                             >
-                                <Text fontWeight={"bold"}>Log in</Text>
+                                <Text fontWeight={"bold"} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                    Log in
+                                </Text>
                             </Button>
 
                             <Box margin="30px 0">
@@ -447,6 +439,7 @@ const LoginPage = () => {
                                     mx={"auto"}
                                     bgColor={"white"}
                                     color={"#B0BFBF"}
+                                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                                 >
                                     or
                                 </Text>
@@ -470,10 +463,12 @@ const LoginPage = () => {
                                             border="1px solid #A6B0DD"
                                             _hover={false}
                                         >
-                                            <Box mr="-1px" my={"auto"}>
+                                            <Box ml="-7px" my={"auto"}>
                                                 <FcGoogle fontSize={"25px"} />
                                             </Box>
-                                            <Text>Google</Text>
+                                            <Text pl={'2px'} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                                Google
+                                            </Text>
                                         </Button>
                                     )}
                                 />
@@ -499,7 +494,9 @@ const LoginPage = () => {
                                                     size={"25px"}
                                                 />
                                             </Box>
-                                            <Text>FaceBook</Text>
+                                            <Text fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                                FaceBook
+                                            </Text>
                                         </Button>
                                     )}
                                 />
@@ -507,7 +504,7 @@ const LoginPage = () => {
 
                             {/* redirect register */}
                             <Box textAlign={"center"} mt={"30px"}>
-                                <Text color={"#0095DA"} fontSize={"12px"}>
+                                <Text color={"#31353BF5"} fontSize={"12px"} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
                                     Don't have an account?
                                     <span style={myStyle}>
                                         <Link to={"/register"}>Sign up</Link>
