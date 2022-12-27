@@ -4,32 +4,26 @@ import {
     Grid,
     GridItem,
     Image,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalOverlay,
     Popover,
-    PopoverArrow,
     PopoverBody,
-    PopoverCloseButton,
     PopoverContent,
-    PopoverHeader,
     PopoverTrigger,
     Text,
     useDisclosure,
     useToast,
 } from "@chakra-ui/react"
+import { Link } from "react-router-dom"
+import { axiosInstance } from "../../../api"
+import moment from "moment"
+import ModalCancelUnpaidTransaction from "../../../components/TransactionList/WaitingForPayment/ModalCancelUnpaidTransaction"
+import ModalDetailTransaction from "../../../components/TransactionList/WaitingForPayment/Modal Detail Transaction"
+import mandiri from "../../../assets/BankLogo/mandiri.png"
+import BNI from "../../../assets/BankLogo/BNI.png"
+import BCA from "../../../assets/BankLogo/BCA.png"
 import { HiOutlineShoppingBag } from "react-icons/hi2"
 import { AiOutlineClockCircle } from "react-icons/ai"
 import { HiOutlineDotsHorizontal } from "react-icons/hi"
 import { RiDeleteBin6Line } from "react-icons/ri"
-import mandiri from "../../assets/BankLogo/mandiri.png"
-import BNI from "../../assets/BankLogo/BNI.png"
-import BCA from "../../assets/BankLogo/BCA.png"
-import moment from "moment"
-import ModalDetailTransaction from "../../components/PaymentProof/Modal Detail Transaction"
-import { Link } from "react-router-dom"
-import { axiosInstance } from "../../api"
 
 const PaymentListItem = ({
     fetchUnpaidTransaction,
@@ -58,15 +52,14 @@ const PaymentListItem = ({
 
     const cancelUnpaidTransaction = async () => {
         try {
-            axiosInstance.patch(
-                `/transactions/cancel-unpaid-transaction/${transactionName}`
-            )
+            axiosInstance.patch(`/transactions/cancel-unpaid-transaction/${transactionName}`)
 
             toast({
                 title: "Success",
                 description: "You have successfully canceled this transaction",
                 status: "success",
             })
+
             fetchUnpaidTransaction()
             cancelOnClose()
         } catch (err) {
@@ -100,14 +93,10 @@ const PaymentListItem = ({
                             color={"#000000B3"}
                             fontFamily={"Open Sauce One, sans-serif"}
                         >
-                            {
-                                new Intl.NumberFormat("id-ID", {
-                                    style: "currency",
-                                    currency: "IDR",
-                                })
-                                    .format(val.price_per_item * val.quantity)
-                                    .split(",")[0]
-                            }
+                            {new Intl.NumberFormat("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                            }).format(val.price_per_item * val.quantity).split(",")[0]}
                         </Text>
                     </Box>
                     <Text
@@ -120,9 +109,7 @@ const PaymentListItem = ({
                             new Intl.NumberFormat("id-ID", {
                                 style: "currency",
                                 currency: "IDR",
-                            })
-                                .format(val.price_per_item)
-                                .split(",")[0]
+                            }).format(val.price_per_item).split(",")[0]
                         }
                     </Text>
                 </>
@@ -283,8 +270,8 @@ const PaymentListItem = ({
                                 {paymentMethod === "Mandiri Virtual Account"
                                     ? "8870810222729362"
                                     : paymentMethod === "BCA Virtual Account"
-                                    ? "8870810222728301"
-                                    : "8870810222743225"}
+                                        ? "8870810222728301"
+                                        : "8870810222743225"}
                             </Text>
                         </Box>
                     </GridItem>
@@ -310,14 +297,10 @@ const PaymentListItem = ({
                                 fontWeight={"bold"}
                                 lineHeight={"20px"}
                             >
-                                {
-                                    new Intl.NumberFormat("id-ID", {
-                                        style: "currency",
-                                        currency: "IDR",
-                                    })
-                                        .format(totalPrice)
-                                        .split(",")[0]
-                                }
+                                {new Intl.NumberFormat("id-ID", {
+                                    style: "currency",
+                                    currency: "IDR",
+                                }).format(totalPrice).split(",")[0]}
                             </Text>
                         </Box>
                     </GridItem>
@@ -435,95 +418,15 @@ const PaymentListItem = ({
                 </Box>
             </Box>
 
-            <Modal
-                isOpen={cancelIsOpen}
-                onOpen={cancelOnOpen}
-                onClose={cancelOnClose}
-                closeOnEsc={false}
-            >
-                <ModalOverlay />
-                <ModalContent
-                    mt={"230px"}
-                    w={"400px"}
-                    h={"206.5px"}
-                    borderRadius={"12px"}
-                >
-                    <ModalBody p={"32px 32px 24px"}>
-                        <Box
-                            display={"flex"}
-                            flexDir={"column"}
-                            alignItems={"center"}
-                            alignContent={"center"}
-                        >
-                            <Text
-                                color={"#31353BF5"}
-                                fontSize={"24px"}
-                                fontFamily={
-                                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                                }
-                                mb={"14px"}
-                                fontWeight={700}
-                                lineHeight={"28px"}
-                                letterSpacing={"-0,2px"}
-                                textAlign={"center"}
-                            >
-                                Are you sure you want to cancel the transaction?
-                            </Text>
-                            <Text
-                                fontSize={"14px"}
-                                fontFamily={"Open Sauce One, sans-serif"}
-                                mb={"16px"}
-                                color={"#0000008A"}
-                                lineHeight={"1.15"}
-                            >
-                                Confirm Your Transaction Cancellation
-                            </Text>
-                        </Box>
-                        <Box
-                            display={"flex"}
-                            flexDir={"row"}
-                            justifyContent={"space-between"}
-                        >
-                            <Button
-                                w={"164px"}
-                                h={"48px"}
-                                fontSize={"16px"}
-                                fontFamily={"Open Sauce One, sans-serif"}
-                                lineHeight={"22px"}
-                                fontWeight={600}
-                                bgColor={"#fff"}
-                                border={"1px solid #0095DA"}
-                                color={"#0095DA"}
-                                borderRadius={"12px"}
-                                onClick={() => cancelOnClose()}
-                            >
-                                Go Back
-                            </Button>
-                            <Button
-                                w={"164px"}
-                                h={"48px"}
-                                fontSize={"16px"}
-                                fontFamily={"Open Sauce One, sans-serif"}
-                                lineHeight={"22px"}
-                                fontWeight={600}
-                                color={"#fff"}
-                                bgColor={"#0095DA"}
-                                borderRadius={"12px"}
-                                _hover={{
-                                    bgColor: "#0370A2",
-                                }}
-                                _active={{
-                                    bgColor: "#0370A2",
-                                }}
-                                onClick={cancelUnpaidTransaction}
-                            >
-                                Yes, Cancel
-                            </Button>
-                        </Box>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+            {/* cancel unpaid transaction */}
+            <ModalCancelUnpaidTransaction
+                cancelIsOpen={cancelIsOpen}
+                cancelOnOpen={cancelOnOpen}
+                cancelOnClose={cancelOnClose}
+                cancelUnpaidTransaction={cancelUnpaidTransaction}
+            />
 
+            {/* detail transaction */}
             <ModalDetailTransaction
                 isOpen={isOpen}
                 onClose={onClose}

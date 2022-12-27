@@ -805,7 +805,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
                                                                         color={!Delivered.length ? "transparent" : "white"}
                                                                         fontWeight={700}
                                                                     >
-                                                                        {Shipping.length}
+                                                                        {Delivered.length}
                                                                     </Box>
                                                                 </sup>
                                                             </Box>

@@ -18,6 +18,10 @@ const Pagination = ({ searchParam, setPage, number, setSearchParam, transaction_
             params["updatedAt"] = searchParam.get("updatedAt")
         }
 
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
+        }
+
         params["page"] = number
         setSearchParam(params)
     }

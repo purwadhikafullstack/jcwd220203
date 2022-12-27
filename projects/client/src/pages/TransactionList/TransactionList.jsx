@@ -4,7 +4,7 @@ import rupiah from "../../assets/rupiah.svg"
 import { MdKeyboardArrowDown, MdOutlineKeyboardArrowRight } from "react-icons/md"
 import { axiosInstance } from "../../api"
 import { useEffect, useState } from "react"
-import TransactionListItem from "./TransactionListItem"
+import TransactionListItems from "./TransactionListItems"
 import { Link, useLocation, useSearchParams } from "react-router-dom"
 import noTransaction from "../../assets/noTransaction.png"
 import Pagination from "./Pagination"
@@ -20,13 +20,11 @@ const TransactionList = () => {
     const [goingOn, setGoingOn] = useState(false)
     const [status, setStatus] = useState("")
     const [searchParam, setSearchParam] = useSearchParams()
-    const [buttonActive, setButtonActive] = useState("")
     const [count, setCount] = useState(0)
     const [page, setPage] = useState(1)
     const [maxItemsPage, setMaxItemsPage] = useState(0)
     const [maxPage, setMaxPage] = useState(1)
     const [keyword, setKeyword] = useState("")
-    const [numberPage, setNumberPage] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
     const [transData, setTransData] = useState([])
     const [transactionSort, setTransactionSort] = useState("All Transaction")
@@ -36,9 +34,9 @@ const TransactionList = () => {
 
     const query = new URLSearchParams(useLocation().search)
 
-    const transaction_page = query.get("page")
-
     const order_status = query.get("status")
+
+    const transaction_page = query.get("page")
 
     const search_keyword = query.get("keyword")
 
@@ -50,8 +48,8 @@ const TransactionList = () => {
             const response = await axiosInstance.get("/transactions/transaction-list", {
                 params: {
                     status: order_status,
-                    _page: transaction_page,
                     keyword: search_keyword,
+                    _page: transaction_page,
                     _sortBy: sortBy,
                     _sortDir: sortDir
                 }
@@ -88,28 +86,7 @@ const TransactionList = () => {
         }
     }
 
-    const renderTransactionList = () => {
-        return transactionList.map((val) => {
-            return (
-                <TransactionListItem
-                    key={val.id.toString()}
-                    paymentDate={val.payment_date}
-                    orderStatusName={val.Order_status.order_status_name}
-                    transactionName={val.transaction_name}
-                    totalPrice={val.total_price}
-                    transactionItems={val.TransactionItems}
-                    courirDuration={val.courir_duration}
-                    transactionAddress={val.Address}
-                    paymentMethod={val.payment_method}
-                    totalQuantity={val.total_quantity}
-                    shippingFee={val.shipping_fee}
-                    fetchMyTransactionList={fetchMyTransactionList}
-                    transactionId={val.id}
-                />
-            )
-        })
-    }
-
+    // search
     const searchFormik = useFormik({
         initialValues: {
             search: "",
@@ -124,9 +101,32 @@ const TransactionList = () => {
             setKeyword(search)
             setPage(1)
             setGoingOn(false)
+
             const params = {}
-            params["keyword"] = search
-            setSearchParam(params)
+
+            if (searchParam.get("status")) {
+                params["status"] = searchParam.get("status")
+            }
+
+            if (searchParam.get("id")) {
+                params["id"] = searchParam.get("id")
+            } else if (searchParam.get("createdAt")) {
+                params["createdAt"] = searchParam.get("createdAt")
+            } else if (searchParam.get("updatedAt")) {
+                params["updatedAt"] = searchParam.get("updatedAt")
+            }
+
+            if (searchParam.get("page")) {
+                params["page"] = 1
+            }
+
+            if (!search.length) {
+                params["keyword"] = search
+                setSearchParam("")
+            } else {
+                params["keyword"] = search
+                setSearchParam(params)
+            }
         },
     })
 
@@ -135,6 +135,7 @@ const TransactionList = () => {
         searchFormik.setFieldValue(name, value)
     }
 
+    // status
     const allBtnHandler = () => {
         setGoingOn(false)
         if (keyword.length) {
@@ -143,7 +144,6 @@ const TransactionList = () => {
             setPayment(true)
         }
         setStatus("")
-        setButtonActive("")
         setPage(1)
 
         const params = {}
@@ -160,15 +160,18 @@ const TransactionList = () => {
             params["page"] = 1
         }
 
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
+        }
+
         params[""] = ""
-        setSearchParam(params)
+        setSearchParam("")
     }
 
     const goingOnBtnHandler = () => {
         setGoingOn(true)
         setPayment(false)
         setStatus("On Going")
-        setButtonActive("On Going")
         setPage(1)
 
         const params = {}
@@ -183,6 +186,10 @@ const TransactionList = () => {
 
         if (searchParam.get("page")) {
             params["page"] = 1
+        }
+
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
         }
 
         params["status"] = "On Going"
@@ -192,7 +199,6 @@ const TransactionList = () => {
     const AwaitingConfirmationBtnHandler = () => {
         setStatus("Awaiting Confirmation")
         setPayment(false)
-        setButtonActive("Awaiting Confirmation")
         setPage(1)
 
         const params = {}
@@ -207,6 +213,10 @@ const TransactionList = () => {
 
         if (searchParam.get("page")) {
             params["page"] = 1
+        }
+
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
         }
 
         params["status"] = "Awaiting Confirmation"
@@ -216,7 +226,6 @@ const TransactionList = () => {
     const processedBtnHandler = () => {
         setStatus("Processed")
         setPayment(false)
-        setButtonActive("Processed")
         setPage(1)
 
         const params = {}
@@ -231,6 +240,10 @@ const TransactionList = () => {
 
         if (searchParam.get("page")) {
             params["page"] = 1
+        }
+
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
         }
 
         params["status"] = "Processed"
@@ -240,7 +253,6 @@ const TransactionList = () => {
     const shippingBtnHandler = () => {
         setStatus("Shipping")
         setPayment(false)
-        setButtonActive("Shipping")
         setPage(1)
 
         const params = {}
@@ -255,6 +267,10 @@ const TransactionList = () => {
 
         if (searchParam.get("page")) {
             params["page"] = 1
+        }
+
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
         }
 
         params["status"] = "Shipping"
@@ -264,7 +280,6 @@ const TransactionList = () => {
     const deliveredBtnHandler = () => {
         setStatus("Delivered")
         setPayment(false)
-        setButtonActive("Delivered")
         setPage(1)
 
         const params = {}
@@ -279,6 +294,10 @@ const TransactionList = () => {
 
         if (searchParam.get("page")) {
             params["page"] = 1
+        }
+
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
         }
 
         params["status"] = "Delivered"
@@ -289,7 +308,6 @@ const TransactionList = () => {
         setStatus("Done")
         setPayment(false)
         setGoingOn(false)
-        setButtonActive("Done")
         setPage(1)
 
         const params = {}
@@ -304,6 +322,10 @@ const TransactionList = () => {
 
         if (searchParam.get("page")) {
             params["page"] = 1
+        }
+
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
         }
 
         params["status"] = "Done"
@@ -314,7 +336,6 @@ const TransactionList = () => {
         setStatus("Cancelled")
         setPayment(false)
         setGoingOn(false)
-        setButtonActive("Cancelled")
         setPage(1)
 
         const params = {}
@@ -331,15 +352,19 @@ const TransactionList = () => {
             params["page"] = 1
         }
 
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
+        }
+
         params["status"] = "Cancelled"
         setSearchParam(params)
     }
 
+    // reset filter
     const resetBtnHandler = () => {
         setPayment(true)
         setGoingOn(false)
         setStatus("")
-        setButtonActive("")
         setPage(1)
         setTransactionSort("All Transaction")
         setSortDir("Desc")
@@ -361,10 +386,15 @@ const TransactionList = () => {
             params["page"] = 1
         }
 
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
+        }
+
         params[""] = ""
         setSearchParam("")
     }
 
+    // change page
     const nextPageBtn = () => {
         setPage(page + 1)
 
@@ -382,8 +412,17 @@ const TransactionList = () => {
             params["updatedAt"] = searchParam.get("updatedAt")
         }
 
-        params["page"] = page + 1
-        setSearchParam(params)
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
+        }
+
+        if (transaction_page === null) {
+            params["page"] = Number(transaction_page) + 2
+            setSearchParam(params)
+        } else {
+            params["page"] = Number(transaction_page) + 1
+            setSearchParam(params)
+        }
     }
 
     const previousPageBtn = () => {
@@ -403,10 +442,15 @@ const TransactionList = () => {
             params["updatedAt"] = searchParam.get("updatedAt")
         }
 
-        params["page"] = page - 1
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
+        }
+
+        params["page"] = Number(transaction_page) - 1
         setSearchParam(params)
     }
 
+    // sort transaction
     const sortAllTransaction = () => {
         setTransactionSort("All Transaction")
         setSortDir("Desc")
@@ -420,6 +464,10 @@ const TransactionList = () => {
 
         if (searchParam.get("page")) {
             params["page"] = 1
+        }
+
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
         }
 
         params["id"] = "Desc"
@@ -441,6 +489,10 @@ const TransactionList = () => {
             params["page"] = searchParam.get("page")
         }
 
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
+        }
+
         params["updatedAt"] = "Desc"
         setSearchParam(params)
     }
@@ -460,10 +512,15 @@ const TransactionList = () => {
             params["page"] = searchParam.get("page")
         }
 
+        if (searchParam.get("keyword")) {
+            params["keyword"] = searchParam.get("keyword")
+        }
+
         params["createdAt"] = "ASC"
         setSearchParam(params)
     }
 
+    // pagination
     const pageNumbers = []
 
     for (let i = 1; i <= Math.ceil(count / maxItemsPage); i++) {
@@ -478,10 +535,32 @@ const TransactionList = () => {
                 number={number}
                 setSearchParam={setSearchParam}
                 transaction_page={transaction_page}
-                setPageNumber={setNumberPage}
                 searchParam={searchParam}
             />
         }))
+    }
+
+    // transaction list item
+    const renderTransactionList = () => {
+        return transactionList.map((val) => {
+            return (
+                <TransactionListItems
+                    key={val.id.toString()}
+                    paymentDate={val.payment_date}
+                    orderStatusName={val.Order_status.order_status_name}
+                    transactionName={val.transaction_name}
+                    totalPrice={val.total_price}
+                    transactionItems={val.TransactionItems}
+                    courirDuration={val.courir_duration}
+                    transactionAddress={val.Address}
+                    paymentMethod={val.payment_method}
+                    totalQuantity={val.total_quantity}
+                    shippingFee={val.shipping_fee}
+                    fetchMyTransactionList={fetchMyTransactionList}
+                    transactionId={val.id}
+                />
+            )
+        })
     }
 
 
@@ -518,7 +597,6 @@ const TransactionList = () => {
         window.scrollTo(0, 0)
     }, [page, payment])
 
-
     return (
         <>
             <Box mt={'108px'}>
@@ -534,6 +612,8 @@ const TransactionList = () => {
                     >
                         Transaction List
                     </Text>
+
+                    {/* search */}
                     <Box
                         w={'100%'}
                         h={'100%'}
@@ -594,6 +674,8 @@ const TransactionList = () => {
                                         </Box>
                                     </MenuButton>
                                 </Box>
+
+                                {/* sort transaction */}
                                 <MenuList w={'250px'} borderRadius={'8px'} mt={'-10px'} borderTopRadius={'0px'} fontWeight={400} lineHeight={1.33} color={'#31353BF5'} fontFamily={'Open Sauce One, sans-serif'} fontSize={'14px'} pt={'1px'} pb={'1px'} >
                                     <MenuItem
                                         h={'40px'}
@@ -623,6 +705,8 @@ const TransactionList = () => {
                                 </MenuList>
                             </Menu>
                         </Box>
+
+                        {/* transaction status */}
                         <Box display={'flex'} h={'48px'} justifyContent={'flex-start'} p={'0px 16px'} mb={search_keyword !== null || order_status === "Done" || order_status === "Cancelled" ? '12px' : null} alignItems={'center'}>
                             <Text
                                 fontSize={'13px'}
@@ -728,6 +812,8 @@ const TransactionList = () => {
                                     Failed
                                 </Text>
                             </Box>
+
+                            {/* reset filter */}
                             <Box w={'100px'} h={'44px'} display={'flex'} justifyContent={'center'} alignItems={'center'} >
                                 <Text
                                     m={'12px 0px'}
@@ -744,6 +830,8 @@ const TransactionList = () => {
                                 </Text>
                             </Box>
                         </Box>
+
+                        {/* status going on */}
                         {goingOn === false ? null : (
                             <Box display={'flex'} h={'48px'} justifyContent={'flex-start'} p={'0px 16px'} mb={'12px'} alignItems={'center'}>
                                 <Box
@@ -843,6 +931,8 @@ const TransactionList = () => {
                                 </Box>
                             </Box>
                         )}
+
+                        {/* see unpaid transaction */}
                         {payment === false ? null : (
                             <Link to={'/transaction/payment-list'}>
                                 <Box
@@ -892,6 +982,8 @@ const TransactionList = () => {
                                 </Box>
                             </Link>
                         )}
+
+                        {/* when data fetching */}
                         <Box>
                             {isLoading &&
                                 renderTransactionList()}
@@ -901,6 +993,8 @@ const TransactionList = () => {
                                 <CircularProgress isIndeterminate color='#F7931E' thickness='160px' size='100px' />
                             </Box>
                         ) : null}
+
+                        {/* if data count = 0 */}
                         {count === 0 && isLoading === true || pageCount === 0 && isLoading === true ? (
                             <Box w={'100%'} h={'496.09px'} p={'40px 0px 60px'}>
                                 <Box display={'flex'} flexDir={'column'} alignItems={'center'}>
@@ -960,6 +1054,7 @@ const TransactionList = () => {
                             null
                         )}
 
+                        {/* pagination */}
                         {count === 0 || pageNumbers.length < 2 ? null : (
                             <Box display={'flex'} justifyContent={'center'} h={'24px'} bgColor={'#fff'} alignItems={'center'}>
                                 <Box

@@ -8,7 +8,7 @@ import { login } from "./redux/features/authSlice"
 import GuestRoute from "./components/GuestRoute"
 import Register from "./pages/Register"
 import RegisterVerification from "./pages/RegisterVerification"
-import { Box, Flex, Spinner, Text } from "@chakra-ui/react"
+import { Box, Spinner, Text } from "@chakra-ui/react"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer/Footer"
 import HomePage from "./pages/Home"
@@ -36,9 +36,7 @@ import AdminProductDataDetail from "./pages/admin/AdminProductDataDetail"
 import Shipment from "./pages/shipment/Shipment"
 import UpdateStock from "./pages/admin/UpdateStock"
 import WarehouseStock from "./components/admin/WarehouseStock"
-import ChangeAddress from "./components/order/ChangeAddress"
 import Checkout from "./pages/order/Checkout"
-import ShippingComponent from "./components/order/ShippingComponent"
 import ShippingComponent2 from "./components/product/ShippingComponent2"
 import AdminStockChangesReport from "./pages/admin/AdminStockChangesReport"
 import AdminOrder from "./pages/admin/AdminOrder"
@@ -46,15 +44,16 @@ import PaymentProof from "./pages/PaymentProof"
 import AdminMutationStock from "./pages/admin/AdminMutationStock"
 import AdminOrderHistory from "./pages/admin/AdminOrderHistory"
 import TransactionList from "./pages/TransactionList/TransactionList"
-import PaymentList from "./pages/TransactionList/PaymentList"
+import PaymentList from "./pages/TransactionList/WaitingForPayment/PaymentList"
 import AdminSalesReport from "./pages/admin/AdminSalesReport"
+
 
 function App() {
     const [message, setMessage] = useState("")
     const authSelector = useSelector((state) => state.auth)
 
     useEffect(() => {
-        ;(async () => {
+        ; (async () => {
             const { data } = await axios.get(
                 `${process.env.REACT_APP_API_BASE_URL}/api/greetings`
             )
@@ -164,12 +163,12 @@ function App() {
             ) : null}
 
             {location.pathname === "/login" ||
-            location.pathname === "/register" ||
-            location.pathname === "/reset-password-confirmation" ||
-            location.pathname === "/request-reset-password" ||
-            location.pathname === "/cart/shipment" ||
-            authSelector.RoleId === 3 ||
-            authSelector.RoleId === 2 ? null : (
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password-confirmation" ||
+                location.pathname === "/request-reset-password" ||
+                location.pathname === "/cart/shipment" ||
+                authSelector.RoleId === 3 ||
+                authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Navbar />
                 </Box>
@@ -270,11 +269,12 @@ function App() {
                         </AdminRoute>
                     }
                 />
+
                 <Route
-                    path="/admin/sales-report"
+                    path="/admin/warehouse-management"
                     element={
                         <AdminRoute>
-                            <AdminSalesReport />
+                            <WarehouseManagement />
                         </AdminRoute>
                     }
                 />
@@ -286,6 +286,16 @@ function App() {
                         </AdminRoute>
                     }
                 />
+
+                <Route
+                    path="/admin/sales-report"
+                    element={
+                        <AdminRoute>
+                            <AdminSalesReport />
+                        </AdminRoute>
+                    }
+                />
+
                 {/* Profiling Route */}
                 <Route
                     path="/user/profile"
@@ -466,19 +476,16 @@ function App() {
                 />
                 {/* Product Route */}
                 <Route path="/product" element={<Product />} />
-                <Route
-                    path="/product/:id/:product_name"
-                    element={<ProductDetail />}
-                />
+                <Route path="/product/:id/:product_name" element={<ProductDetail />} />
             </Routes>
 
             {location.pathname === "/login" ||
-            location.pathname === "/register" ||
-            location.pathname === "/reset-password-confirmation" ||
-            location.pathname === "/request-reset-password" ||
-            location.pathname === "/cart/shipment" ||
-            authSelector.RoleId === 3 ||
-            authSelector.RoleId === 2 ? null : (
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password-confirmation" ||
+                location.pathname === "/request-reset-password" ||
+                location.pathname === "/cart/shipment" ||
+                authSelector.RoleId === 3 ||
+                authSelector.RoleId === 2 ? null : (
                 <Box>
                     <Footer />
                 </Box>

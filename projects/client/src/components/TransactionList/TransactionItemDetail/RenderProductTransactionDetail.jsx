@@ -2,14 +2,15 @@ import { Box, Button, Grid, GridItem, Image, Text, useToast } from "@chakra-ui/r
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { Link } from "react-router-dom"
-import { axiosInstance } from "../../api"
-import { addItemToCart, fillCart } from "../../redux/features/cartSlice"
+import { axiosInstance } from "../../../api"
+import { addItemToCart, fillCart } from "../../../redux/features/cartSlice"
 
-const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
+
+const RenderProductTransactionDetail = ({ productImage, productName, price, quantity, totalPrice, shippingFee, orderStatusName, productId }) => {
 
     const [cartItemQuantity, setCartItemQuantity] = useState(null)
-    const toast = useToast()
     const dispatch = useDispatch()
+    const toast = useToast()
 
 
     const fetchMyCart = async () => {
@@ -46,6 +47,7 @@ const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
             }
             const response = await axiosInstance.post("/carts", addToCart)
 
+
             dispatch(addItemToCart(response.data.data))
 
             toast({
@@ -72,7 +74,9 @@ const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
                 quantity: 1,
                 note: ""
             }
+
             await axiosInstance.patch(`/carts/addCartItems/${productId}`, newQuantity)
+
             toast({
                 title: "Product has been added to Shopping Cart",
                 status: "success",
@@ -83,6 +87,11 @@ const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
 
         } catch (err) {
             console.log(err)
+            toast({
+                title: `Failed Added Cart Items`,
+                status: "error",
+                description: err.response.data.message,
+            })
         }
     }
 
@@ -95,7 +104,7 @@ const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
         <Box
             p={'16px'}
             border={'1px solid #e5e7e9'}
-            borderRadius={'10px'}
+            borderRadius={'8px'}
             cursor={'default'}
             mb={'10px'}
         >
@@ -118,16 +127,6 @@ const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
                                     fontWeight={'bold'}
                                     lineHeight={'18px'}
                                     letterSpacing={'0px'}
-                                    style={
-                                        {
-                                            maxWidth: '200px',
-                                            display: '-webkit-box',
-                                            WebkitBoxOrient: 'vertical',
-                                            WebkitLineClamp: 2,
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                        }
-                                    }
                                 >
                                     {productName}
                                 </Text>
@@ -139,9 +138,8 @@ const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
                                 fontWeight={400}
                                 lineHeight={'18px'}
                                 letterSpacing={'0px'}
-
                             >
-                                {new Intl.NumberFormat("id-ID", {
+                                {quantity} {quantity > 1 ? "items" : "item"} x {new Intl.NumberFormat("id-ID", {
                                     style: "currency",
                                     currency: "IDR",
                                 }).format(price).split(",")[0]}
@@ -151,23 +149,51 @@ const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
                 </GridItem>
                 <GridItem pl={'16px'} w={'151.99px'} naxH={"90px"} display={'flex'} flexDir={'column'} justifyContent={'center'}>
                     <Box display={'flex'} flexDir={'column'} alignItems={'flex-end'} >
-                        <Button
-                            w={'135px'}
-                            h={'31.99px'}
-                            p={'0px 16px'}
-                            border={'1px solid #0095DA'}
-                            bgColor={'#fff'}
-                            onClick={cartItemQuantity !== null ? addToCartByProductId : addToCart}
+                        <Text
+                            fontSize={'14px'}
+                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                            mb={'2px'}
+                            color={'#31353BF5'}
+                            fontWeight={400}
+                            lineHeight={'20px'}
+                            letterSpacing={'0px'}
+
                         >
-                            <Text
-                                fontSize={'12px'}
-                                fontWeight={700}
-                                lineHeight={'18px'}
-                                color={'#0095DA'}
+                            Total Price
+                        </Text>
+                        <Text
+                            color={'#31353BF5'}
+                            fontSize={'14px'}
+                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                            lineHeight={'20px'}
+                            letterSpacing={'0px'}
+                            fontWeight={700}
+                        >
+                            {new Intl.NumberFormat("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                            }).format(quantity * price).split(",")[0]}
+                        </Text>
+                        {orderStatusName !== "Done" ? null : (
+                            <Button
+                                mt={'9.98px'}
+                                w={'135px'}
+                                h={'31.99px'}
+                                p={'0px 16px'}
+                                border={'1px solid #0095DA'}
+                                bgColor={'#fff'}
+                                onClick={cartItemQuantity === null ? addToCart : addToCartByProductId}
                             >
-                                + Cart
-                            </Text>
-                        </Button>
+                                <Text
+                                    fontSize={'12px'}
+                                    fontWeight={700}
+                                    lineHeight={'18px'}
+                                    color={'#0095DA'}
+                                >
+                                    Buy Again
+                                </Text>
+                            </Button>
+                        )}
                     </Box>
                 </GridItem>
             </Grid>
@@ -175,4 +201,4 @@ const ProductBuyAgain = ({ productImage, productName, price, productId }) => {
     )
 }
 
-export default ProductBuyAgain
+export default RenderProductTransactionDetail

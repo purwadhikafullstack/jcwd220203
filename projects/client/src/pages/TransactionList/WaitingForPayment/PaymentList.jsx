@@ -1,9 +1,9 @@
 import { Box, Button, CircularProgress, Image, Text } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { axiosInstance } from "../../api"
+import { axiosInstance } from "../../../api"
 import PaymentListItem from "./PaymentListItem"
-import emptyStroll from "../../assets/emptyStroll.jpg"
+import emptyStroll from "../../../assets/emptyStroll.jpg"
 
 const PaymentList = () => {
     const [unpaidTransaction, setUnpaidTransaction] = useState([])
@@ -12,9 +12,7 @@ const PaymentList = () => {
 
     const fetchUnpaidTransaction = async () => {
         try {
-            const response = await axiosInstance.get(
-                "/transactions/unpaid-transaction"
-            )
+            const response = await axiosInstance.get("/transactions/unpaid-transaction")
 
             setCount(response.data.dataCount)
 
@@ -169,7 +167,10 @@ const PaymentList = () => {
                     </Box>
                 ) : (
                     <Box>
-                        {isLoading && <Box>{renderPaymentListItem()}</Box>}
+                        {isLoading &&
+                            <Box>
+                                {renderPaymentListItem()}
+                            </Box>}
                     </Box>
                 )}
             </Box>

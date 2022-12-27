@@ -563,7 +563,7 @@ const ModalCancelTransaction = ({
                                     m={"4px 0px 0px"}
                                     color={
                                         inputText.length < 16 &&
-                                        inputText.length
+                                            inputText.length
                                             ? "#EF144A"
                                             : "#73767a"
                                     }
@@ -592,7 +592,7 @@ const ModalCancelTransaction = ({
                         onClick={cancelPaidTransaction}
                         isDisabled={
                             !cancelReason.length ||
-                            (reason === "Other reason" && inputText.length < 16)
+                                (reason === "Other reason" && inputText.length < 16)
                                 ? true
                                 : false
                         }
