@@ -36,7 +36,7 @@ const CategoryHomeItems = ({ category_name, category_image }) => {
         textAlign: "center",
     }
 
-    // console.log(countProduct)
+    const apiImg = process.env.REACT_APP_IMAGE_URL
 
     return (
         <GridItem
@@ -64,7 +64,7 @@ const CategoryHomeItems = ({ category_name, category_image }) => {
                     <Image
                         w={'80px'}
                         h={'80px'}
-                        src={category_image}
+                        src={`${apiImg}/${category_image}`}
                     />
                 </motion.button>
                 <motion.text

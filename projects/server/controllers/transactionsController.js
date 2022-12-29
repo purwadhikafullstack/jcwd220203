@@ -219,7 +219,7 @@ const transactionsController = {
             const { transaction_name } = req.params
 
             if (req.file) {
-                req.body.payment_proof = `http://localhost:8000/public/${req.file.filename}`
+                req.body.payment_proof = req.file.filename
             }
 
             const { payment_proof } = req.body
