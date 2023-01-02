@@ -19,6 +19,7 @@ const Alert = ({
   rightButton,
   leftButton,
   color,
+  responsive,
 }) => {
   return (
     <AlertDialog
@@ -28,13 +29,17 @@ const Alert = ({
     >
       <AlertDialogOverlay>
         <AlertDialogContent
-          p={"32px 32px 24px"}
+          p={{
+            lg: "32px 32px 24px",
+            md: "24px 16px 16px",
+            base: "24px 16px 16px",
+          }}
           my="auto"
           boxSize={"-moz-fit-content"}
-          maxW="400px"
+          maxW={{ lg: "400px", md: "350px", base: "340px" }}
         >
           <AlertDialogHeader
-            fontSize={"24px"}
+            fontSize={{ lg: "24px", md: "20px", base: "20px" }}
             fontWeight="bold"
             mb="14px"
             p="0"
@@ -43,8 +48,19 @@ const Alert = ({
             {header}
           </AlertDialogHeader>
           <AlertDialogBody textAlign={"center"} p="0">
-            <Text fontSize={"16px"} m="0px 0px 32px">
+            <Text
+              fontSize={"16px"}
+              m="0px 0px 32px"
+              display={{ lg: "block", md: "none", base: "none" }}
+            >
               {body}
+            </Text>
+            <Text
+              fontSize={"14px"}
+              m="0px 0px 32px"
+              display={{ lg: "none", md: "block", base: "block" }}
+            >
+              {responsive}
             </Text>
           </AlertDialogBody>
 
@@ -52,8 +68,8 @@ const Alert = ({
             <Button
               ref={cancelRef}
               onClick={onClose}
-              w="164px"
-              h="48px"
+              w={{ lg: "164px", md: "152px", base: "152px" }}
+              h={{ lg: "48px", md: "40px", base: "40px" }}
               mr={"6px"}
               borderRadius="8px"
               fontWeight={"bold"}
@@ -70,8 +86,8 @@ const Alert = ({
               color={"white"}
               type="submit"
               onClick={onSubmit}
-              w="164px"
-              h="48px"
+              w={{ lg: "164px", md: "152px", base: "152px" }}
+              h={{ lg: "48px", md: "40px", base: "40px" }}
               borderRadius="8px"
               _hover={false}
               textAlign="left"
@@ -81,8 +97,18 @@ const Alert = ({
                 p="0 16px"
                 overflow="hidden"
                 textOverflow={"ellipsis"}
+                display={{ lg: "block", md: "none", base: "none" }}
               >
                 {rightButton}
+              </Text>
+              <Text
+                maxW={"160px"}
+                p="0 16px"
+                overflow="hidden"
+                textOverflow={"ellipsis"}
+                display={{ lg: "none", md: "block", base: "block" }}
+              >
+                Confirm
               </Text>
             </Button>
           </AlertDialogFooter>

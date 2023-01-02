@@ -928,6 +928,61 @@ const adminOrderController = {
       })
     }
   },
+  deliverOrder: async (req, res) => {
+    try {
+      const { id } = req.params
+
+      const findTransaction = await db.Transaction.findOne({
+        where: {
+          id: id,
+          OrderStatusId: 3,
+        },
+        include: [{ model: db.User }],
+      })
+
+      if (!findTransaction) {
+        return res.status(400).json({
+          message: "Transaction not found",
+        })
+      }
+
+      await db.Transaction.update(
+        {
+          OrderStatusId: 4,
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      )
+
+      const rawHTML = fs.readFileSync("templates/orderDelivered.html", "utf-8")
+
+      const compiledHTML = handlebars.compile(rawHTML)
+
+      const htmlResult = compiledHTML({
+        username: findTransaction.User.username,
+        shopediaLink: process.env.BASE_URL_FE,
+      })
+
+      await emailer({
+        to: findTransaction.User.email,
+        html: htmlResult,
+        subject: "Delivere Order",
+        text: "Your order is delivered",
+      })
+
+      return res.status(200).json({
+        message: "Order Delivered",
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(200).json({
+        message: "Server Error",
+      })
+    }
+  },
 }
 
 module.exports = adminOrderController

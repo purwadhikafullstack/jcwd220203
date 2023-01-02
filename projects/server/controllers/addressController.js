@@ -1,4 +1,5 @@
 const axios = require("axios")
+const { validationResult } = require("express-validator")
 const { Op } = require("sequelize")
 const db = require("../models")
 const Address = db.Address
@@ -53,6 +54,15 @@ const addressController = {
   },
   addNewAddress: async (req, res) => {
     try {
+      const errors = validationResult(req)
+
+      if (!errors.isEmpty()) {
+        return res.status(422).json({
+          errors: errors.array(),
+          message: "Invalid fields",
+        })
+      }
+
       const {
         recipients_name,
         phone_number,
@@ -136,6 +146,15 @@ const addressController = {
   },
   updateAddress: async (req, res) => {
     try {
+      const errors = validationResult(req)
+
+      if (!errors.isEmpty()) {
+        return res.status(422).json({
+          errors: errors.array(),
+          message: "Invalid fields",
+        })
+      }
+
       const {
         recipients_name,
         phone_number,

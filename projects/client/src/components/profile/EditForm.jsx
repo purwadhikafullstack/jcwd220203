@@ -117,18 +117,29 @@ const EditForm = ({
         isOpen={isOpenMod}
         onClose={onCloseMod}
         motionPreset="slideInBottom"
-        size={"3xl"}
+        size={{ lg: "3xl", md: "6xl", base: "xl" }}
       >
         <form>
           <ModalOverlay />
-          <ModalContent mt={"90px"} borderRadius="8px" overflow={false}>
+          <ModalContent
+            mt={{ lg: "90px", md: "120px", base: "120px" }}
+            borderRadius="8px"
+            overflow={false}
+            bottom={{ lg: "auto", md: "0px", base: "0px" }}
+            left={{ lg: "auto", md: "0px", base: "0px" }}
+            right={{ lg: "auto", md: "0px", base: "0px" }}
+            position={{ lg: "static", md: "fixed", base: "fixed" }}
+            m="0"
+            zIndex={"99999"}
+            height={{ lg: "auto", md: "500px", base: "500px" }}
+          >
             <ModalHeader
-              fontSize={"24px"}
+              fontSize={{ lg: "24px", md: "16px", base: "16px" }}
               fontWeight="bold"
               textAlign={"center"}
               p="0"
-              h="36px"
-              m="16px 0"
+              h={{ lg: "36px", md: "24px", base: "24px" }}
+              m={{ lg: "16px 0", md: "12px 0 8px", base: "12px 0 8px" }}
             >
               <Grid templateColumns={"repeat(3,1fr)"}>
                 <Box></Box>
@@ -138,6 +149,7 @@ const EditForm = ({
                     onClick={onOpenExitAlert}
                     size={"sm"}
                     mr="2"
+                    mt={{ md: "-2", base: "-2" }}
                     bgColor={"#fff"}
                     _hover={false}
                   >
@@ -151,21 +163,27 @@ const EditForm = ({
               borderTop="1px solid #dfe1e3"
               overflowY={"scroll"}
               maxH="529px"
-              p="24px 40px"
-              fontSize={"14px"}
+              p={{ lg: "24px 40px", md: "12px 20px", base: "12px 20px" }}
+              fontSize={{ lg: "14px", md: "12px", base: "12px" }}
             >
               <Text
                 mb={"24px"}
                 fontSize={"20px"}
                 fontWeight="bold"
                 color={"black"}
+                display={{ lg: "block", md: "none", base: "none" }}
               >
                 Complete the address details
               </Text>
-              <Box mt="34px" mb="4px">
+              <Box mt={{ lg: "34px", md: "0xp", base: "0px" }} mb="4px">
                 <Grid templateColumns={"repeat(2, 1fr)"} gap="4">
                   <Box>
-                    <FormLabel mb="8px">Province</FormLabel>
+                    <FormLabel
+                      mb={{ lg: "8px", md: "4px", base: "4px" }}
+                      fontSize={{ lg: "16px", md: "14px", base: "14px" }}
+                    >
+                      Province
+                    </FormLabel>
                     <FormControl isInvalid={formik.errors.province}>
                       <Select
                         placeholder="--Select Province--"
@@ -179,7 +197,12 @@ const EditForm = ({
                     </FormControl>
                   </Box>
                   <Box>
-                    <FormLabel mb="8px">City</FormLabel>
+                    <FormLabel
+                      mb={{ lg: "8px", md: "4px", base: "4px" }}
+                      fontSize={{ lg: "16px", md: "14px", base: "14px" }}
+                    >
+                      City
+                    </FormLabel>
                     <FormControl isInvalid={formik.errors.city}>
                       <Select
                         placeholder="--Select City--"
@@ -192,8 +215,13 @@ const EditForm = ({
                   </Box>
                 </Grid>
               </Box>
-              <Box mt="12px">
-                <FormLabel mb="8px">Districts</FormLabel>
+              <Box mt={{ lg: "12px", md: "6px", base: "6px" }}>
+                <FormLabel
+                  mb={{ lg: "8px", md: "4px", base: "4px" }}
+                  fontSize={{ lg: "16px", md: "14px", base: "14px" }}
+                >
+                  Districts
+                </FormLabel>
                 <FormControl isInvalid={formik.errors.districts}>
                   <Input
                     value={formik.values.districts}
@@ -206,8 +234,16 @@ const EditForm = ({
                 </FormControl>
               </Box>
 
-              <Box mt="34px" mb="4px">
-                <FormLabel mb="8px">Address Labels</FormLabel>
+              <Box
+                mt={{ lg: "34px", md: "17px", base: "17px" }}
+                mb={{ lg: "4px", md: "2px", base: "2px" }}
+              >
+                <FormLabel
+                  mb={{ lg: "8px", md: "4px", base: "4px" }}
+                  fontSize={{ lg: "16px", md: "14px", base: "14px" }}
+                >
+                  Address Labels
+                </FormLabel>
                 <FormControl isInvalid={formik.errors.address_labels}>
                   <Input
                     value={formik.values.address_labels}
@@ -221,7 +257,7 @@ const EditForm = ({
                 </FormControl>
               </Box>
 
-              <Box mt="12px">
+              <Box mt={{ lg: "12px", md: "6px", base: "6px" }}>
                 <FormLabel mb={"8px"}>Full Address</FormLabel>
                 <FormControl isInvalid={formik.errors.full_address}>
                   <Textarea
@@ -231,7 +267,7 @@ const EditForm = ({
                     resize="none"
                     maxLength={200}
                     p="12px 8px"
-                    h={"119px"}
+                    h={{ lg: "119px", md: "100px", base: "100px" }}
                     onChange={editFormChangeHandler}
                   />
 
@@ -241,8 +277,16 @@ const EditForm = ({
                 </FormControl>
               </Box>
 
-              <Box mt="34px" mb="4px">
-                <FormLabel mb="8px">Recipient's Name</FormLabel>
+              <Box
+                mt={{ lg: "34px", md: "17px", base: "17px" }}
+                mb={{ lg: "4px", md: "2px", base: "2px" }}
+              >
+                <FormLabel
+                  mb={{ lg: "8px", md: "4px", base: "4px" }}
+                  fontSize={{ lg: "16px", md: "14px", base: "14px" }}
+                >
+                  Recipient's Name
+                </FormLabel>
                 <FormControl isInvalid={formik.errors.recipients_name}>
                   <Input
                     value={formik.values.recipients_name}
@@ -257,13 +301,24 @@ const EditForm = ({
                 </FormControl>
               </Box>
 
-              <Box mt="34px" mb="4px">
-                <FormLabel mb="8px">Phone Number</FormLabel>
+              <Box
+                mt={{ lg: "34px", md: "17px", base: "17px" }}
+                mb={{ lg: "4px", md: "2px", base: "2px" }}
+              >
+                <FormLabel
+                  mb={{ lg: "8px", md: "4px", base: "4px" }}
+                  fontSize={{ lg: "16px", md: "14px", base: "14px" }}
+                >
+                  Phone Number
+                </FormLabel>
                 <FormControl isInvalid={formik.errors.phone_number}>
                   <Input
                     value={formik.values.phone_number}
                     name="phone_number"
                     type="number"
+                    onWheel={(e) => e.target.blur()}
+                    maxLength={15}
+                    minLength={9}
                     onChange={editFormChangeHandler}
                   />
                   <FormErrorMessage>
@@ -272,7 +327,10 @@ const EditForm = ({
                 </FormControl>
               </Box>
 
-              <Text m="10px 12px" textAlign={"center"}>
+              <Text
+                m={{ lg: "10px 12px", md: "5px 6px", base: "5px 6px" }}
+                textAlign={"center"}
+              >
                 By clicking "Save", you agree to the
                 <Text
                   color={"#F7931E"}
@@ -283,13 +341,16 @@ const EditForm = ({
                   Terms & Conditions
                 </Text>
               </Text>
-              <Box m="16px 0px" textAlign={"center"}>
+              <Box
+                m={{ lg: "16px 0", md: "8px 0px", base: "8px 0px" }}
+                textAlign={"center"}
+              >
                 <Button
-                  p="0px 16px"
-                  fontSize={"16px"}
+                  p={{ lg: "0px 16px", md: "0px 8px", base: "0px 8px" }}
+                  fontSize={{ lg: "16px", md: "14px", base: "14px" }}
                   color="white"
                   fontWeight={"bold"}
-                  w="80px"
+                  w={{ lg: "80px", md: "60px", base: "60px" }}
                   _hover={false}
                   bgColor="#F7931E"
                   onClick={doubleOnClick1}
@@ -303,6 +364,7 @@ const EditForm = ({
       </Modal>
 
       <Alert
+        responsive={"Confirm exit page."}
         header={"Exit Page?"}
         body={
           "You will cancel the change of address. All data changes will not be saved."

@@ -1,70 +1,199 @@
-import { Box, Button, Text, HStack } from "@chakra-ui/react"
+import { Box, Button, Text, HStack, Avatar, useToast } from "@chakra-ui/react"
 
-import { BiUser } from "react-icons/bi"
+import { BiArrowBack, BiStore, BiUser } from "react-icons/bi"
 
 import UserInfo from "../../components/profile/UserInfo"
-import { Link } from "react-router-dom"
-import { useSelector } from "react-redux"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import { BsPencil } from "react-icons/bs"
+import { TbLogout } from "react-icons/tb"
+import { logout } from "../../redux/features/authSlice"
 
 const Profile = () => {
-    const authSelector = useSelector((state) => state.auth)
+  const authSelector = useSelector((state) => state.auth)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const toast = useToast()
+  const location = useLocation()
 
-    return (
-        <Box mt="55px" fontSize={"16px"} color="rgba(0,0,0,.54)">
-            <Box w="1208px" marginX={"auto"}>
-                <Box display={"flex"} mt="80px" mb="16px">
-                    <Box mr="8px" my={"auto"}>
-                        <BiUser fontSize={"20px"} />
-                    </Box>
-                    <Text fontSize={"16px"} fontWeight="bold" my={"auto"}>
-                        {authSelector.username}
-                    </Text>
-                </Box>
+  const refreshPage = () => {
+    window.location.reload(false)
+  }
 
-                <Box border={"1px solid #dfe1e3"} borderRadius="10px">
-                    <HStack>
-                        {/* Personal Info */}
-                        <Box display={"flex"} height="53px" fontWeight={"bold"}>
-                            <Button
-                                p="16px 24px"
-                                color="#0095DA"
-                                borderBottom={"2px solid #0095DA"}
-                                borderRadius="1px"
-                                variant="link"
-                            >
-                                <Text>Personal Data</Text>
-                            </Button>
-                        </Box>
+  const logoutBtnHandler = () => {
+    localStorage.removeItem("auth_token")
+    dispatch(logout())
 
-                        {/* Change Password */}
-                        <Box display={"flex"} height="53px" fontWeight={"bold"}>
-                            <Link to="/user/profile/change-password">
-                                <Box
-                                    p="16px 24px"
-                                    _hover={{ color: "#0095DA" }}
-                                >
-                                    <Text>Change Password</Text>
-                                </Box>
-                            </Link>
-                        </Box>
+    toast({
+      title: "User Logout",
+      status: "info",
+    })
 
-                        {/* Address List */}
-                        <Box display={"flex"} height="53px" fontWeight={"bold"}>
-                            <Link to="/user/profile/address">
-                                <Box
-                                    p="16px 24px"
-                                    _hover={{ color: "#0095DA" }}
-                                >
-                                    <Text>Address List</Text>
-                                </Box>
-                            </Link>
-                        </Box>
-                    </HStack>
-                    <UserInfo />
-                </Box>
+    if (
+      location.pathname === "/cart" ||
+      location.pathname === "/transaction-list" ||
+      location.pathname === "/user/profile" ||
+      location.pathname === "/user/profile/change-password" ||
+      location.pathname === "/user/profile/address"
+    ) {
+      navigate("/login")
+      refreshPage()
+    } else {
+      refreshPage()
+    }
+  }
+
+  return (
+    <>
+      <Box
+        mt="55px"
+        fontSize={"16px"}
+        display={{ base: "none", md: "none", lg: "block" }}
+        color="rgba(0,0,0,.54)"
+      >
+        <Box w="1208px" marginX={"auto"}>
+          <Box display={"flex"} mt="80px" mb="16px">
+            <Box mr="8px" my={"auto"}>
+              <BiUser fontSize={"20px"} />
             </Box>
+            <Text fontSize={"16px"} fontWeight="bold" my={"auto"}>
+              {authSelector.username}
+            </Text>
+          </Box>
+
+          <Box border={"1px solid #dfe1e3"} borderRadius="10px">
+            <HStack>
+              {/* Personal Info */}
+              <Box display={"flex"} height="53px" fontWeight={"bold"}>
+                <Button
+                  p="16px 24px"
+                  color="#0095DA"
+                  borderBottom={"2px solid #0095DA"}
+                  borderRadius="1px"
+                  variant="link"
+                >
+                  <Text>Personal Data</Text>
+                </Button>
+              </Box>
+
+              {/* Change Password */}
+              <Box display={"flex"} height="53px" fontWeight={"bold"}>
+                <Link to="/user/profile/change-password">
+                  <Box p="16px 24px" _hover={{ color: "#0095DA" }}>
+                    <Text>Change Password</Text>
+                  </Box>
+                </Link>
+              </Box>
+
+              {/* Address List */}
+              <Box display={"flex"} height="53px" fontWeight={"bold"}>
+                <Link to="/user/profile/address">
+                  <Box p="16px 24px" _hover={{ color: "#0095DA" }}>
+                    <Text>Address List</Text>
+                  </Box>
+                </Link>
+              </Box>
+            </HStack>
+            <UserInfo />
+          </Box>
         </Box>
-    )
+      </Box>
+
+      {/* Responsive */}
+      <Box
+        display={{ base: "block", md: "block", lg: "none" }}
+        maxW="500px"
+        mx="auto"
+      >
+        <Box
+          position={"fixed"}
+          left="0"
+          right={"0"}
+          top="0"
+          maxW={"500px"}
+          mx="auto"
+          backgroundColor={"white"}
+          zIndex="9998"
+        >
+          <Box
+            display={"flex"}
+            borderBottom="1px solid var(--N75,#E5E7E9)"
+            h={"52px"}
+            backgroundColor={"#E5F9F6"}
+          >
+            <Box fontSize={"20px"} alignItems="center" my="auto">
+              <Link to={"/"}>
+                <Box display={"flex"} alignItems="center" w="40px">
+                  <Box mx="auto">
+                    <BiArrowBack fontSize={"24px"} />
+                  </Box>
+                </Box>
+              </Link>
+            </Box>
+            <Box
+              fontSize={"16px"}
+              fontWeight="bold"
+              ml="2"
+              display={"flex"}
+              alignItems="center"
+            >
+              My Account
+            </Box>
+          </Box>
+        </Box>
+
+        <Box p="16px" display={"flex"} mt="52px ">
+          <Avatar w={"64px"} h="64px" name={authSelector.username} />
+          <Box ml="16px" w="175px">
+            <Text fontWeight={"bold"}>{authSelector.username}</Text>
+            <Text>{authSelector.phone_number}</Text>
+            <Text>{authSelector.email}</Text>
+          </Box>
+          <Box display={"flex"} ml="auto" alignItems={"center"}>
+            <BsPencil fontSize={"20px"} />
+          </Box>
+        </Box>
+
+        <Box pt="17px">
+          <Box>
+            <Text fontWeight={"bold"} pl={"16px"} pr="16px">
+              Account Settings
+            </Text>
+            <Link to="/user/profile/address">
+              <Box p="16px 16px 16px 0" ml="16px">
+                <Box display={"flex"}>
+                  <Box display={"flex"} alignItems="center">
+                    <BiStore fontSize={"24px"} />
+                  </Box>
+
+                  <Box ml="2">
+                    <Text fontWeight={"bold"}>Address List</Text>
+                    <Text fontSize={"12px"} mt="4px">
+                      Set the delivery address for groceries
+                    </Text>
+                  </Box>
+                </Box>
+              </Box>
+            </Link>
+            <Link onClick={logoutBtnHandler}>
+              <Box borderTop="8px solid var(--N50,#F3F4F5)">
+                <Box p="16px 16px 16px 0" ml="16px">
+                  <Box display={"flex"}>
+                    <Box>
+                      <TbLogout fontSize={"24px"} />
+                    </Box>
+                    <Box ml="2" fontWeight={"bold"}>
+                      Logout
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Link>
+          </Box>
+        </Box>
+      </Box>
+    </>
+  )
 }
 
 export default Profile

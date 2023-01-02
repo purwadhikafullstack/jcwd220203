@@ -217,14 +217,12 @@ const userDataController = {
         req.body.profile_picture = req.file.filename
       }
 
-      const { branch, phone_number, profile_picture, username, WarehouseId } =
-        req.body
+      const { phone_number, profile_picture, username, WarehouseId } = req.body
 
       const { id } = req.params
 
       await db.User.update(
         {
-          branch,
           phone_number,
           profile_picture,
           username,

@@ -61,7 +61,6 @@ const ManageAdminData = () => {
   const [openedEdit, setOpenedEdit] = useState(null)
   const [selectedImage, setSelectedImage] = useState(null)
   const [deleteAlert, setDeleteAlert] = useState(null)
-  console.log(deleteAlert?.id)
 
   const fetchAdminData = async () => {
     const maxItemsPerPage = 10
