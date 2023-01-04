@@ -232,7 +232,7 @@ const AdminStockChangesReport = () => {
           </Box>
         </HStack>
       </Box>
-      <Table>
+      <Table variant='striped' colorScheme='teal'>
         <Thead>
           <Tr>
             <Th>ID</Th>
@@ -262,7 +262,7 @@ const AdminStockChangesReport = () => {
         <Box textAlign={"center"}>
           {page === 1 ? null : (
             <Button onClick={previousPage} disabled={page === 1 ? true : null}>
-              {"<"}
+              {"< Prev"}
             </Button>
           )}
           {page >= maxPage ? null : (
@@ -271,7 +271,7 @@ const AdminStockChangesReport = () => {
               ml="10px"
               disabled={page >= maxPage ? true : null}
             >
-              {">"}
+              {"Next >"}
             </Button>
           )}
         </Box>

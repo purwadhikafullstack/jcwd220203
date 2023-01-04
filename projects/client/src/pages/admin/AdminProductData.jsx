@@ -390,7 +390,7 @@ const AdminProductData = () => {
             </FormControl>
           </Box>
         </HStack>
-        <Table>
+        <Table variant='striped' colorScheme='teal'>
           <Thead>
             <Tr>
               <Th w="10px">ID</Th>
@@ -405,12 +405,9 @@ const AdminProductData = () => {
           <Tbody>{isLoading && renderProductData()}</Tbody>
         </Table>
       </Box>
-      <Text>
-        Page: {pages + 1} of {maxPage}
-      </Text>
+    
       <Grid templateColumns={"repeat(3, 1fr"} mt={15}>
-        <GridItem />
-        <GridItem />
+      <GridItem />
         <GridItem>
           {!admin.length ? (
             <Alert status="warning" ml="275px">
@@ -418,7 +415,7 @@ const AdminProductData = () => {
               <AlertTitle>No post found</AlertTitle>
             </Alert>
           ) : null}
-          <HStack justifyContent={"end"} gap={"2px"}>
+          <HStack justifyContent={"center"} gap={"2px"} paddingLeft="65px">
             {pages + 1 === 1 ? null : (
               <CgChevronLeft onClick={prevPage} color={"#9E7676"}>
                 {""}
@@ -432,6 +429,8 @@ const AdminProductData = () => {
             )}
           </HStack>
         </GridItem>
+        <GridItem />
+        
       </Grid>
 
       {/* Modal Add New Admin */}

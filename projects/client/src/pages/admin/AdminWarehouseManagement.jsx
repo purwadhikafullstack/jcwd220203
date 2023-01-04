@@ -338,7 +338,7 @@ const WarehouseManagement = () => {
           </Box>
         </HStack>
 
-      <Table>
+      <Table variant='striped' colorScheme='teal'>
         <Thead>
           <Tr>
             <Th>ID</Th>
@@ -353,11 +353,8 @@ const WarehouseManagement = () => {
         </Thead>
         <Tbody>{isLoading && renderWarehouse()}</Tbody>
       </Table>
-      <Text>
-        Page: {pages + 1} of {maxPage}
-      </Text>
+      
       <Grid templateColumns={"repeat(3, 1fr"} mt={15}>
-        <GridItem />
         <GridItem />
         <GridItem>
           {!data.length ? (
@@ -366,7 +363,7 @@ const WarehouseManagement = () => {
               <AlertTitle>No post found</AlertTitle>
             </Alert>
           ) : null}
-          <HStack justifyContent={"end"} gap={"2px"}>
+          <HStack justifyContent={"center"} gap={"2px"}>
             {pages + 1 === 1 ? null : (
               <CgChevronLeft onClick={prevPage} color={"#9E7676"}>
                 {""}
@@ -380,6 +377,7 @@ const WarehouseManagement = () => {
             )}
           </HStack>
         </GridItem>
+        <GridItem />
       </Grid>
       <Divider />
 
