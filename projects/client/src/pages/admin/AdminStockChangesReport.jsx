@@ -50,7 +50,6 @@ const AdminStockChangesReport = () => {
           endTime: endTime,
         },
       });
-      console.log(currentTime, endTime);
 
       setTotalCount(response.data.dataCount);
       setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage));
