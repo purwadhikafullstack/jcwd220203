@@ -1,10 +1,4 @@
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Box,
   Button,
   Checkbox,
@@ -28,6 +22,8 @@ import * as Yup from "yup"
 import { useFormik } from "formik"
 import FormAddress from "../../components/profile/FormAddress"
 import Alert from "../../components/profile/Alert"
+import AlertDialogDeleteSelectedCart from "../../components/Cart/AlertDialogDeleteSelectedCart"
+import { HiOutlineArrowLeft } from "react-icons/hi"
 
 const Cart = () => {
   const [allChecked, setAllChecked] = useState(false)
@@ -68,13 +64,12 @@ const Cart = () => {
 
       setSelectedCart(response.data.checkedDataCount)
 
-      const cartChecked = response.data.data.map((val) => val.is_checked)
-
-      if (!cartChecked.includes(false)) {
+      if (!response.data.cartChecked.includes(0)) {
         setAllChecked(true)
       } else {
         setAllChecked(false)
       }
+
       setIsLoading(true)
     } catch (err) {
       console.log(err)
@@ -106,7 +101,7 @@ const Cart = () => {
       onClose()
 
       toast({
-        title: " Deleted All Items in Cart",
+        title: " Deleted Selected Items in Cart",
         status: "info",
       })
     } catch (err) {
@@ -125,6 +120,8 @@ const Cart = () => {
           productId={val.ProductId}
           quantity={val.quantity}
           isChecked={val.is_checked}
+          cartNote={val.note}
+          totalStocks={val.Product.Total_Stocks}
           CartId={val.id}
           fetchMyCart={fetchMyCart}
           onDelete={() => deleteBtnHandler(val.id)}
@@ -143,7 +140,8 @@ const Cart = () => {
 
       if (!cartChecked.includes(false)) {
         setAllChecked(true)
-      } else {
+      }
+      else {
         setAllChecked(false)
       }
 
@@ -162,7 +160,6 @@ const Cart = () => {
 
       dispatch(getTotalQuantity(response.data.data.totalQuantity))
 
-      fetchMyCart()
     } catch (err) {
       console.log(err)
     }
@@ -281,7 +278,6 @@ const Cart = () => {
   }, [])
 
   // if cart empty
-
   if (!cartSelector.cart.length && isLoading === false) {
     return (
       <Box w={'1583px'} h={'700px'} display={'flex'} justifyContent={'center'} alignItems={'center'} alignContent={'center'}>
@@ -343,331 +339,417 @@ const Cart = () => {
   } else {
     return (
       <>
-        {/* cart filled */}
-        <Box mt={"67px"}>
-          <Box
-            width={"1070px"}
-            h={"66px"}
-            m={"0px 231.5px"}
-            p={"40px 20px 0px"}
-            mx={"auto"}
-            mt={"5px"}
-          >
-            <Text
-              fontSize={"20px"}
-              color="#31353BF5"
-              fontWeight={"700"}
-              fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+        <Box display={{ lg: 'inline', base: 'none' }}>
+          {/* cart filled */}
+          <Box mt={"67px"}>
+            <Box
+              width={"1070px"}
+              h={"66px"}
+              m={"0px 231.5px"}
+              p={"40px 20px 0px"}
+              mx={"auto"}
+              mt={"5px"}
             >
-              Cart
-            </Text>
-          </Box>
-          <Grid
-            minH={"200px"}
-            width="710"
-            maxWidth={"1027px"}
-            margin={"auto"}
-            p={"0x 24px"}
-            templateColumns="3.8fr 1.7fr"
-            gap={2}
-            mt={"10px"}
-          >
-            <GridItem w="100%">
-              <Box
-                w={"710px"}
-                boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%) !important"}
-                borderRadius={"15px"}
-                pl={"28px"}
-                border={"1px solid #99d5f0"}
+              <Text
+                fontSize={"20px"}
+                color="#31353BF5"
+                fontWeight={"700"}
+                fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
               >
-                <Box
-                  h={"52px"}
-                  width={"650px"}
-                  p="16px 0"
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                  mt={"8px"}
-                >
-                  <Checkbox
-                    isChecked={allChecked}
-                    onChange={() => checkAllCartItems()}
-                    borderColor={"#6C727C"}
-                    size={"lg"}
-                  >
-                    <Text
-                      fontSize={"14px"}
-                      color={"#31353BAD"}
-                      fontWeight={"400px"}
-                      fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-                    >
-                      Select All
-                    </Text>
-                  </Checkbox>
-                  {selectedCart === 0 ? null : (
-                    <Text
-                      textAlign={"end"}
-                      fontSize={"14px"}
-                      display={"block"}
-                      fontWeight="700"
-                      color={"#0095DA"}
-                      fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-                      cursor={"pointer"}
-                      position={"relative"}
-                      onClick={() => onOpen()}
-                    >
-                      Remove
-                    </Text>
-                  )}
-                </Box>
-                {/* cart item list */}
-                <Box width={"650px"} h={"5px"} bgColor={"#f7931E"} />
-                <Box>
-                  {isLoading && renderCartItems()}
-                </Box>
-                <Box pb={"50px"}></Box>
-              </Box>
-            </GridItem>
-            {/* Shopping Summary */}
-            <GridItem pl={"30px"}>
-              <Box
-                w={"318.02px"}
-                h={"236.88px"}
-                p={"16px"}
-                boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%)"}
-                borderRadius={"15px"}
-                border={"1px solid #99d5f0"}
-              >
-                <Text
-                  fontWeight={"600"}
-                  position={"relative"}
-                  fontSize={"16px"}
-                  color={"#31353BF5"}
-                  fontFamily={
-                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                  }
-                  display={"block"}
-                  line-height={"20px"}
-                  m={"0px 0px 16px"}
-                >
-                  Shopping Summary
-                </Text>
-                <Box
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                  borderBottom={"1px solid #fcd4a5"}
-                  pb={"16px"}
-                >
-                  <Text
-                    color={"#31353BAD"}
-                    fontFamily={
-                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                    }
-                    fontSize={"14px"}
-                    fontWeight={"400"}
-                    lineHeight={"18px"}
-                    margin={"2px 0px"}
-                  >
-                    Total Price (items)
-                  </Text>
-                  <Text
-                    color={"#31353BAD"}
-                    fontFamily={
-                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                    }
-                    fontSize={"14px"}
-                    fontWeight={"400"}
-                    lineHeight={"18px"}
-                    margin={"2px 0px"}
-                  >
-                    {
-                      new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      })
-                        .format(cartSelector.totalPrice)
-                        .split(",")[0]
-                    }
-                  </Text>
-                </Box>
-                <Box
-                  mt={"16px"}
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                >
-                  <Text
-                    fontWeight={"600"}
-                    position={"relative"}
-                    fontSize={"16px"}
-                    color={"#31353BF5"}
-                    fontFamily={
-                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                    }
-                    display={"block"}
-                    line-height={"20px"}
-                    m={"2px 0px"}
-                  >
-                    Grand Total
-                  </Text>
-                  <Text
-                    fontWeight={"600"}
-                    position={"relative"}
-                    fontSize={"16px"}
-                    color={"#31353BF5"}
-                    fontFamily={
-                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                    }
-                    display={"block"}
-                    line-height={"20px"}
-                    m={"2px 0px"}
-                  >
-                    {
-                      new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      })
-                        .format(cartSelector.totalPrice)
-                        .split(",")[0]
-                    }
-                  </Text>
-                </Box>
-                {!cartSelector.totalQuantity ? (
-                  <Button
-                    width={"100%"}
-                    h={"48px"}
-                    mt={"20px"}
-                    fontWeight={"700"}
-                    fontSize={"16px"}
-                    bgColor={"#0095DA"}
-                    color={"#fff"}
-                    _hover={"none"}
-                    _active={"none"}
-                    isDisabled={true}
-                  >
-                    Buy(0)
-                  </Button>
-                ) : (
-                  <Button
-                    width={"100%"}
-                    h={"48px"}
-                    mt={"20px"}
-                    fontWeight={"700"}
-                    fontSize={"16px"}
-                    bgColor={"#0095DA"}
-                    color={"#fff"}
-                    _hover={{
-                      bgColor: "#0370A2",
-                    }}
-                    _active={"none"}
-                    onClick={doubleOnClick}
-                  >
-                    Buy(
-                    {cartSelector.totalQuantity})
-                  </Button>
-                )}
-              </Box>
-            </GridItem>
-          </Grid>
-        </Box>
-        {/* Alert Dialog for Delete All Carts */}
-        <AlertDialog
-          isCentered
-          isOpen={isOpen}
-          onClose={onClose}
-          closeOnEsc={false}
-        >
-          <AlertDialogOverlay bg="blackAlpha.400">
-            <AlertDialogContent
-              position={"fixed"}
-              width={"400px"}
-              maxW={"400px"}
-              height={"270px"}
-              zIndex={"60"}
-              opacity={"1"}
-              p={"32px 32px 24px"}
-              boxShadow={"0px 1px 6px rgba(49,53,59,0.12)"}
-              borderRadius={"30px"}
+                Cart
+              </Text>
+            </Box>
+            <Grid
+              minH={"200px"}
+              width="710"
+              maxWidth={"1027px"}
+              margin={"auto"}
+              p={"0x 24px"}
+              templateColumns="3.8fr 1.7fr"
+              gap={2}
               mt={"10px"}
             >
-              <AlertDialogHeader
-                fontSize="24px"
-                fontWeight="600"
-                fontFamily={
-                  "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                }
-                color={"#31353BF5"}
-                textAlign={"center"}
-                m={"0px 0px 14px"}
-                letterSpacing={"-0.2px"}
-                lineHeight={"28px"}
-                p={"0px"}
-              >
-                Remove {selectedCart} items?
-              </AlertDialogHeader>
-
-              <AlertDialogBody
-                fontSize={"17px"}
-                fontWeight={"400px"}
-                fontFamily={
-                  "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                }
-                letterSpacing={"0px"}
-                line-height={"22px"}
-                m={"0px 0px 32px"}
-                p={"0px"}
-                color={"#31353BAD"}
-                textAlign={"center"}
-              >
-                <Text m={"0px 0px 25px"}>
-                  The selected items will be removed from your cart.
-                </Text>
+              <GridItem w="100%">
                 <Box
-                  display={"flex"}
-                  flexDirection={"column"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  boxSizing={"border-box"}
+                  w={"710px"}
+                  boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%) !important"}
+                  borderRadius={"15px"}
+                  pl={"28px"}
+                  border={"1px solid #99d5f0"}
                 >
-                  <Button
-                    display={"block"}
-                    bgColor={"#0095DA"}
-                    onClick={deleteAllCartsBtnHandler}
-                    color={"#fff"}
-                    p={"0px 16px"}
-                    height={"48px"}
-                    position={"relative"}
-                    width={"304px"}
-                    fontFamily={"inherit"}
-                    fontWeight={700}
-                    fontSize={"16px"}
-                    _hover={"none"}
-                    borderRadius={"20px"}
-                    _active={{ bgColor: "#165877" }}
+                  <Box
+                    h={"52px"}
+                    width={"650px"}
+                    p="16px 0"
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                    mt={"8px"}
                   >
-                    Remove Items
-                  </Button>
-                  <Button
-                    onClick={onClose}
-                    bgColor={"#fff"}
-                    color={"#F7931E"}
-                    display={"block"}
-                    m={"8px 0px 0px"}
-                    p={"0px 16px"}
-                    fontWeight={700}
-                    height={"48px"}
-                    width={"304px"}
-                    fontFamily={"inherit"}
-                    _hover={"none"}
-                    _active={"none"}
-                  >
-                    Cancel
-                  </Button>
-                </Box>
-              </AlertDialogBody>
+                    <Checkbox
+                      isChecked={allChecked}
+                      onChange={() => checkAllCartItems()}
+                      borderColor={"#6C727C"}
+                      size={"lg"}
+                    >
+                      <Text
+                        fontSize={"14px"}
+                        color={"#31353BAD"}
+                        fontWeight={"400px"}
+                        fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                      >
+                        Select All
+                      </Text>
+                    </Checkbox>
+                    {selectedCart === 0 ? null : (
+                      <Text
+                        textAlign={"end"}
+                        fontSize={"14px"}
+                        display={"block"}
+                        fontWeight="700"
+                        color={"#0095DA"}
+                        fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                        cursor={"pointer"}
+                        position={"relative"}
+                        onClick={() => onOpen()}
+                      >
+                        Remove
+                      </Text>
+                    )}
+                  </Box>
 
-              <AlertDialogFooter></AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
+                  {/* cart item list */}
+                  <Box width={"650px"} h={"5px"} bgColor={"#f7931E"} />
+                  <Box>
+                    {isLoading && renderCartItems()}
+                  </Box>
+                  <Box pb={"50px"}></Box>
+                </Box>
+              </GridItem>
+
+              {/* Shopping Summary */}
+              <GridItem pl={"30px"}>
+                <Box
+                  w={"318.02px"}
+                  h={"236.88px"}
+                  p={"16px"}
+                  boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%)"}
+                  borderRadius={"15px"}
+                  border={"1px solid #99d5f0"}
+                >
+                  <Text
+                    fontWeight={"600"}
+                    position={"relative"}
+                    fontSize={"16px"}
+                    color={"#31353BF5"}
+                    fontFamily={
+                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                    }
+                    display={"block"}
+                    line-height={"20px"}
+                    m={"0px 0px 16px"}
+                  >
+                    Shopping Summary
+                  </Text>
+                  <Box
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                    borderBottom={"1px solid #fcd4a5"}
+                    pb={"16px"}
+                  >
+                    <Text
+                      color={"#31353BAD"}
+                      fontFamily={
+                        "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                      }
+                      fontSize={"14px"}
+                      fontWeight={"400"}
+                      lineHeight={"18px"}
+                      margin={"2px 0px"}
+                    >
+                      Total Price (items)
+                    </Text>
+                    <Text
+                      color={"#31353BAD"}
+                      fontFamily={
+                        "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                      }
+                      fontSize={"14px"}
+                      fontWeight={"400"}
+                      lineHeight={"18px"}
+                      margin={"2px 0px"}
+                    >
+                      {new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      })
+                        .format(cartSelector.totalPrice)
+                        .split(",")[0]}
+                    </Text>
+                  </Box>
+                  <Box
+                    mt={"16px"}
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                  >
+                    <Text
+                      fontWeight={"600"}
+                      position={"relative"}
+                      fontSize={"16px"}
+                      color={"#31353BF5"}
+                      fontFamily={
+                        "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                      }
+                      display={"block"}
+                      line-height={"20px"}
+                      m={"2px 0px"}
+                    >
+                      Grand Total
+                    </Text>
+                    <Text
+                      fontWeight={"600"}
+                      position={"relative"}
+                      fontSize={"16px"}
+                      color={"#31353BF5"}
+                      fontFamily={
+                        "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                      }
+                      display={"block"}
+                      line-height={"20px"}
+                      m={"2px 0px"}
+                    >
+                      {
+                        new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                        })
+                          .format(cartSelector.totalPrice)
+                          .split(",")[0]
+                      }
+                    </Text>
+                  </Box>
+                  {!cartSelector.totalQuantity ? (
+                    <Button
+                      width={"100%"}
+                      h={"48px"}
+                      mt={"20px"}
+                      fontWeight={"700"}
+                      fontSize={"16px"}
+                      bgColor={"#0095DA"}
+                      color={"#fff"}
+                      _hover={"none"}
+                      _active={"none"}
+                      isDisabled={true}
+                    >
+                      Buy(0)
+                    </Button>
+                  ) : (
+                    <Button
+                      width={"100%"}
+                      h={"48px"}
+                      mt={"20px"}
+                      fontWeight={"700"}
+                      fontSize={"16px"}
+                      bgColor={"#0095DA"}
+                      color={"#fff"}
+                      _hover={{
+                        bgColor: "#0370A2",
+                      }}
+                      _active={"none"}
+                      onClick={doubleOnClick}
+                    >
+                      Buy(
+                      {cartSelector.totalQuantity})
+                    </Button>
+                  )}
+                </Box>
+              </GridItem>
+            </Grid>
+          </Box>
+        </Box>
+
+        {/* mobile responsive */}
+        <Box display={{ lg: 'none', base: 'inline' }}>
+          <Box
+            bgColor={'white'}
+            position={'fixed'}
+            left="0"
+            right={"0"}
+            top="0"
+            zIndex="9998"
+            boxShadow={"rgb(0 0 0 / 15%) 0px 1px 3px 0px"}
+          >
+            <Box h={'52px'} maxW={'500px'} display={'flex'} alignItems={'center'} flexdir={'row'} justifyContent={'flex-start'} >
+              <Link to={'/'}>
+                <Box w={'52px'} h={'52px'} p={'1px 6px'} pr={'8px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+                  <HiOutlineArrowLeft style={{ height: "24px", width: "24px", color: "#7d8086" }} />
+                </Box>
+              </Link>
+              <Text
+                fontSize={'16px'}
+                color={'#212121'}
+                fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                lineHeight={'20px'}
+                fontWeight={800}
+              >
+                Cart
+              </Text>
+            </Box>
+            <Box
+              h={"50px"}
+              maxW={'500px'}
+              m={'0px '}
+              p={'16px'}
+              display={"flex"}
+              justifyContent={"space-between"}
+            >
+              <Checkbox
+                isChecked={allChecked}
+                onChange={() => checkAllCartItems()}
+                borderColor={"#6C727C"}
+                size={"lg"}
+              >
+                <Text
+                  fontSize={"14px"}
+                  color={"#0000008A"}
+                  fontWeight={"400"}
+                  fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                >
+                  Select All Product
+                </Text>
+              </Checkbox>
+              {selectedCart === 0 ? null : (
+                <Text
+                  textAlign={"end"}
+                  fontSize={"14px"}
+                  display={"block"}
+                  fontWeight={700}
+                  color={"#0095DA"}
+                  fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+                  cursor={"pointer"}
+                  position={"relative"}
+                  onClick={() => onOpen()}
+                >
+                  Clear
+                </Text>
+              )}
+            </Box>
+          </Box>
+          <Box h={'102px'} maxW={'500px'} />
+          <Box h={'8px'} bgColor={'#f0f3f7'} maxW={'500px'} />
+          <Box>
+            {renderCartItems()}
+          </Box>
+          {!cartSelector.totalQuantity ? (
+            <>
+              <Box maxW={'500px'} h={'72px'} />
+              <Box display={'flex'} flexDir={'row'} justifyContent={'space-between'} p={'16px'} maxW={'500px'} h={'72px'} position={'fixed'}
+                left="0"
+                right={"0"}
+                bottom="0"
+                zIndex="9998"
+                bgColor={'#fff'}
+              >
+                <Box display={'flex'} flexDir={'column'} justifyContent={'center'} >
+                  <Text
+                    color={'#31353BAD'}
+                    fontSize={'14px'}
+                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                    lineHeight={'16px'}
+                    fontWeight={700}
+                  >
+                    Total Price
+                  </Text>
+                  <Text
+                    color={'#31353BF5'}
+                    fontSize={'16px'}
+                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                    lineHeight={'18px'}
+                    fontWeight={700}
+                    m={'4px 0px'}
+                  >
+                    -
+                  </Text>
+                </Box>
+                <Button
+                  borderRadius={'8px'}
+                  h={'100%'}
+                  color={'#AAB4C8'}
+                  bgColor={"#E4EBF5"}
+                  onClick={doubleOnClick}
+                  fontSize={'16px'}
+                  fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                  lineHeight={'18px'}
+                  fontWeight={700}
+                  w={'164px'}
+                >
+                  Buy (0)
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Box maxW={'500px'} h={'74px'} />
+              <Box display={'flex'} flexDir={'row'} justifyContent={'space-between'} p={'16px'} maxW={'500px'} h={'74px'} position={'fixed'}
+                left="0"
+                right={"0"}
+                bottom="0"
+                zIndex="9998"
+                bgColor={'#fff'}
+              >
+                <Box display={'flex'} flexDir={'column'} justifyContent={'center'} >
+                  <Text
+                    color={'#31353BAD'}
+                    fontSize={'14px'}
+                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                    lineHeight={'16px'}
+                    fontWeight={700}
+                  >
+                    Total Price
+                  </Text>
+                  <Text
+                    color={'#31353BF5'}
+                    fontSize={'16px'}
+                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                    lineHeight={'18px'}
+                    fontWeight={700}
+                    m={'4px 0px'}
+                  >
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                    }).format(cartSelector.totalPrice).split(",")[0]}
+                  </Text>
+                </Box>
+                <Button
+                  h={'100%'}
+                  color={'#fff'}
+                  bgColor={"#0095DA"}
+                  onClick={doubleOnClick}
+                  fontSize={'16px'}
+                  fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                  lineHeight={'18px'}
+                  fontWeight={700}
+                  w={'164px'}
+                  borderRadius={'8px'}
+                  _hover={{
+                    bgColor: "#0370A2",
+                  }}
+                  _active={"none"}
+                >
+                  Buy ({cartSelector.totalQuantity})
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
+
+        {/* Alert Dialog for Delete Selected Carts */}
+        <AlertDialogDeleteSelectedCart
+          selectedCart={selectedCart}
+          deleteAllCartsBtnHandler={deleteAllCartsBtnHandler}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
 
         {/* Formik add new address */}
         <FormAddress

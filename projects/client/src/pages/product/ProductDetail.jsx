@@ -22,8 +22,7 @@ import { axiosInstance } from "../../api"
 import { Carousel } from "react-responsive-carousel"
 import "react-responsive-carousel/lib/styles/carousel.min.css"
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
-import { addItemToCart, fillCart } from "../../redux/features/cartSlice"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { MdModeEdit } from 'react-icons/md';
 
 const ProductDetail = ({ product_name, id }) => {
@@ -36,9 +35,13 @@ const ProductDetail = ({ product_name, id }) => {
     const [addNote, setAddNote] = useState(false)
     const [inputNote, setInputNote] = useState("")
 
-    const dispatch = useDispatch()
+    const authSelector = useSelector((state) => state.auth)
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const toast = useToast()
+
+    const location = useLocation()
 
     const params = useParams()
 
@@ -71,26 +74,15 @@ const ProductDetail = ({ product_name, id }) => {
             min: 1,
             max: stock
         })
+
     const inc = getIncrementButtonProps()
     const dec = getDecrementButtonProps()
     const input = getInputProps()
     const addQuantity = Number(input.value)
 
-    const location = useLocation()
-    const authSelector = useSelector((state) => state.auth)
-    const { isOpen, onOpen, onClose } = useDisclosure()
-
-    const backToLogin = () => {
-        onClose()
-    }
-
-    const fetchMyCart = async () => {
-        try {
-            const response = await axiosInstance.get("/carts/me")
-            dispatch(fillCart(response.data.data))
-
-        } catch (err) {
-            console.log(err)
+    const userMustLogin = () => {
+        if (!authSelector.id) {
+            onOpen()
         }
     }
 
@@ -116,11 +108,8 @@ const ProductDetail = ({ product_name, id }) => {
                 quantity: addQuantity,
                 note: inputNote
             }
-            const response = await axiosInstance.post("/carts", addToCart)
 
-
-            dispatch(addItemToCart(response.data.data))
-            setAddNote(false)
+            await axiosInstance.post("/carts", addToCart)
 
             toast({
                 title: "Cart Items Added",
@@ -128,24 +117,26 @@ const ProductDetail = ({ product_name, id }) => {
             })
 
             fetchCartByProductId()
-            fetchMyCart()
         } catch (err) {
             console.log(err)
-            toast({
-                title: `Failed Added Cart Items`,
-                status: "error",
-                description: err.response.data.message,
-            })
+
+            if (stock === 0) {
+                toast({
+                    title: `Failed Added Cart Items`,
+                    status: "error",
+                    description: "Product out of stock",
+                })
+            } else {
+                toast({
+                    title: `Failed Added Cart Items`,
+                    status: "error",
+                    description: err.response.data.message,
+                })
+            }
         }
     }
 
-    const userMustLogin = () => {
-        if (!authSelector.id) {
-            onOpen()
-        }
-    }
-
-    const addToCartByProductId = async () => {
+    const addToExistingCart = async () => {
         try {
             let newQuantity = {
                 quantity: addQuantity,
@@ -158,30 +149,37 @@ const ProductDetail = ({ product_name, id }) => {
             })
 
             fetchCartByProductId()
-            fetchMyCart()
-            setAddNote(false)
 
         } catch (err) {
             console.log(err)
 
             const itemLeft = stock - cartItemQuantity
-            toast({
-                title: `Only ${itemLeft} left and you already have ${cartItemQuantity} of this item in your cart.`,
-                status: "error",
-                description: err.response.data.message,
-            })
+
+            if (stock === 0) {
+                toast({
+                    title: `Failed Added Cart Items`,
+                    status: "error",
+                    description: "Product out of stock",
+                })
+            } else {
+                toast({
+                    title: `Only ${itemLeft} left and you already have ${cartItemQuantity} of this item in your cart.`,
+                    status: "error",
+                    description: err.response.data.message,
+                })
+            }
         }
     }
 
+    const cancelNotes = () => {
+        setAddNote(false)
+        setInputNote("")
+    }
+
     useEffect(() => {
-        fetchMyCart()
         fetchCartByProductId()
         fetchProductDetail()
     }, [cartItemQuantity, addQuantity, productDetail])
-
-    const myStyle = {
-        width: "1000px"
-    }
 
     return (
         <>
@@ -325,24 +323,23 @@ const ProductDetail = ({ product_name, id }) => {
                     <Box
                         bgColor={"#fff"}
                         right={'250px'}
-                        p={'0px 12px'}
+                        p={'16px 12px'}
                         display="block"
                         px="16px"
                         w="268px"
-                        h={addQuantity > stock ? "305px" : addNote === true ? "312px" : "265px"}
+                        h={'100%'}
                         boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%) !important"}
                         borderRadius={"15px"}
                         border={"1px solid #99d5f0"}
                     >
-                        <Box mt="12px" gap="20px" >
-                            {/* Buy now */}
+                        <Box gap="20px" >
                             <Stack >
                                 <Text
                                     fontSize="16px"
                                     fontWeight={700}
                                     textAlign={'left'}
                                     lineHeight={'22px'}
-                                    m={'12px 0px 20px'}
+                                    m={'4px 0px 20px'}
                                     color={'#3135BF5'}
                                     fontFamily={'Open Sauce One, Nunito Sans, -apple-system, sans-serif'}
                                 >
@@ -358,9 +355,9 @@ const ProductDetail = ({ product_name, id }) => {
                             >
                                 {/* set amount */}
                                 <Box
-                                    w={'99.97px'}
-                                    h={'27.97px'}
-                                    display={'inline-flex'}
+                                    w={'104px'}
+                                    h={'28px'}
+                                    display={'flex'}
                                     border={'1px solid #BFC9D9'}
                                     borderRadius={'4px'}
                                     p={'3px'}
@@ -368,19 +365,32 @@ const ProductDetail = ({ product_name, id }) => {
                                     _hover={{
                                         borderColor: '#0095DA'
                                     }}
+                                    justifyContent={'flex-start'}
                                 >
                                     <Box
-                                        w={'18px'}
-                                        h={'18px'}
-                                        pt={'2px'}
+                                        maxW={'20px'}
+                                        maxH={'20px'}
+                                        minH={'20px'}
+                                        minW={'20px'}
+                                        w={'20px'}
+                                        h={'20px'}
+                                        p={'0px'}
                                         color={addQuantity > 1 ? '#0095DA' : '#c0cada'}
-                                        {...dec}>
-                                        <AiOutlineMinus />
+                                        {...dec}
+                                        isDisabled={stock === 0 ? true : false}
+                                        bgColor={'#fff'}
+                                        display={'flex'}
+                                        justifyContent={'center'}
+                                        alignItems={'center'}
+                                        _hover={'none'}
+                                        _active={'none'}
+                                    >
+                                        <AiOutlineMinus style={{ height: "16px", width: "16px" }} />
                                     </Box>
-
                                     <Input
                                         isDisabled={stock === 0 ? true : false}
-                                        width={'56px'}
+                                        minWidth={'56px'}
+                                        maxWidth={'56px'}
                                         height={'20px'}
                                         textAlign="center"
                                         p={'1px'}
@@ -392,17 +402,50 @@ const ProductDetail = ({ product_name, id }) => {
                                         borderColor={'#fff'}
                                         _hover={'none'}
                                         focusBorderColor={'#fff'}
+                                        type={'number'}
                                     />
-
-                                    <Box
-                                        w={'18px'}
-                                        h={'18px'}
-                                        pt={'2px'}
-                                        color={stock <= addQuantity ? '#c0cada' : '#0095DA'}
-                                        {...inc}
-                                    >
-                                        <AiOutlinePlus />
-                                    </Box>
+                                    {stock === 0 ? (
+                                        <Box
+                                            maxW={'20px'}
+                                            maxH={'20px'}
+                                            minH={'20px'}
+                                            minW={'20px'}
+                                            w={'20px'}
+                                            h={'20px'}
+                                            p={'0px'}
+                                            color={stock <= addQuantity ? '#c0cada' : '#0095DA'}
+                                            isDisabled={stock !== 0 ? false : true}
+                                            bgColor={'#fff'}
+                                            display={'flex'}
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                            _hover={'none'}
+                                            _active={'none'}
+                                        >
+                                            <AiOutlinePlus />
+                                        </Box>
+                                    ) : (
+                                        <Box
+                                            maxW={'20px'}
+                                            maxH={'20px'}
+                                            minH={'20px'}
+                                            minW={'20px'}
+                                            w={'20px'}
+                                            h={'20px'}
+                                            p={'0px'}
+                                            color={stock <= addQuantity ? '#c0cada' : '#0095DA'}
+                                            {...inc}
+                                            isDisabled={stock !== 0 ? false : true}
+                                            bgColor={'#fff'}
+                                            display={'flex'}
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                            _hover={'none'}
+                                            _active={'none'}
+                                        >
+                                            <AiOutlinePlus />
+                                        </Box>
+                                    )}
                                 </Box>
                                 <Text
                                     lineHeight={'20px'}
@@ -413,7 +456,7 @@ const ProductDetail = ({ product_name, id }) => {
                                     fontWeight={500}
                                 >
                                     {`Total Stocks: `}
-                                    <Text as={'span'} fontWeight={'bolder'}>
+                                    <Text as={'span'} fontWeight={'bolder'} color={stock === 0 ? '#FF6577' : '#31353BF5'}>
                                         {stock}
                                     </Text>
                                 </Text>
@@ -429,66 +472,70 @@ const ProductDetail = ({ product_name, id }) => {
                                 >Maximum Quantity to purchase this item is {stock}
                                 </Text>
                             ) : null}
+
                             {/* add notes */}
-                            <Box
-                                mt={'16px'}
-                                display={'flex'}
-                                color={'#0095DA'}
-                                gap={'2px'}
-                            >
-                                {addNote === true ? null : (
-                                    <>
-                                        <MdModeEdit />
-                                        <Text
-                                            onClick={() => setAddNote(true)}
-                                            fontSize={'12px'}
-                                            fontFamily={"Open Sauce One, sans-serif"}
-                                            fontWeight={'600'}
-                                            lineHeight={'1,4'}
-                                            cursor={'pointer'}
-                                            color={'#0095DA'}
-                                            flex-direction={'row'}
-                                        >
-                                            Add Notes
-                                        </Text>
-                                    </>
-                                )}
-                                {addNote === true ? (
-                                    <Box>
-                                        <Input
-                                            padding={'10px 16px'}
-                                            type={'text'}
-                                            onChange={e => setInputNote(e.target.value)}
-                                            value={inputNote}
-                                            _placeholder={{ color: "#c2c2c2" }}
-                                            placeholder={'Example: white color, medium size'}
-                                            width={'234px'}
-                                            height={'40px'}
-                                            margin={'0px'}
-                                            border={'1px solid #ebedee'}
-                                            borderRadius={'8px'}
-                                            color={'rgba(49,53,59,0.96)'}
-                                            focusBorderColor={'#0095DA'}
-                                            fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-                                        />
-                                        <Text
-                                            onClick={() => setAddNote(false)}
-                                            fontSize={'12px'}
-                                            fontFamily={"Open Sauce One, sans-serif"}
-                                            fontWeight={'600'}
-                                            lineHeight={'1,4'}
-                                            cursor={'pointer'}
-                                            color={'#0095DA'}
-                                            p={'0px'}
-                                            display={'flex'}
-                                            alignItems={'center'}
-                                            margin={'8px 0px 0px'}
-                                        >
-                                            Cancel Notes
-                                        </Text>
-                                    </Box>
-                                ) : null}
-                            </Box>
+                            {stock === 0 ? null : (
+                                <Box
+                                    mt={'16px'}
+                                    display={'flex'}
+                                    color={'#0095DA'}
+                                    gap={'2px'}
+                                >
+                                    {addNote === true ? null : (
+                                        <>
+                                            <MdModeEdit />
+                                            <Text
+                                                onClick={() => setAddNote(true)}
+                                                fontSize={'12px'}
+                                                fontFamily={"Open Sauce One, sans-serif"}
+                                                fontWeight={'600'}
+                                                lineHeight={'1,4'}
+                                                cursor={'pointer'}
+                                                color={'#0095DA'}
+                                                flex-direction={'row'}
+                                            >
+                                                Add Notes
+                                            </Text>
+                                        </>
+                                    )}
+                                    {addNote === true ? (
+                                        <Box>
+                                            <Input
+                                                padding={'10px 16px'}
+                                                type={'text'}
+                                                onChange={e => setInputNote(e.target.value)}
+                                                value={inputNote}
+                                                _placeholder={{ color: "#c2c2c2" }}
+                                                placeholder={'Example: white color, medium size'}
+                                                width={'234px'}
+                                                height={'40px'}
+                                                margin={'0px'}
+                                                border={'1px solid #ebedee'}
+                                                borderRadius={'8px'}
+                                                color={'#31353BF5'}
+                                                focusBorderColor={'#0095DA'}
+                                                fontFamily={"Open Sauce One, Nunito Sans, sans-serif"}
+                                                fontSize={'14px'}
+                                            />
+                                            <Text
+                                                onClick={cancelNotes}
+                                                fontSize={'12px'}
+                                                fontFamily={"Open Sauce One, sans-serif"}
+                                                fontWeight={'600'}
+                                                lineHeight={'1,4'}
+                                                cursor={'pointer'}
+                                                color={'#0095DA'}
+                                                p={'0px'}
+                                                display={'flex'}
+                                                alignItems={'center'}
+                                                margin={'8px 0px 0px'}
+                                            >
+                                                Cancel Notes
+                                            </Text>
+                                        </Box>
+                                    ) : null}
+                                </Box>
+                            )}
                             <Box display={'flex'} justifyContent={"space-between"} pb={'16px'} mt={'18px'}>
                                 <Text
                                     color={'#31353BAD'}
@@ -508,7 +555,7 @@ const ProductDetail = ({ product_name, id }) => {
                                     lineHeight={'26px'}
                                     margin={'0px'}
                                 >
-                                    {new Intl.NumberFormat("id-ID", {
+                                    {stock === 0 ? '-' : new Intl.NumberFormat("id-ID", {
                                         style: "currency",
                                         currency: "IDR",
                                     }).format(productDetail.price * addQuantity).split(",")[0]}
@@ -535,6 +582,7 @@ const ProductDetail = ({ product_name, id }) => {
                                         bgColor: "#B86401"
                                     }}
                                     onClick={authSelector.id ? addToCart : userMustLogin}
+                                    isDisabled={addQuantity === null || addQuantity === 0 || stock === 0 ? true : false}
                                 >
                                     Add to Cart
                                 </Button>
@@ -557,7 +605,8 @@ const ProductDetail = ({ product_name, id }) => {
                                     _active={{
                                         bgColor: "#B86401"
                                     }}
-                                    onClick={authSelector.id ? addToCartByProductId : userMustLogin}
+                                    onClick={authSelector.id ? addToExistingCart : userMustLogin}
+                                    isDisabled={addQuantity === null || addQuantity === 0 || stock === 0 ? true : false}
                                 >
                                     Add to Cart
                                 </Button>
@@ -567,8 +616,8 @@ const ProductDetail = ({ product_name, id }) => {
                 </Box>
             </Box>
 
-            {/* if user not log in */}
-            <AlertDialog isCentered closeOnOverlayClick={false} isOpen={isOpen} onClose={backToLogin} size={"sm"}
+            {/* if user not logged in */}
+            <AlertDialog isCentered closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} size={"sm"}
                 closeOnEsc={false}
             >
                 <AlertDialogOverlay
@@ -600,7 +649,7 @@ const ProductDetail = ({ product_name, id }) => {
                                         mt={'16px'}
                                         width={'220px'}
                                         colorScheme="blue"
-                                        onClick={backToLogin}
+                                        onClick={() => onClose()}
                                     >
                                         OK
                                     </Button>

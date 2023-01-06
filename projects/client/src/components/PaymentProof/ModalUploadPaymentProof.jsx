@@ -6,7 +6,7 @@ const ModalUploadPaymentProof = ({ doubleOnClick, selectedImage, setSelectImage,
     return (
         <Modal isOpen={paymentIsOpen} onOpen={paymentOnOpen} onClose={paymentOnClose}>
             <ModalOverlay />
-            <ModalContent mt={selectImage ? '100px' : '145px'} w={'550px'} borderRadius={'10px'}>
+            <ModalContent mt={{ lg: selectImage ? '100px' : '145px', base: selectImage ? '60px' : '105px' }} w={'550px'} borderRadius={'10px'}>
                 <ModalCloseButton />
                 <ModalBody pt={'25px'} pb={'32px'} pr={'25px'} pl={'25px'} mt={'10px'}>
                     <Box>

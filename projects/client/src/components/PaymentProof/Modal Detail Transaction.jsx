@@ -5,7 +5,7 @@ const ModalDetailTransaction = ({ courir, shippingDate, isOpen, onClose, transac
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
-            <ModalContent mt={'180px'} w={'504.88px'} maxHeight={"520px"} overflow={"auto"}>
+            <ModalContent mt={{ lg: '160px', base: '100px' }} w={'504.88px'} maxHeight={"520px"} overflow={"auto"}>
                 <ModalCloseButton />
                 <ModalBody pt={'20px'} pb={'20px'}>
                     <Text

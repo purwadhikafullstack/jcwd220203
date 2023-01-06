@@ -26,9 +26,9 @@ const ModalTransactionItemDetail = ({ courirDuration, transactionItems, transact
     const receiptNo = `2208${moment(paymentDate).format("YYMMDD")}${transactionId}`
 
     return (
-        <Modal isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onOpen={onOpen} onClose={onClose} motionPreset={{ lg: 'none', base: 'slideInBottom' }}>
             <ModalOverlay />
-            <ModalContent maxW="532.54px" mt={"99px"} borderRadius={"12px"}>
+            <ModalContent maxW="532.54px" mt={{ lg: "99px", base: '220px' }} borderRadius={"12px"}>
                 <ModalHeader
                     borderBottom={"1px solid #e5e7e9"}
                     pt={"32px"}

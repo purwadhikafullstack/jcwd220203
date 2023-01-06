@@ -17,7 +17,7 @@ import { useSearchParams } from "react-router-dom"
 import { CgChevronLeft, CgChevronRight } from "react-icons/cg"
 import { axiosInstance } from "../../api"
 import ProductItem from "../../components/product/ProductItem"
-import Navbar from "../../components/Navbar"
+import Navbar from "../../components/HomePage/Navbar/Navbar"
 
 const Product = () => {
     const [products, setProducts] = useState([])
@@ -165,7 +165,7 @@ const Product = () => {
                 w="1100px"
                 h="1600px"
                 display="block"
-                // borderBottom="1px solid #dfe1e3"
+            // borderBottom="1px solid #dfe1e3"
             >
                 {/* Filter and Search */}
                 <Box
@@ -196,7 +196,7 @@ const Product = () => {
                     // border="1px solid brown"
                     display="flex"
                     gap="4px"
-                    // borderBottom="1px solid #dfe1e3"
+                // borderBottom="1px solid #dfe1e3"
                 >
                     {/* Fitler */}
                     <Box
