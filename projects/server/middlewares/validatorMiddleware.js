@@ -1,5 +1,50 @@
 const { check, validationResult } = require("express-validator")
 
+exports.validateRegisterEmail = [
+  check("email")
+    .optional({ checkFalsy: true })
+    .isEmail()
+    .withMessage("Invalid email"),
+
+  (req, res, next) => {
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty())
+      return res.status(422).json({
+        errors: errors.array(),
+        message: "Invalid fields",
+      })
+    next()
+  },
+]
+
+exports.validateRegisterPassword = [
+  check("username")
+    .optional({ checkFalsy: true })
+    .isAlphanumeric()
+    .withMessage(
+      "username must be at least 3 characters and only contain alphanumeric chars"
+    ),
+  check("password").optional({ checkFalsy: true }).isStrongPassword({
+    minLength: 8,
+    minNumbers: 1,
+    minUppercase: 1,
+    minSymbols: 1,
+    minLowercase: 1,
+  }),
+
+  (req, res, next) => {
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty())
+      return res.status(422).json({
+        errors: errors.array(),
+        message: "Invalid fields",
+      })
+    next()
+  },
+]
+
 exports.validateAddress = [
   check("recipients_name")
     .optional({ checkFalsy: true })

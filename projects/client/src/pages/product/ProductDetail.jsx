@@ -260,12 +260,154 @@ const ProductDetail = ({ product_name, id }) => {
                                         h="58px"
                                     />
                                 </Box> */}
-                                </Stack>
-                            ))}
-                        </Carousel>
-                    </Box>
+                </Stack>
+              ))}
+            </Carousel>
+          </Box>
 
-                    {/* Product */}
+          {/* Product */}
+          <Box
+            // border="1px solid green"
+            borderRadius="12px"
+            w="468px"
+            h="700px"
+            display="block"
+          >
+            <Box display="grid" gap="20px">
+              {/* Product Name */}
+              <Stack
+                // border="1px solid red"
+                w="468px"
+                h="48px"
+              >
+                <Text fontSize="16" fontFamily="sans-serif" fontWeight="bold">
+                  {productDetail?.product_name}
+                </Text>
+              </Stack>
+
+              {/* Price */}
+              <Stack
+                // border="1px solid blue"
+                w="468px"
+                h="80px"
+                borderBottom="1px solid #dfe1e3"
+              >
+                <Text fontSize="28" fontFamily="sans-serif" fontWeight="bold">
+                  {new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                  }).format(productDetail.price)}
+                </Text>
+              </Stack>
+
+              {/* Description */}
+              <Stack
+                // border="1px solid brown"
+                w="468px"
+                h="48px"
+              >
+                <Text
+                  fontSize="14"
+                  fontFamily="sans-serif"
+                  whiteSpace={"pre-line"}
+                >
+                  {productDetail.description}
+                </Text>
+              </Stack>
+            </Box>
+          </Box>
+
+          {/* Add to cart */}
+          <Box
+            bgColor={"#fff"}
+            right={"250px"}
+            p={"16px 12px"}
+            display="block"
+            px="16px"
+            w="268px"
+            h={"100%"}
+            boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%) !important"}
+            borderRadius={"15px"}
+            border={"1px solid #99d5f0"}
+          >
+            <Box gap="20px">
+              <Stack>
+                <Text
+                  fontSize="16px"
+                  fontWeight={700}
+                  textAlign={"left"}
+                  lineHeight={"22px"}
+                  m={"4px 0px 20px"}
+                  color={"#3135BF5"}
+                  fontFamily={
+                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                  }
+                >
+                  Set amount and note
+                </Text>
+              </Stack>
+              <Box
+                display={"flex"}
+                alignItems={"center"}
+                boxSizing={"inherit"}
+                w={"242.03px"}
+                h={"27.97px"}
+              >
+                {/* set amount */}
+                <Box
+                  w={"104px"}
+                  h={"28px"}
+                  display={"flex"}
+                  border={"1px solid #BFC9D9"}
+                  borderRadius={"4px"}
+                  p={"3px"}
+                  alignItems={"center"}
+                  _hover={{
+                    borderColor: "#0095DA",
+                  }}
+                  justifyContent={"flex-start"}
+                >
+                  <Box
+                    maxW={"20px"}
+                    maxH={"20px"}
+                    minH={"20px"}
+                    minW={"20px"}
+                    w={"20px"}
+                    h={"20px"}
+                    p={"0px"}
+                    color={addQuantity > 1 ? "#0095DA" : "#c0cada"}
+                    {...dec}
+                    isDisabled={stock === 0 ? true : false}
+                    bgColor={"#fff"}
+                    display={"flex"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    _hover={"none"}
+                    _active={"none"}
+                  >
+                    <AiOutlineMinus style={{ height: "16px", width: "16px" }} />
+                  </Box>
+                  <Input
+                    isDisabled={stock === 0 ? true : false}
+                    minWidth={"56px"}
+                    maxWidth={"56px"}
+                    height={"20px"}
+                    textAlign="center"
+                    p={"1px"}
+                    {...input}
+                    fontFamily={
+                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                    }
+                    fontSize={"14px"}
+                    lineHeight={"18px"}
+                    color={"rgba(49,53,59,0.68)"}
+                    borderColor={"#fff"}
+                    _hover={"none"}
+                    focusBorderColor={"#fff"}
+                    type={"number"}
+                  />
+                  {stock === 0 ? (
                     <Box
                         // border="1px solid green"
                         borderRadius="12px"
@@ -721,66 +863,36 @@ const ProductDetail = ({ product_name, id }) => {
                     bg="blackAlpha.400"
                     backdropFilter="blur(50px) hue-rotate(90deg)"
                 >
-                    <AlertDialogContent borderRadius={"30px"} mt={"-50px"}>
-                        <AlertDialogHeader
-                            fontSize="lg"
-                            fontWeight="bold"
-                            color={"#F7931E"}
-                            pt={"20px"}
-                        >
-                            Notification!
-                        </AlertDialogHeader>
+                  You must log in first before do any transaction
+                </Text>
+                <Link to={"/login"} replace state={{ from: location }}>
+                  <Button
+                    borderRadius={"20px"}
+                    mt={"16px"}
+                    width={"220px"}
+                    colorScheme="blue"
+                    onClick={() => onClose()}
+                  >
+                    OK
+                  </Button>
+                </Link>
+              </Box>
+            </AlertDialogBody>
 
-                        <AlertDialogBody>
-                            <Box
-                                display={"flex"}
-                                flexDirection={"column"}
-                                justifyContent={"center"}
-                                alignItems={"center"}
-                                boxSizing={"border-box"}
-                            >
-                                <Text
-                                    pb={"10px"}
-                                    fontFamily={
-                                        "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
-                                    }
-                                    fontWeight={500}
-                                >
-                                    You must log in first before do any
-                                    transaction
-                                </Text>
-                                <Link
-                                    to={"/login"}
-                                    replace
-                                    state={{ from: location }}
-                                >
-                                    <Button
-                                        borderRadius={"20px"}
-                                        mt={"16px"}
-                                        width={"220px"}
-                                        colorScheme="blue"
-                                        onClick={() => onClose()}
-                                    >
-                                        OK
-                                    </Button>
-                                </Link>
-                            </Box>
-                        </AlertDialogBody>
+            <AlertDialogFooter pb={"5px"}></AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
 
-                        <AlertDialogFooter pb={"5px"}></AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialogOverlay>
-            </AlertDialog>
-
-            {/* Reposive */}
-            <ResponsiveProductDetail
-                addToCart={addToCart}
-                // addToCartByProductId={addToCartByProductId}
-                cartItemQuantity={cartItemQuantity}
-                userMustLogin={userMustLogin}
-            />
-        </>
-    )
+      {/* Reposive */}
+      <ResponsiveProductDetail
+        addToCart={addToCart}
+        addToCartByProductId={addToExistingCart}
+        cartItemQuantity={cartItemQuantity}
+        userMustLogin={userMustLogin}
+      />
+    </>
+  )
 }
 
 export default ProductDetail
