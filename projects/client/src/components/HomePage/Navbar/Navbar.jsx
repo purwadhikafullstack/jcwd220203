@@ -111,6 +111,11 @@ const Navbar = ({ onChange, onKeyDown }) => {
         }
     }
 
+    const refreshPage = () => {
+        window.location.reload(false)
+    }
+
+
     const renderCategory = () => {
         return showCategory.map((val) => {
             return (
@@ -141,7 +146,8 @@ const Navbar = ({ onChange, onKeyDown }) => {
             location.pathname === "/transaction-list" ||
             location.pathname === "/user/profile" ||
             location.pathname === "/user/profile/change-password" ||
-            location.pathname === "/user/profile/address"
+            location.pathname === "/user/profile/address" ||
+            location.pathname === "/transaction/payment-list"
         ) {
             navigate("/login")
         }
@@ -856,6 +862,7 @@ const Navbar = ({ onChange, onKeyDown }) => {
                             right={"0"}
                             top="0"
                             zIndex="9998"
+                            bgColor={'#fff'}
                         >
                             <Box
                                 p={'8px 10px 4px'}

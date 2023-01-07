@@ -159,6 +159,126 @@ const Checkout = () => {
 
   return (
     <>
+      {/* mobile responsive */}
+      <Box display={{ lg: "none", base: "inline" }}>
+        <Box
+          h={'52px'}
+          maxW={'500px'}
+          display={'flex'}
+          alignItems={'center'}
+          flexdir={'row'}
+          justifyContent={'flex-start'}
+          boxShadow={"rgb(0 0 0 / 15%) 0px 1px 3px 0px"}
+          bgColor={'white'}
+          position={'fixed'}
+          left="0"
+          right={"0"}
+          top="0"
+          zIndex="9998"
+        >
+          <Link to={'/cart'}>
+            <Box w={'52px'} h={'52px'} p={'1px 6px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+              <HiOutlineArrowLeft style={{ height: "24px", width: "24px", color: "#7d8086" }} />
+            </Box>
+          </Link>
+          <Text
+            fontSize={'16px'}
+            color={'#212121'}
+            fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
+            lineHeight={'20px'}
+            fontWeight={700}
+          >
+            Shipping
+          </Text>
+        </Box>
+        <Box h={'52px'} w={'500px'} />
+        <Box>
+          <ChangeAddress defaultAddressUser={setDefaultAddressId} />
+          <CheckoutCartItems />
+          <Box h={'6px'} bgColor={'#edeff1'} />
+          <ShippingComponent closestWarehouseTransaction={setClosestWarehouse} selectedCourir={setCourirDuration} shippingFeePay={setShippingFee} productWeight={productWeight} shippingError={shippingError} setShippingError={setShippingError} />
+          <Box h={'6px'} bgColor={'#edeff1'} />
+          <Box
+            w={'500px'}
+            h={'96px'}
+            display={'flex'}
+            flexDir={'column'}
+            p={'14px 16px'}
+            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+            margin={'0px'}
+            color={'#31353BF5'}
+            fontSize={'12px'}
+            borderBottom="6px solid #edeff1"
+          >
+            <Text fontWeight={600} lineHeight={'16px'} mb={'8px'}>
+              Shopping summary
+            </Text>
+            <Box display={'flex'} flexDir={'row'} justifyContent={'space-between'} color={'#31353BAD'}>
+              <Text>
+                Total price ({cartSelector.totalQuantity} {cartSelector.totalQuantity < 2 ? "product" : "products"})
+              </Text>
+              <Text>
+                {new Intl.NumberFormat("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                }).format(cartSelector.totalPrice).split(",")[0]}
+              </Text>
+            </Box>
+            <Box display={'flex'} flexDir={'row'} mt={'5px'} justifyContent={'space-between'} color={'#31353BAD'} >
+              <Text>
+                Total Shipping Cost
+              </Text>
+              <Text>
+                {new Intl.NumberFormat("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                }).format(shippingFee).split(",")[0]}
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+        <Box display={'flex'} flexDir={'row'} justifyContent={'space-between'} p={'16px'} w={'500px'} h={'80px'}>
+          <Box display={'flex'} flexDir={'column'} justifyContent={'center'}>
+            <Text
+              color={'#31353BAD'}
+              fontSize={'12px'}
+              fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+              lineHeight={'16px'}
+              fontWeight={700}
+            >
+              Total
+            </Text>
+            <Text
+              color={'#31353BF5'}
+              fontSize={'14px'}
+              fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+              lineHeight={'18px'}
+              fontWeight={700}
+            >
+              {new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(totalBill).split(",")[0]}
+            </Text>
+          </Box>
+          <Button
+            borderRadius={'8px'}
+            h={'100%'}
+            color={'#fff'}
+            bgColor={"#0095DA"}
+            onClick={openPayment}
+            fontSize={'14px'}
+            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+            lineHeight={'18px'}
+            fontWeight={700}
+            w={'164px'}
+          >
+            Select Payment
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Dekstop mode */}
       <Box display={{ lg: "inline", base: "none" }}>
         <Box h="52px" borderBottom="1px solid #e4e6e9">
           <Box m={'0px'} mt={'8px'} w={"1080px"} mx="auto" h="60px">
@@ -345,125 +465,6 @@ const Checkout = () => {
               </Box>
             </Box>
           </Flex>
-        </Box>
-      </Box>
-
-      {/* mobile responsive */}
-      <Box display={{ lg: "none", base: "inline" }}>
-        <Box
-          h={'52px'}
-          maxW={'500px'}
-          display={'flex'}
-          alignItems={'center'}
-          flexdir={'row'}
-          justifyContent={'flex-start'}
-          boxShadow={"rgb(0 0 0 / 15%) 0px 1px 3px 0px"}
-          bgColor={'white'}
-          position={'fixed'}
-          left="0"
-          right={"0"}
-          top="0"
-          zIndex="9998"
-        >
-          <Link to={'/cart'}>
-            <Box w={'52px'} h={'52px'} p={'1px 6px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-              <HiOutlineArrowLeft style={{ height: "24px", width: "24px", color: "#7d8086" }} />
-            </Box>
-          </Link>
-          <Text
-            fontSize={'16px'}
-            color={'#212121'}
-            fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-            lineHeight={'20px'}
-            fontWeight={700}
-          >
-            Shipping
-          </Text>
-        </Box>
-        <Box h={'52px'} w={'500px'} />
-        <Box>
-          <ChangeAddress defaultAddressUser={setDefaultAddressId} />
-          <CheckoutCartItems />
-          <Box h={'6px'} bgColor={'#edeff1'} />
-          <ShippingComponent closestWarehouseTransaction={setClosestWarehouse} selectedCourir={setCourirDuration} shippingFeePay={setShippingFee} productWeight={productWeight} shippingError={shippingError} setShippingError={setShippingError} />
-          <Box h={'6px'} bgColor={'#edeff1'} />
-          <Box
-            w={'500px'}
-            h={'96px'}
-            display={'flex'}
-            flexDir={'column'}
-            p={'14px 16px'}
-            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-            margin={'0px'}
-            color={'#31353BF5'}
-            fontSize={'12px'}
-            borderBottom="6px solid #edeff1"
-          >
-            <Text fontWeight={600} lineHeight={'16px'} mb={'8px'}>
-              Shopping summary
-            </Text>
-            <Box display={'flex'} flexDir={'row'} justifyContent={'space-between'} color={'#31353BAD'}>
-              <Text>
-                Total price ({cartSelector.totalQuantity} {cartSelector.totalQuantity < 2 ? "product" : "products"})
-              </Text>
-              <Text>
-                {new Intl.NumberFormat("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                }).format(cartSelector.totalPrice).split(",")[0]}
-              </Text>
-            </Box>
-            <Box display={'flex'} flexDir={'row'} mt={'5px'} justifyContent={'space-between'} color={'#31353BAD'} >
-              <Text>
-                Total Shipping Cost
-              </Text>
-              <Text>
-                {new Intl.NumberFormat("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                }).format(shippingFee).split(",")[0]}
-              </Text>
-            </Box>
-          </Box>
-        </Box>
-        <Box display={'flex'} flexDir={'row'} justifyContent={'space-between'} p={'16px'} w={'500px'} h={'80px'}>
-          <Box display={'flex'} flexDir={'column'} justifyContent={'center'}>
-            <Text
-              color={'#31353BAD'}
-              fontSize={'12px'}
-              fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-              lineHeight={'16px'}
-              fontWeight={700}
-            >
-              Total
-            </Text>
-            <Text
-              color={'#31353BF5'}
-              fontSize={'14px'}
-              fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-              lineHeight={'18px'}
-              fontWeight={700}
-            >
-              {new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-              }).format(totalBill).split(",")[0]}
-            </Text>
-          </Box>
-          <Button
-            borderRadius={'8px'}
-            h={'100%'}
-            color={'#fff'}
-            bgColor={"#0095DA"}
-            onClick={openPayment}
-            fontSize={'14px'}
-            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-            lineHeight={'18px'}
-            fontWeight={700}
-            w={'164px'}
-          >
-            Select Payment
-          </Button>
         </Box>
       </Box>
 

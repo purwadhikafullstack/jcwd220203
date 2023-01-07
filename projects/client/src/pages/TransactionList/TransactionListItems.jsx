@@ -28,7 +28,6 @@ import { HiOutlineDotsVertical } from "react-icons/hi"
 
 const TransactionListItems = ({
     fetchMyTransactionList,
-    fetchMyTransactionListMobile,
     shippingFee,
     transactionAddress,
     totalQuantity,
@@ -77,10 +76,9 @@ const TransactionListItems = ({
                 description: response.data.message,
                 status: "success",
             })
-
             doneOnClose()
             fetchMyTransactionList()
-            fetchMyTransactionListMobile()
+
         } catch (err) {
             console.log(err)
         }
@@ -99,7 +97,6 @@ const TransactionListItems = ({
                 status: "success",
             })
             fetchMyTransactionList()
-            fetchMyTransactionListMobile()
             cancelOnClose()
         } catch (err) {
             console.log(err)

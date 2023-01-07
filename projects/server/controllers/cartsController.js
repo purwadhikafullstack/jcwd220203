@@ -9,6 +9,7 @@ const cartsController = {
             const findProductinCart = await Cart.findOne({
                 where: {
                     ProductId,
+                    UserId: req.user.id
                 },
                 include: [
                     {
@@ -128,7 +129,8 @@ const cartsController = {
 
             const findProductinCart = await Cart.findOne({
                 where: {
-                    ProductId: ProductId
+                    ProductId: ProductId,
+                    UserId: req.user.id
                 },
                 include: [
                     {
@@ -170,7 +172,8 @@ const cartsController = {
                     },
                     {
                         where: {
-                            id: findProductinCart.id
+                            id: findProductinCart.id,
+                            UserId: req.user.id
                         }
                     }
                 )
@@ -189,6 +192,7 @@ const cartsController = {
                     {
                         where: {
                             id: findProductinCart.id,
+                            UserId: req.user.id
                         }
                     }
                 )
@@ -280,6 +284,7 @@ const cartsController = {
             const findProductinCart = await Cart.findOne({
                 where: {
                     ProductId,
+                    UserId: req.user.id
                 },
                 include: [
                     {
@@ -350,7 +355,8 @@ const cartsController = {
                 },
                 {
                     where: {
-                        id: findCartByid.id
+                        id: findCartByid.id,
+                        UserId: req.user.id
                     }
                 }
             )
@@ -381,7 +387,8 @@ const cartsController = {
                 },
                 {
                     where: {
-                        id: findCartByid.id
+                        id: findCartByid.id,
+                        UserId: req.user.id
                     }
                 }
             )
@@ -400,7 +407,8 @@ const cartsController = {
 
             await Cart.destroy({
                 where: {
-                    id: id
+                    id: id,
+                    UserId: req.user.id
                 },
             })
             return res.status(200).json({
@@ -444,7 +452,8 @@ const cartsController = {
                     },
                     {
                         where: {
-                            id: findCartByid.id
+                            id: findCartByid.id,
+                            UserId: req.user.id
                         }
                     },
                 )
@@ -471,7 +480,8 @@ const cartsController = {
                 },
                 {
                     where: {
-                        id: findCartByid.id
+                        id: findCartByid.id,
+                        UserId: req.user.id
                     }
                 },
             )
@@ -520,14 +530,16 @@ const cartsController = {
                     },
                     {
                         where: {
-                            id: cartIdArr
+                            id: cartIdArr,
+                            UserId: req.user.id
                         }
                     },
                 )
 
                 const findUncheckedCart = await Cart.findAll({
                     where: {
-                        id: cartIdArr
+                        id: cartIdArr,
+                        UserId: req.user.id
                     },
                     include: [
                         {
@@ -550,14 +562,16 @@ const cartsController = {
                 },
                 {
                     where: {
-                        id: cartIdArr
+                        id: cartIdArr,
+                        UserId: req.user.id
                     }
                 },
             )
 
             const findAllCheckedCart = await Cart.findAll({
                 where: {
-                    id: cartIdArr
+                    id: cartIdArr,
+                    UserId: req.user.id
                 },
                 include: [
                     {
@@ -618,7 +632,8 @@ const cartsController = {
                 },
                 {
                     where: {
-                        id: id
+                        id: id,
+                        UserId: req.user.id
                     }
                 },
             )

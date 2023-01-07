@@ -26,6 +26,7 @@ const ShippingComponent = ({ closestWarehouseTransaction, shippingFeePay, select
   const [isLoading, setIsLoading] = useState(false)
 
   shippingFeePay(shippingFee)
+  // ShippingFeePayMobile(shippingFee)
   selectedCourir(courirDuration)
   closestWarehouseTransaction(closestWarehouse)
 
@@ -198,10 +199,11 @@ const ShippingComponent = ({ closestWarehouseTransaction, shippingFeePay, select
     }
   }
 
+
   useEffect(() => {
-    fetchWarehouseData()
-    fetchUserData()
-  }, [])
+    fetchWarehouseData();
+    fetchUserData();
+  }, [openSelect]);
 
   return (
     <>

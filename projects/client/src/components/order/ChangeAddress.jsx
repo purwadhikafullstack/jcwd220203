@@ -52,11 +52,10 @@ const ChangeAddress = ({ defaultAddressUser }) => {
   const [selectedNewCity, setSelectedNewCity] = useState(0)
   const [selectedEditProvince, setSelectedEditProvince] = useState(0)
   const [selectedEditCity, setSelectedEditCity] = useState(0)
-  console.log(selectedEditCity)
-  console.log(selectedEditProvince)
   const [openedEdit, setOpenedEdit] = useState(null)
   const [currentSearch, setCurrentSearch] = useState("")
   const [defaultAddressId, setDefaultAddressId] = useState(0)
+  const [refreshAddress, setRefreshAddress] = useState(false)
   defaultAddressUser(defaultAddressId)
 
   const fetchAddress = async () => {
@@ -85,6 +84,19 @@ const ChangeAddress = ({ defaultAddressUser }) => {
     }
   }
 
+  const refreshPage = () => {
+    window.location.reload(false)
+  }
+
+  const onCloseAddressModal = () => {
+    if (refreshAddress === false) {
+      onClose()
+    }
+    if (refreshAddress === true) {
+      refreshPage()
+    }
+  }
+
   const setAsDefault = async (id) => {
     try {
       const response = await axiosInstance.patch(`/address/setDefault/${id}`)
@@ -96,6 +108,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
       })
       fetchAllAddress()
       fetchAddress()
+      setRefreshAddress(true)
     } catch (error) {
       console.log(error.response)
       toast({
@@ -251,6 +264,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
   }
 
   const doubleOnClick1 = () => {
+    setRefreshAddress(true)
     editFormik.handleSubmit()
     setSelectedEditProvince(0)
     setSelectedEditCity(0)
@@ -476,7 +490,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
 
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={onCloseAddressModal}
         motionPreset="slideInBottom"
         size={"3xl"}
       >
