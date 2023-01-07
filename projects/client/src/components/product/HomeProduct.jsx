@@ -166,27 +166,30 @@ const HomeProduct = () => {
           </Grid>
         </Box>
       </Box>
-
-      <Box p="16px 16px 8px">
-        <Box display={"flex"} justifyContent="space-between">
-          <Text fontSize={"20px"} fontWeight="bold">
-            Recommended Products
-          </Text>
-          <Link to="/product">
-            <Text color="#0095DA" fontSize="14px">
-              See all
+      
+      <Box display={{ lg: "none", md: "block", base: "block" }}>
+        <Box p="16px 16px 8px">
+          <Box display={"flex"} justifyContent="space-between">
+            <Text fontSize={"20px"} fontWeight="bold">
+              Recommended Products
             </Text>
-          </Link>
+            <Link to="/product">
+              <Text color="#0095DA" fontSize="14px">
+                See all
+              </Text>
+            </Link>
+          </Box>
         </Box>
-      </Box>
-      {/* Responsive */}
-      <Box
-        display={{ lg: "none", md: "flex", base: "flex" }}
-        overflowX="scroll"
-        p="12px"
-        gap="4"
-      >
-        {renderProduct()}
+        
+        {/* Responsive */}
+        <Box
+          display={{ lg: "none", md: "flex", base: "flex" }}
+          overflowX="scroll"
+          p="12px"
+          gap="4"
+        >
+          {renderProduct()}
+        </Box>
       </Box>
     </>
   )
