@@ -1,5 +1,4 @@
 const { Op } = require("sequelize")
-const { sequelize } = require("../models")
 const db = require("../models")
 const Product = db.Product
 const Image_Url = db.Image_Url
@@ -11,8 +10,6 @@ const productController = {
         try {
             const {
                 product_name = "",
-                description = "",
-                // price = "",
                 CategoryId = "",
                 _sortBy = "id",
                 _sortDir = "ASC",
@@ -20,17 +17,7 @@ const productController = {
                 _page = 1,
             } = req.query
 
-            if (
-                // _sortBy === "product_name" ||
-
-                // _sortBy === "description" ||
-                // _sortBy === "price" ||
-                // _sortBy === "CategoryId" ||
-                // product_name ||
-                // price ||
-                // description ||
-                CategoryId
-            ) {
+            if (CategoryId) {
                 if (!Number(CategoryId)) {
                     const getAllProducts1 = await Product.findAndCountAll({
                         limit: Number(_limit),

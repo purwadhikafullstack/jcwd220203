@@ -53,8 +53,6 @@ const ProductItem = ({ product_name, id }) => {
                     borderRadius="12px"
                     boxShadow="1px 1px 6px 1px #e0e0e0"
                     cursor="pointer"
-                    // px="8px"
-                    // pb="16px"
                 >
                     {/* Image */}
                     <Image
@@ -67,7 +65,14 @@ const ProductItem = ({ product_name, id }) => {
 
                     {/* Product Name */}
                     <Box h="70px">
-                        <Text p="2" fontSize="14px">
+                        <Text
+                            p="2"
+                            h="70px"
+                            fontSize="14px"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            noOfLines={[1, 3]}
+                        >
                             {productData?.product_name}
                         </Text>
                     </Box>

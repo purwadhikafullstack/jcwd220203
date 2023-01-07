@@ -34,8 +34,12 @@ const Product = () => {
     const [catPage, setCatPage] = useState(1)
     const [catTotalCount, setCatTotalCount] = useState(0)
 
+    const catPerRow = 5
+    const [next, setNext] = useState(catPerRow)
+
     const fetchProduct = async () => {
         const maxItemsPerPage = 10
+
         try {
             const response = await axiosInstance.get(`/product`, {
                 params: {
@@ -129,7 +133,10 @@ const Product = () => {
         }
     }
     const seeMoreBtnHandler = () => {
-        setCatPage(catPage + 1)
+        setNext(next + category.length)
+    }
+    const seeLessBtnHandler = () => {
+        setNext(catPerRow)
     }
     const resetBtnHandler = () => {
         setSearchParam(false)
@@ -158,18 +165,9 @@ const Product = () => {
                 onChange={(e) => setSearchProduct(e.target.value)}
                 onKeyDown={handleKeyEnter}
             />
-            <Box
-                // border="1px solid red"
-                mx="auto"
-                mt="90px"
-                w="1100px"
-                h="1600px"
-                display="block"
-            // borderBottom="1px solid #dfe1e3"
-            >
+            <Box mx="auto" mt="90px" w="1100px" h="1600px" display="block">
                 {/* Filter and Search */}
                 <Box
-                    // border="1px solid blue"
                     marginBlockEnd="16px"
                     marginBlockStart="18px"
                     display="flex"
@@ -192,12 +190,7 @@ const Product = () => {
                 </Box>
 
                 {/* Content */}
-                <Box
-                    // border="1px solid brown"
-                    display="flex"
-                    gap="4px"
-                // borderBottom="1px solid #dfe1e3"
-                >
+                <Box display="flex" gap="4px">
                     {/* Fitler */}
                     <Box
                         border="1px solid #dfe1e3"
@@ -205,7 +198,7 @@ const Product = () => {
                         boxShadow="1px 1px 6px 1px #e0e0e0"
                         display="block"
                         w="auto"
-                        h="800px"
+                        h="50%"
                         p="12px"
                     >
                         <Flex borderBottom="1px solid #dfe1e3">
@@ -225,12 +218,13 @@ const Product = () => {
                                 </Text>
                             </Button>
                         </Flex>
-                        <Box mt="20px" display="grid" h="auto">
+
+                        <Box mt="20px" display="grid" h="auto" w="160px">
                             <Text fontWeight="bold" fontSize="14px" mb="10px">
                                 Categories
                             </Text>
                             <Grid gap="5px">
-                                {category.map((val) => (
+                                {category.slice(0, next).map((val, i) => (
                                     <Button
                                         onClick={filterBtnHandler}
                                         value={val.id}
@@ -242,28 +236,50 @@ const Product = () => {
                                             borderRadius: "10px",
                                             color: "#0095DA",
                                         }}
+                                        key={i}
                                     >
                                         {val.category_name}
                                     </Button>
                                 ))}
                             </Grid>
-
-                            {/* {category.length >= catTotalCount ? null : (
+                            {next < category.length ? (
                                 <Button
-                                    onClick={seeMoreBtnHandler}
+                                    onClick={() => seeMoreBtnHandler()}
                                     mt="6"
                                     colorScheme="linkedin"
-                                    w="100%"
+                                    variant="link"
+                                    justifyContent="flex-start"
                                 >
-                                    See More
+                                    <Text
+                                        fontSize="12px"
+                                        w="110px"
+                                        textAlign="start"
+                                    >
+                                        See More
+                                    </Text>
                                 </Button>
-                            )} */}
+                            ) : (
+                                <Button
+                                    onClick={() => seeLessBtnHandler()}
+                                    mt="6"
+                                    colorScheme="linkedin"
+                                    variant="link"
+                                    justifyContent="flex-start"
+                                >
+                                    <Text
+                                        fontSize="12px"
+                                        w="110px"
+                                        textAlign="start"
+                                    >
+                                        See Less
+                                    </Text>
+                                </Button>
+                            )}
                         </Box>
                     </Box>
 
                     {/* Product */}
                     <Box
-                        // border="1px solid green"
                         borderRadius="12px"
                         w="912px"
                         h="1000px"
@@ -279,12 +295,9 @@ const Product = () => {
                         ) : null}
                         <GridItem>
                             <Grid
-                                // border="1px solid green"
                                 p="16px 0"
                                 pl="16px"
-                                // px="8px"
                                 gap="4"
-                                // cursor="pointer"
                                 templateColumns="repeat(5,1fr)"
                             >
                                 {renderProduct()}
@@ -296,17 +309,17 @@ const Product = () => {
                                         onClick={prevPageBtnHandler}
                                         color="#0095DA"
                                         cursor="pointer"
-                                        size={20}
+                                        size={30}
                                     />
                                 )}
-
+                                <Text>{page}</Text>
                                 {page >= maxPage ? null : (
                                     <CgChevronRight
                                         bgColor="#0095DA"
                                         color="#0095DA"
                                         onClick={nextPageBtnHandler}
                                         cursor="pointer"
-                                        size={20}
+                                        size={30}
                                     />
                                 )}
                             </HStack>

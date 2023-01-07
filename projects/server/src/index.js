@@ -73,6 +73,8 @@ app.use("/stock-mutation", verifyToken, stockMutationRoute)
 app.use("/admin/order-history", adminOrderHistoryRoute)
 app.use("/admin/sales-report", salesReportRoute)
 
+app.use("/product", productRoute)
+
 app.get("/api", (req, res) => {
     res.send(`Hello, this is my API`)
 })
