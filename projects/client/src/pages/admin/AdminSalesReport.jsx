@@ -15,13 +15,14 @@ import {
     Input,
     InputGroup,
     Button,
+    Skeleton,
 } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useState } from "react"
-import { CgChevronLeft, CgChevronRight } from "react-icons/cg"
 import { axiosInstance } from "../../api"
 import { useSelector } from "react-redux"
 import { TbSearch } from "react-icons/tb"
+import { AiOutlineLeftCircle, AiOutlineRightCircle } from "react-icons/ai"
 
 const AdminSalesReport = () => {
     const [salesData, setSalesData] = useState([])
@@ -32,15 +33,16 @@ const AdminSalesReport = () => {
     const [filterWarehouse, setFilterWarehouse] = useState("")
     const [filterCategory, setFilterCategory] = useState("")
     const [filterMonth, setFilterMonth] = useState("")
-    const [productSearch, setProductSearch] = useState("")
-    const [categorySearch, setCategorySearch] = useState("")
+    const [searchValue, setSearchValue] = useState("")
+    const [searchInput, setSearchInput] = useState("")
     const [sort, setSort] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
     const authSelector = useSelector((state) => state.auth)
 
     const maxItemsPerPage = 10
     const fetchData = async () => {
         try {
-            let url = `/admin/sales-report/get2`
+            let url = `/admin/sales-report/get`
 
             if (authSelector.WarehouseId) {
                 url += `?WarehouseId=${authSelector.WarehouseId}`
@@ -53,8 +55,8 @@ const AdminSalesReport = () => {
                     WarehouseId: filterWarehouse,
                     CategoryId: filterCategory,
                     createdAt: filterMonth,
-                    product_name: productSearch,
-                    category_name: categorySearch,
+                    product_name: searchValue,
+                    category_name: searchValue,
                     _sortBy: sort,
                 },
             })
@@ -64,41 +66,18 @@ const AdminSalesReport = () => {
             } else {
                 setSalesData(response.data.data)
             }
+            setIsLoading(true)
         } catch (err) {
             console.log(err)
         }
     }
 
-    // const fetchData2 = async () => {
-    //     try {
-    //         let url = `/admin/sales-report/get`
-
-    //         if (authSelector.WarehouseId) {
-    //             url += `?WarehouseId=${authSelector.WarehouseId}`
-    //         }
-
-    //         const response = await axiosInstance.get(url, {
-    //             params: {
-    //                 _page: page,
-    //                 _limit: maxItemsPerPage,
-    //                 WarehouseId: filterWarehouse,
-    //                 CategoryId: filterCategory,
-    //                 createdAt: filterMonth,
-    //             },
-    //         })
-    //         setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage))
-    //         if (page === 1) {
-    //             setSalesData(response.data.data)
-    //         } else {
-    //             setSalesData(response.data.data)
-    //         }
-    //     } catch (err) {
-    //         console.log(err)
-    //     }
-    // }
     const fetchWarehouse = async () => {
         try {
-            const response = await axiosInstance.get("/warehouse")
+            const response = await axiosInstance.get(
+                "/admin/sales-report/findWarehouse"
+            )
+
             setWarehouseData(response.data.data)
         } catch (err) {
             console.log(err)
@@ -117,72 +96,56 @@ const AdminSalesReport = () => {
     const filterWarehouseBtnHandler = ({ target }) => {
         const { value } = target
         setFilterWarehouse(value)
-        // setSortBy(value)
+        setIsLoading(false)
     }
 
     const filterCategoryBtnHandler = ({ target }) => {
         const { value } = target
         setFilterCategory(value)
+        setIsLoading(false)
     }
 
     const filterMonthBtnHandler = ({ target }) => {
         const { value } = target
         setFilterMonth(value)
+        setIsLoading(false)
     }
 
-    const categorySearchBtnHandler = (e) => {
-        setCategorySearch(e.target.value)
-    }
-
-    const productSearchBtnHandler = (e) => {
-        setProductSearch(e.target.value)
+    const searchBtnHandler = () => {
+        setSearchValue(searchInput)
+        setIsLoading(false)
     }
 
     const handleKeyEnter = (e) => {
         if (e.key === "Enter") {
-            setProductSearch(productSearch)
+            setSearchValue(searchInput)
         }
     }
-    // const searching = () => {
-    //     if (categorySearch) {
-    //         categorySearchBtnHandler()
-    //     } else if (productSearch) {
-    //         productSearchBtnHandler()
-    //     }
-    // }
 
     const sortHandler = ({ target }) => {
         const { value } = target
         setSort(value)
+        setIsLoading(false)
     }
 
     const nextPageBtnHandler = () => {
         setPage(page + 1)
+        setIsLoading(false)
     }
 
     const prevPageBtnHandler = () => {
         setPage(page - 1)
+        setIsLoading(false)
     }
-    // console.log("trans", transactionData.map((val) => val.WarehouseId)[0])
-    console.log("cat", categoryData)
-    console.log(
-        "sal",
-        salesData.map((val) => val.category_name)
-    )
-    console.log("salllll", salesData)
-
-    console.log("sss", sort)
     useEffect(() => {
         fetchData()
-        // fetchData2()
     }, [
         filterWarehouse,
         filterCategory,
         filterMonth,
         page,
         sort,
-        productSearch,
-        categorySearch,
+        searchValue,
         authSelector,
     ])
 
@@ -216,10 +179,9 @@ const AdminSalesReport = () => {
                                 borderRadius="8px"
                                 onChange={sortHandler}
                             >
-                                <Select>
-                                    {/* <option value="">---Sort---</option> */}
-                                    <option value={"ASC"}>ASC</option>
-                                    <option value={"DESC"}>DESC</option>
+                                <Select placeholder="---Sort---">
+                                    <option value={"ASC"}>Old</option>
+                                    <option value={"DESC"}>Latest</option>
                                 </Select>
                             </GridItem>
 
@@ -274,7 +236,6 @@ const AdminSalesReport = () => {
                                 border="1px solid #dfe1e3"
                                 borderRadius="8px"
                             >
-                                {/* RAW QUERY */}
                                 <Select>
                                     <option value="">---By Warehouse---</option>
                                     {authSelector.WarehouseId ===
@@ -290,15 +251,6 @@ const AdminSalesReport = () => {
                                               </option>
                                           ))}
                                 </Select>
-
-                                {/* <Select>
-                                    <option value="">---By Warehouse---</option>
-                                    {authSelector.WarehouseId === salesData.map((val) => val.WarehouseId)[0]
-                                    ? salesData.map((val) => (
-                                        <option value={val.WarehouseId}
-                                    ))
-                                    }
-                                </Select> */}
                             </GridItem>
 
                             {/* Search */}
@@ -307,12 +259,16 @@ const AdminSalesReport = () => {
                                 justifySelf="center"
                                 border="1px solid #dfe1e3"
                                 borderRadius="8px"
-                                onSubmit={(e) => productSearchBtnHandler(e)}
                             >
                                 <InputGroup>
                                     <Input
+                                        placeholder="Find product or category"
+                                        _placeholder={{ fontSize: "14px" }}
+                                        onChange={(e) =>
+                                            setSearchInput(e.target.value)
+                                        }
                                         onKeyDown={handleKeyEnter}
-                                        value={productSearch}
+                                        value={searchInput}
                                     />
                                     <Button
                                         borderLeftRadius={"0"}
@@ -320,6 +276,7 @@ const AdminSalesReport = () => {
                                         bgColor={"white"}
                                         border="1px solid #e2e8f0"
                                         borderLeft={"0px"}
+                                        onClick={searchBtnHandler}
                                     >
                                         <TbSearch />
                                     </Button>
@@ -332,126 +289,209 @@ const AdminSalesReport = () => {
                         border="1px solid #dfe1e3"
                         mt="3vh"
                         borderRadius="8px"
+                        boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                        bgColor="white"
                     >
-                        <Table variant="simple">
+                        <Table variant={"striped"} colorScheme={"blue"}>
                             <Thead>
                                 <Tr>
-                                    <Th w="130px">
+                                    <Th w="150px" fontWeight="bold">
                                         <Text fontSize="10px">Date</Text>
                                     </Th>
-                                    <Th w="100px">
+                                    <Th w="100px" fontWeight="bold">
                                         <Text fontSize="10px">Category</Text>
                                     </Th>
-                                    <Th w="200px">
+                                    <Th w="200px" fontWeight="bold">
                                         <Text fontSize="10px">
                                             Product Name
                                         </Text>
                                     </Th>
-                                    {/* <Th w="200px">
-                                        <Text fontSize="10px">Description</Text>
-                                    </Th> */}
-                                    <Th w="100px">
+                                    <Th w="130px" fontWeight="bold">
                                         <Text fontSize="10px">Price</Text>
                                     </Th>
-                                    <Th w="50px">
-                                        <Text fontSize="10px">qty</Text>
+                                    <Th w="50px" fontWeight="bold">
+                                        <Text fontSize="10px">quantity</Text>
                                     </Th>
-                                    <Th w="100px">
+                                    <Th w="130px" fontWeight="bold">
                                         <Text fontSize="10px">Total</Text>
                                     </Th>
-                                    <Th w="100px">
+                                    <Th w="100px" fontWeight="bold">
                                         <Text fontSize="10px">Warehouse</Text>
                                     </Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {salesData.map((val) => (
+                                {isLoading &&
+                                    salesData.map((val) => (
+                                        <Tr>
+                                            <Td maxW="150px">
+                                                <Text>
+                                                    {
+                                                        val.createdAt.split(
+                                                            "T"
+                                                        )[0]
+                                                    }{" "}
+                                                    /{" "}
+                                                    {val.createdAt
+                                                        .split("T")[1]
+                                                        .split(".000Z")}
+                                                </Text>
+                                            </Td>
+
+                                            <Td maxW="100px">
+                                                <Text>{val.category_name}</Text>
+                                            </Td>
+                                            <Td maxW="200px">
+                                                <Text
+                                                    overflow="hidden"
+                                                    textOverflow="ellipsis"
+                                                >
+                                                    {val.product_name}
+                                                </Text>
+                                            </Td>
+                                            <Td maxW="130px">
+                                                <Text>
+                                                    {new Intl.NumberFormat(
+                                                        "id-ID",
+                                                        {
+                                                            style: "currency",
+                                                            currency: "IDR",
+                                                            minimumFractionDigits: 0,
+                                                        }
+                                                    ).format(val.price)}
+                                                </Text>
+                                            </Td>
+                                            <Td maxW="50px">
+                                                <Text>{val.quantity}</Text>
+                                            </Td>
+
+                                            <Td maxW="130px">
+                                                <Text>
+                                                    {new Intl.NumberFormat(
+                                                        "id-ID",
+                                                        {
+                                                            style: "currency",
+                                                            currency: "IDR",
+                                                            minimumFractionDigits: 0,
+                                                        }
+                                                    ).format(val.total)}
+                                                </Text>
+                                            </Td>
+                                            <Td>
+                                                <Text>
+                                                    {val.warehouse_name}
+                                                </Text>
+                                            </Td>
+                                        </Tr>
+                                    ))}
+                                {isLoading === false ? (
                                     <Tr>
-                                        <Td maxW="130px">
-                                            {/* RAW QUERY */}
-                                            <Text>
-                                                {val.createdAt.split("T")[0]} /{" "}
-                                                {val.createdAt
-                                                    .split("T")[1]
-                                                    .split(".000Z")}
-                                            </Text>
-
-                                            {/* <Text maxW="150px">
-                                                {val.createdAt.split("T")[0]} /{" "}
-                                                {val.createdAt
-                                                    .split("T")[1]
-                                                    .split(".000Z")}
-                                            </Text> */}
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                            />
                                         </Td>
-
-                                        <Td maxW="100px">
-                                            <Text>
-                                                {/* {val.User.username} */}
-
-                                                {/* raw query */}
-                                                {val.category_name}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
-                                        <Td maxW="200px">
-                                            <Text
-                                                overflow="hidden"
-                                                textOverflow="ellipsis"
-                                            >
-                                                {val.product_name}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="60%"
+                                                borderRadius="8px"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="70%"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
-                                        {/* <Td maxW="200px">
-                                            <Text
-                                                overflow="hidden"
-                                                textOverflow="ellipsis"
-                                            >
-                                                {val.description}
-                                            </Text>
-                                        </Td> */}
-                                        <Td maxW="100px">
-                                            <Text>
-                                                {new Intl.NumberFormat(
-                                                    "id-ID",
-                                                    {
-                                                        style: "currency",
-                                                        currency: "IDR",
-                                                        minimumFractionDigits: 0,
-                                                    }
-                                                ).format(val.price)}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
-                                        <Td maxW="50px">
-                                            <Text>
-                                                {/* {
-                                                    val.Order_status
-                                                        .order_status_name
-                                                } */}
-
-                                                {/* raw query */}
-                                                {val.quantity}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="100%"
+                                                borderRadius="8px"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="45%"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
-
-                                        <Td maxW="100px">
-                                            <Text>
-                                                {/* {val.Warehouse.warehouse_name} */}
-
-                                                {/* raw query */}
-                                                {new Intl.NumberFormat(
-                                                    "id-ID",
-                                                    {
-                                                        style: "currency",
-                                                        currency: "IDR",
-                                                        minimumFractionDigits: 0,
-                                                    }
-                                                ).format(val.total)}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                            />
                                         </Td>
-                                        <Td>
-                                            <Text>{val.warehouse_name}</Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="30%"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
                                     </Tr>
-                                ))}
+                                ) : null}
                             </Tbody>
                         </Table>
                     </TableContainer>
@@ -459,7 +499,7 @@ const AdminSalesReport = () => {
                     {/* Page */}
                     <HStack justifyContent="center" gap="2" mt="1em">
                         {page === 1 ? null : (
-                            <CgChevronLeft
+                            <AiOutlineLeftCircle
                                 bgColor="#0095DA"
                                 onClick={prevPageBtnHandler}
                                 color="#0095DA"
@@ -469,7 +509,7 @@ const AdminSalesReport = () => {
                         )}
                         <Text color="#0095DA">{page}</Text>
                         {page >= maxPage ? null : (
-                            <CgChevronRight
+                            <AiOutlineRightCircle
                                 bgColor="#0095DA"
                                 color="#0095DA"
                                 onClick={nextPageBtnHandler}
