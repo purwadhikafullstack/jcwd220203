@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react"
 import { axiosInstance } from "../../api"
-import Alert from "./Alert"
+import Alert from "../profile/Alert"
 import { CgClose } from "react-icons/cg"
 
 const EditForm = ({

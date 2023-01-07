@@ -5,11 +5,6 @@ import {
   HStack,
   useDisclosure,
   useToast,
-  FormControl,
-  InputGroup,
-  Input,
-  Link as LinkChakra,
-  Skeleton,
 } from "@chakra-ui/react"
 import { BiArrowBack, BiUser } from "react-icons/bi"
 import { Link, useNavigate } from "react-router-dom"
@@ -23,15 +18,18 @@ import * as Yup from "yup"
 import FormAddress from "../../components/profile/FormAddress"
 import Alert from "../../components/profile/Alert"
 import EditForm from "../../components/profile/EditForm"
-import { TbSearch } from "react-icons/tb"
+import LoadingAddressList from "../../components/loading/LoadingAddressList"
+import ResponsiveAddress from "./ReponsiveAddress"
+import Search from "../../components/Search"
 
 const AddressList = () => {
   const authSelector = useSelector((state) => state.auth)
-
   const [selectedNewProvince, setSelectedNewProvince] = useState(0)
   const [selectedNewCity, setSelectedNewCity] = useState(0)
   const [selectedEditProvince, setSelectedEditProvince] = useState(0)
   const [selectedEditCity, setSelectedEditCity] = useState(0)
+  console.log(selectedEditCity)
+  console.log(selectedEditProvince)
   const [openedEdit, setOpenedEdit] = useState(null)
   console.log(openedEdit?.id)
   const [address, setAddress] = useState([])
@@ -57,17 +55,19 @@ const AddressList = () => {
     setSelectedEditProvince(0)
     setSelectedEditCity(0)
     onCloseAlert()
-    // setOpenedEdit(null)
+    setIsLoading(false)
   }
 
   const doubleOnClick2 = () => {
     setDeleteAlert(null)
     deleteHandler(deleteAlert.id)
+    setIsLoading(false)
   }
 
   const doubleOnClick3 = () => {
     setDefaultAlert(null)
     setAsDefault(defaultAlert.id)
+    setIsLoading(false)
   }
 
   const { onOpen, isOpen, onClose } = useDisclosure()
@@ -76,6 +76,7 @@ const AddressList = () => {
 
   const doubleOnClick = () => {
     formikAddNewAddress.handleSubmit()
+    setIsLoading(false)
   }
 
   const cancelRef = React.useRef()
@@ -94,26 +95,6 @@ const AddressList = () => {
     } catch (error) {
       console.log(error)
     }
-  }
-
-  const renderAddress = () => {
-    return address.map((val) => {
-      return (
-        <AddressCard
-          key={val.id.toString()}
-          address_labels={val.address_labels}
-          recipients_name={val.recipients_name}
-          full_address={val.full_address}
-          phone_number={val.phone_number}
-          id={val.id}
-          on_delete={() => setDeleteAlert(val)}
-          on_edit={() => setOpenedEdit(val)}
-          on_default={() => setDefaultAlert(val)}
-          is_default={val.is_default}
-          isLoading={isLoading}
-        />
-      )
-    })
   }
 
   const formikAddNewAddress = useFormik({
@@ -179,7 +160,7 @@ const AddressList = () => {
         .max(15),
       address_labels: Yup.string().required().min(4),
       districts: Yup.string().required(),
-      full_address: Yup.string().required().min(7),
+      full_address: Yup.string().required().min(5),
     }),
     validateOnChange: false,
   })
@@ -302,6 +283,7 @@ const AddressList = () => {
     },
     onSubmit: ({ search }) => {
       setCurrentSearch(search)
+      setIsLoading(false)
     },
   })
 
@@ -377,26 +359,12 @@ const AddressList = () => {
             <Box borderTop={"1px solid #dfe1e3"} p="24px 32px">
               <Box display={"flex"} justifyContent="space-between">
                 <Box>
-                  <form onSubmit={formikSearch.handleSubmit}>
-                    <FormControl>
-                      <InputGroup textAlign={"right"}>
-                        <Input
-                          type={"text"}
-                          placeholder="Search by recipient's address or name"
-                          name="search"
-                          w="300px"
-                          onChange={searchHandler}
-                          _placeholder={"halo"}
-                          borderRightRadius="0"
-                          value={formikSearch.values.search}
-                        />
-
-                        <Button borderLeftRadius={"0"} type="submit">
-                          <TbSearch />
-                        </Button>
-                      </InputGroup>
-                    </FormControl>
-                  </form>
+                  <Search
+                    formikSearch={formikSearch}
+                    searchHandler={searchHandler}
+                    placeholder="Search by recipient's address or name"
+                    width={"300px"}
+                  />
                 </Box>
                 <Button
                   m="0 4px"
@@ -408,88 +376,25 @@ const AddressList = () => {
                   Add A New Address
                 </Button>
               </Box>
-              {isLoading && renderAddress()}
-              {isLoading === false ? (
-                <Box
-                  boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-                  borderRadius="10px"
-                  m="16px 4px 4px"
-                  p="16px 24px"
-                  fontWeight={"bold"}
-                  color="black"
-                  fontSize={"14px"}
-                >
-                  <Box
-                    bgColor={"#F7931E"}
-                    w="6.5px"
-                    h="35px"
-                    position={"absolute"}
-                    ml="-24px"
-                    borderRightRadius={"5px"}
-                  />
-                  <Skeleton
-                    height="20px"
-                    startColor="#bab8b8"
-                    endColor="#d4d2d2"
-                    borderRadius={"5px"}
-                    w="120px"
-                  />
-                  <Skeleton
-                    height="20px"
-                    startColor="#bab8b8"
-                    endColor="#d4d2d2"
-                    borderRadius={"5px"}
-                    mt="3"
-                    w="90px"
-                  />
-                  <Skeleton
-                    height="20px"
-                    startColor="#bab8b8"
-                    endColor="#d4d2d2"
-                    borderRadius={"5px"}
-                    mt="3"
-                    w="110px"
-                  />
-                  <Skeleton
-                    height="20px"
-                    startColor="#bab8b8"
-                    endColor="#d4d2d2"
-                    borderRadius={"5px"}
-                    mt="3"
-                    w="170px"
-                  />
-                  <Box display={{ lg: "flex", md: "block", base: "block" }}>
-                    <Skeleton
-                      height="20px"
-                      startColor="#bab8b8"
-                      endColor="#d4d2d2"
-                      borderRadius={"5px"}
-                      mt="3"
-                      w={"90px"}
-                      mr="4"
-                      display={{ lg: "block", md: "none", base: "none" }}
+              {isLoading &&
+                address.map((val) => {
+                  return (
+                    <AddressCard
+                      key={val.id.toString()}
+                      address_labels={val.address_labels}
+                      recipients_name={val.recipients_name}
+                      full_address={val.full_address}
+                      phone_number={val.phone_number}
+                      id={val.id}
+                      on_delete={() => setDeleteAlert(val)}
+                      on_edit={() => setOpenedEdit(val)}
+                      on_default={() => setDefaultAlert(val)}
+                      is_default={val.is_default}
+                      isLoading={isLoading}
                     />
-                    <Skeleton
-                      height="20px"
-                      startColor="#bab8b8"
-                      endColor="#d4d2d2"
-                      borderRadius={"5px"}
-                      mt="3"
-                      w="90px"
-                      mr="4"
-                      display={{ lg: "block", md: "none", base: "none" }}
-                    />
-                    <Skeleton
-                      height={{ lg: "20px", md: "32px", base: "32px" }}
-                      startColor="#bab8b8"
-                      endColor="#d4d2d2"
-                      borderRadius={"5px"}
-                      mt="3"
-                      w={{ lg: "90px", md: "100%", base: "100%" }}
-                    />
-                  </Box>
-                </Box>
-              ) : null}
+                  )
+                })}
+              {isLoading === false ? <LoadingAddressList /> : null}
               {!address.length && isLoading === true ? (
                 <Box
                   fontSize={"22px"}
@@ -560,7 +465,7 @@ const AddressList = () => {
           color={"#F7931E"}
         />
 
-        {/* set as default alert */}
+        {/* Alert set as default*/}
         <Alert
           header={"Make the primary address?"}
           body={`Are you sure you want to make "${defaultAlert?.address_labels}" your primary address? You can only select one primary address.`}
@@ -589,187 +494,17 @@ const AddressList = () => {
         />
       </Box>
 
-      {/* Responseive */}
-      <Box
-        fontSize={"16px"}
-        display={{ base: "block", md: "block", lg: "none" }}
-        maxW="500px"
-        mx={"auto"}
-      >
-        <Box
-          position={"fixed"}
-          left="0"
-          right={"0"}
-          top="0"
-          maxW={"500px"}
-          mx="auto"
-          backgroundColor={"white"}
-          zIndex="9998"
-          boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-        >
-          <Box
-            h="52px"
-            display={"flex"}
-            borderBottom="1px solid var(--N75,#E5E7E9)"
-            backgroundColor={"#E5F9F6"}
-          >
-            <Box fontSize={"20px"} alignItems="center" my="auto">
-              <Link to={"/user/profile"}>
-                <Box display={"flex"} alignItems="center" w="40px">
-                  <Box mx="auto">
-                    <BiArrowBack fontSize={"24px"} />
-                  </Box>
-                </Box>
-              </Link>
-            </Box>
-            <Box
-              fontSize={"16px"}
-              fontWeight="bold"
-              ml="2"
-              display={"flex"}
-              alignItems="center"
-            >
-              Address List
-            </Box>
-            <Box
-              fontSize={"14px"}
-              fontWeight="bold"
-              ml="auto"
-              display={"flex"}
-              alignItems="center"
-              pr="16px"
-              onClick={onOpenAddNewAddress}
-              color="#F7931E"
-            >
-              Add New Address
-            </Box>
-          </Box>
-          <Box pt="8px" pb="8px">
-            <form onSubmit={formikSearch.handleSubmit}>
-              <Box>
-                <Box>
-                  <FormControl>
-                    <InputGroup textAlign={"right"} justifyContent="center">
-                      <Input
-                        type={"text"}
-                        placeholder="Search address"
-                        name="search"
-                        w="300px"
-                        onChange={searchHandler}
-                        _placeholder={"halo"}
-                        borderRightRadius="0"
-                        value={formikSearch.values.search}
-                      />
-                      <Button borderLeftRadius={"0"} type="submit">
-                        <TbSearch />
-                      </Button>
-                    </InputGroup>
-                  </FormControl>
-                </Box>
-              </Box>
-            </form>
-          </Box>
-        </Box>
-        <Box p="0 12px" mt="120px" zIndex="9998" mb="20px">
-          {isLoading && renderAddress()}
-          {isLoading === false ? (
-            <Box
-              boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-              borderRadius="10px"
-              m="16px 4px 4px"
-              p="16px 24px"
-              fontWeight={"bold"}
-              color="black"
-              fontSize={"14px"}
-            >
-              <Box
-                bgColor={"#F7931E"}
-                w="6.5px"
-                h="35px"
-                position={"absolute"}
-                ml="-24px"
-                borderRightRadius={"5px"}
-              />
-              <Skeleton
-                height="20px"
-                startColor="#bab8b8"
-                endColor="#d4d2d2"
-                borderRadius={"5px"}
-                w="120px"
-              />
-              <Skeleton
-                height="20px"
-                startColor="#bab8b8"
-                endColor="#d4d2d2"
-                borderRadius={"5px"}
-                mt="3"
-                w="90px"
-              />
-              <Skeleton
-                height="20px"
-                startColor="#bab8b8"
-                endColor="#d4d2d2"
-                borderRadius={"5px"}
-                mt="3"
-                w="110px"
-              />
-              <Skeleton
-                height="20px"
-                startColor="#bab8b8"
-                endColor="#d4d2d2"
-                borderRadius={"5px"}
-                mt="3"
-                w="170px"
-              />
-              <Box display={{ lg: "flex", md: "block", base: "block" }}>
-                <Skeleton
-                  height="20px"
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  borderRadius={"5px"}
-                  mt="3"
-                  w={"90px"}
-                  mr="4"
-                  display={{ lg: "block", md: "none", base: "none" }}
-                />
-                <Skeleton
-                  height="20px"
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  borderRadius={"5px"}
-                  mt="3"
-                  w="90px"
-                  mr="4"
-                  display={{ lg: "block", md: "none", base: "none" }}
-                />
-                <Skeleton
-                  height={{ lg: "20px", md: "32px", base: "32px" }}
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  borderRadius={"5px"}
-                  mt="3"
-                  w={{ lg: "90px", md: "100%", base: "100%" }}
-                />
-              </Box>
-            </Box>
-          ) : null}
-          {!address.length && isLoading === true ? (
-            <Box
-              fontSize={"22px"}
-              fontWeight="semibold"
-              textAlign={"center"}
-              p="40px"
-              color={"#F7931E"}
-            >
-              <Link>
-                <Text onClick={onOpenAddNewAddress}>
-                  Click Here To Add Your First Address
-                </Text>
-              </Link>
-            </Box>
-          ) : null}
-        </Box>
-      </Box>
+      {/* Responsive */}
+      <ResponsiveAddress
+        address={address}
+        formikSearch={formikSearch}
+        isLoading={isLoading}
+        onOpenAddNewAddress={onOpenAddNewAddress}
+        searchHandler={searchHandler}
+        setDefaultAlert={(val) => setDefaultAlert(val)}
+        setDeleteAlert={(val) => setDeleteAlert(val)}
+        setOpenedEdit={(val) => setOpenedEdit(val)}
+      />
     </>
   )
 }

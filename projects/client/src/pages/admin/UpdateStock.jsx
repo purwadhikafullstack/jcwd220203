@@ -1,12 +1,7 @@
 import {
   Box,
-  Button,
-  FormControl,
   Grid,
-  Input,
-  InputGroup,
   Select,
-  Skeleton,
   Table,
   Tbody,
   Td,
@@ -17,13 +12,13 @@ import {
 } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useState } from "react"
-import { TbSearch } from "react-icons/tb"
 import { axiosInstance } from "../../api"
 import { useFormik } from "formik"
-import { Link, useNavigate, useSearchParams } from "react-router-dom"
-import WarehouseStock from "../../components/admin/WarehouseStock"
+import { useNavigate } from "react-router-dom"
 import { IoIosAlert } from "react-icons/io"
-import { AiOutlineLeftCircle, AiOutlineRightCircle } from "react-icons/ai"
+import LoadingUpdateStock from "../../components/loading/LoadingUpdateStock"
+import Search from "../../components/Search"
+import Pagination from "../../components/admin/Pagination"
 
 const UpdateStock = () => {
   const [warehouse, setWarehouse] = useState([])
@@ -36,16 +31,19 @@ const UpdateStock = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate()
+
   const handleRowClick = (warehouse_name) => {
     navigate(`/admin/update-stock/${warehouse_name}`)
   }
 
   const nextPage = () => {
     setPage(page + 1)
+    setIsLoading(false)
   }
 
   const previousPage = () => {
     setPage(page - 1)
+    setIsLoading(false)
   }
 
   const fetchAllWarehouse = async () => {
@@ -75,25 +73,6 @@ const UpdateStock = () => {
     }
   }
 
-  const renderWarehouse = () => {
-    return warehouse.map((val) => {
-      return (
-        <Tr
-          h="auto"
-          key={val.id.toString()}
-          onClick={() => handleRowClick(val.warehouse_name)}
-        >
-          <Td>{val.warehouse_name || "null"}</Td>
-          <Td>{val.address_labels}</Td>
-          <Td>
-            {val.province}, {val.city}, {val.districts}
-          </Td>
-          <Td>{val.User?.username || "Not assign"}</Td>
-        </Tr>
-      )
-    })
-  }
-
   const formikSearch = useFormik({
     initialValues: {
       search: "",
@@ -101,10 +80,11 @@ const UpdateStock = () => {
     onSubmit: ({ search }) => {
       setCurrentSearch(search)
       setPage(1)
+      setIsLoading(false)
     },
   })
 
-  const searchAdminHandler = ({ target }) => {
+  const searchHandler = ({ target }) => {
     const { name, value } = target
     formikSearch.setFieldValue(name, value)
   }
@@ -113,6 +93,7 @@ const UpdateStock = () => {
 
     setSortBy(value.split(" ")[0])
     setSortDir(value.split(" ")[1])
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -130,7 +111,6 @@ const UpdateStock = () => {
           onChange={sortCategoryHandler}
           fontSize={"15px"}
           color={"#6D6D6F"}
-          placeholder="Sort"
           bgColor={"white"}
         >
           <option value="warehouse_name ASC" selected>
@@ -141,31 +121,12 @@ const UpdateStock = () => {
           <option value="createdAt ASC">Old</option>
         </Select>
 
-        <form onSubmit={formikSearch.handleSubmit}>
-          <FormControl>
-            <InputGroup textAlign={"right"}>
-              <Input
-                type={"text"}
-                placeholder="Search by warehouse name"
-                name="search"
-                onChange={searchAdminHandler}
-                borderRightRadius="0"
-                value={formikSearch.values.search}
-                bgColor="white"
-              />
-
-              <Button
-                borderLeftRadius={"0"}
-                type="submit"
-                bgColor={"white"}
-                border="1px solid #e2e8f0"
-                borderLeft={"0px"}
-              >
-                <TbSearch />
-              </Button>
-            </InputGroup>
-          </FormControl>
-        </form>
+        <Search
+          formikSearch={formikSearch}
+          searchHandler={searchHandler}
+          placeholder="Search by warehouse name"
+          width={"100%"}
+        />
       </Grid>
       <Table
         variant={"striped"}
@@ -182,16 +143,27 @@ const UpdateStock = () => {
             <Th>Warehouse Admin</Th>
           </Tr>
         </Thead>
-        <Tbody>{isLoading && renderWarehouse()}</Tbody>
+        <Tbody>
+          {isLoading &&
+            warehouse.map((val) => {
+              return (
+                <Tr
+                  h="auto"
+                  key={val.id.toString()}
+                  onClick={() => handleRowClick(val.warehouse_name)}
+                >
+                  <Td>{val.warehouse_name || "null"}</Td>
+                  <Td>{val.address_labels}</Td>
+                  <Td>
+                    {val.province}, {val.city}, {val.districts}
+                  </Td>
+                  <Td>{val.User?.username || "Not assign"}</Td>
+                </Tr>
+              )
+            })}
+          {isLoading === false ? <LoadingUpdateStock /> : null}
+        </Tbody>
       </Table>
-      {isLoading === false ? (
-        <Skeleton
-          startColor="#bab8b8"
-          endColor="#d4d2d2"
-          height="60px"
-          borderRadius="8px"
-        />
-      ) : null}
       {!warehouse.length && isLoading === true ? (
         <Box p="10px" bgColor={"#E5F9F6"}>
           <Box mx="auto">
@@ -204,32 +176,13 @@ const UpdateStock = () => {
           </Box>
         </Box>
       ) : null}
-      <Box p="20px" fontSize={"16px"}>
-        <Box textAlign={"center"}>
-          <Button
-            onClick={previousPage}
-            disabled={page === 1 ? true : null}
-            _hover={false}
-            _active={false}
-          >
-            <AiOutlineLeftCircle fontSize={"20px"} />
-          </Button>
 
-          <Box display={"inline"}>{page}</Box>
-
-          <Button
-            onClick={nextPage}
-            disabled={page >= maxPage ? true : null}
-            _hover={false}
-            _active={false}
-          >
-            <AiOutlineRightCircle fontSize={"20px"} />
-          </Button>
-          <Box>
-            Page: {page} of {maxPage}
-          </Box>
-        </Box>
-      </Box>
+      <Pagination
+        maxPage={maxPage}
+        nextPage={nextPage}
+        page={page}
+        previousPage={previousPage}
+      />
     </Box>
   )
 }
