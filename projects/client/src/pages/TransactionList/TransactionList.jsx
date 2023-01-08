@@ -1,5 +1,5 @@
-import { Box, Button, CircularProgress, FormControl, Image, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react"
-import { BiSearch, BiSearchAlt2 } from "react-icons/bi"
+import { Box, Button, CircularProgress, FormControl, Image, Input, InputGroup, InputRightElement, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react"
+import { BiSearchAlt2 } from "react-icons/bi"
 import rupiah from "../../assets/rupiah.svg"
 import { MdKeyboardArrowDown, MdOutlineKeyboardArrowRight } from "react-icons/md"
 import { axiosInstance } from "../../api"
@@ -9,12 +9,10 @@ import { Link, useLocation, useSearchParams } from "react-router-dom"
 import noTransaction from "../../assets/noTransaction.png"
 import Pagination from "./Pagination"
 import { useFormik } from "formik"
-import { HiOutlineArrowLeft } from "react-icons/hi"
 
 const TransactionList = () => {
 
     const [transactionList, setTransactionList] = useState([])
-    const [transactionListMobile, setTransactionListMobile] = useState([])
     const [unpaidTransaction, setUnpaidTransaction] = useState([])
     const [payment, setPayment] = useState(true)
     const [goingOn, setGoingOn] = useState(false)
@@ -31,6 +29,7 @@ const TransactionList = () => {
     const [sortBy, setSortBy] = useState("id")
     const [sortDir, setSortDir] = useState("Desc")
     const [pageCount, setPageCount] = useState(1)
+    const [inputSearch, setInputSearch] = useState("")
 
     const query = new URLSearchParams(useLocation().search)
 
@@ -122,7 +121,10 @@ const TransactionList = () => {
     const searchKeywordHandler = ({ target }) => {
         const { name, value } = target
         searchFormik.setFieldValue(name, value)
+        setInputSearch(value)
     }
+
+    console.log(inputSearch)
 
     // status
     const allBtnHandler = () => {
@@ -561,6 +563,12 @@ const TransactionList = () => {
         if (search_keyword) {
             setPayment(false)
         }
+        if (search_keyword) {
+            setInputSearch(search_keyword)
+        }
+        if (transaction_page) {
+            setPage(transaction_page)
+        }
     }, [transData])
 
     useEffect(() => {
@@ -604,7 +612,8 @@ const TransactionList = () => {
                                                 borderRadius={"8px"}
                                                 onChange={searchKeywordHandler}
                                                 name="search"
-                                                value={searchFormik.values.search}
+                                                // value={searchFormik.values.search}
+                                                defaultValue={inputSearch}
                                             />
                                             <InputRightElement >
                                                 <Box
