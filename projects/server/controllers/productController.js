@@ -9,6 +9,7 @@ const productController = {
     getAllProduct: async (req, res) => {
         try {
             const {
+                category_name = "",
                 product_name = "",
                 CategoryId = "",
                 _sortBy = "id",
@@ -22,11 +23,19 @@ const productController = {
                     const getAllProducts1 = await Product.findAndCountAll({
                         limit: Number(_limit),
                         offset: (_page - 1) * _limit,
-                        include: [{ model: Category }, { model: Image_Url }],
+                        include: [
+                            { model: Category, required: true },
+                            { model: Image_Url },
+                        ],
                         order: [[_sortBy, _sortDir]],
                         where: {
-                            product_name: {
-                                [Op.like]: `%${product_name}%`,
+                            [Op.or]: {
+                                product_name: {
+                                    [Op.like]: `%${product_name}%`,
+                                },
+                                "$Category.category_name$": {
+                                    [Op.like]: `%${category_name}%`,
+                                },
                             },
                         },
                     })
@@ -40,11 +49,20 @@ const productController = {
                 const getAllProducts2 = await Product.findAndCountAll({
                     limit: Number(_limit),
                     offset: (_page - 1) * _limit,
-                    include: [{ model: Category }, { model: Image_Url }],
+                    include: [
+                        { model: Category, required: true },
+                        { model: Image_Url },
+                    ],
+
                     order: [[_sortBy, _sortDir]],
                     where: {
-                        product_name: {
-                            [Op.like]: `%${product_name}%`,
+                        [Op.or]: {
+                            product_name: {
+                                [Op.like]: `%${product_name}%`,
+                            },
+                            "$Category.category_name$": {
+                                [Op.like]: `%${category_name}%`,
+                            },
                         },
 
                         CategoryId,

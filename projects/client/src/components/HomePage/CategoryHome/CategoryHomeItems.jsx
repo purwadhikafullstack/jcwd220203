@@ -2,27 +2,38 @@ import { Box, GridItem, Image, Text } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { axiosInstance } from "../../../api"
 import { motion } from "framer-motion"
+import { Link, useNavigate, createSearchParams } from "react-router-dom"
 
-const CategoryHomeItems = ({ category_name, category_image }) => {
-
+const CategoryHomeItems = ({ id, category_name, category_image, testfil }) => {
     const [countProduct, setCountProduct] = useState(0)
+    const navigate = useNavigate()
     const fetchCategoryByProductName = async () => {
         try {
-            const response = await axiosInstance.get(`categories/category_detail`, {
-                params: {
-                    category_name: category_name
+            const response = await axiosInstance.get(
+                `categories/category_detail`,
+                {
+                    params: {
+                        category_name: category_name,
+                    },
                 }
-            })
+            )
 
-            const productQuantity = response.data.data.Products.map((val) => val)
+            const productQuantity = response.data.data.Products.map(
+                (val) => val
+            )
 
             setCountProduct(productQuantity.length)
-
         } catch (err) {
             console.log(err)
         }
     }
 
+    const productBtnHandler = () => {
+        navigate({
+            pathname: "/product",
+            search: createSearchParams({ category: id }).toString(),
+        })
+    }
     useEffect(() => {
         fetchCategoryByProductName()
     }, [])
@@ -36,21 +47,19 @@ const CategoryHomeItems = ({ category_name, category_image }) => {
     }
 
     const apiImg = process.env.REACT_APP_IMAGE_URL
-
     return (
         <>
-            <Box display={{ lg: "inline", base: "none" }}>
-                <GridItem
-                    w={'126px'}
-                    h={'122px'}
-                    cursor={'pointer'}
-                >
+            <Box
+                display={{ lg: "inline", base: "none" }}
+                onClick={() => productBtnHandler()}
+            >
+                <GridItem w={"126px"} h={"122px"} cursor={"pointer"}>
                     <Box
                         display={"flex"}
-                        flexDir={'column'}
-                        alignItems={'center'}
+                        flexDir={"column"}
+                        alignItems={"center"}
                         _hover={{
-                            color: "#F7931E"
+                            color: "#F7931E",
                         }}
                     >
                         <motion.button
@@ -59,51 +68,46 @@ const CategoryHomeItems = ({ category_name, category_image }) => {
                                 boxShadow: "0px 0px 8px rgb(255,255,255)",
                             }}
                             transition={{
-                                type: "spring", stifness: 300
+                                type: "spring",
+                                stifness: 300,
                             }}
                         >
                             <Image
-                                w={'80px'}
-                                h={'80px'}
+                                w={"80px"}
+                                h={"80px"}
                                 src={`${apiImg}/${category_image}`}
                             />
                         </motion.button>
-                        <motion.text
-                            style={myStyle}
-                        >
+                        <motion.text style={myStyle}>
                             {category_name}
                         </motion.text>
-                        <Text
-                            fontSize={'11.2px'}
-                            color={'#6C757D'}
-                            pb={'3px'}
-                        >
+                        <Text fontSize={"11.2px"} color={"#6C757D"} pb={"3px"}>
                             {countProduct} Products
                         </Text>
                     </Box>
-                </GridItem >
+                </GridItem>
             </Box>
 
             {/* responsive mobile */}
             <Box display={{ lg: "none", base: "inline" }}>
                 <GridItem
-                    w={'80px'}
-                    h={'96px'}
-                    cursor={'pointer'}
-                    display={'flex'}
-                    flexDir={'column'}
-                    alignItems={'center'}
-                    justifyContent={'center'}
-                    alignContent={'center'}
+                    w={"80px"}
+                    h={"96px"}
+                    cursor={"pointer"}
+                    display={"flex"}
+                    flexDir={"column"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                    alignContent={"center"}
                 >
                     <Box
                         display={"flex"}
-                        flexDir={'column'}
-                        alignItems={'center'}
-                        justifyContent={'center'}
-                        alignContent={'center'}
+                        flexDir={"column"}
+                        alignItems={"center"}
+                        justifyContent={"center"}
+                        alignContent={"center"}
                         _hover={{
-                            color: "#F7931E"
+                            color: "#F7931E",
                         }}
                     >
                         <motion.button
@@ -112,12 +116,13 @@ const CategoryHomeItems = ({ category_name, category_image }) => {
                                 boxShadow: "0px 0px 8px rgb(255,255,255)",
                             }}
                             transition={{
-                                type: "spring", stifness: 300
+                                type: "spring",
+                                stifness: 300,
                             }}
                         >
                             <Image
-                                w={'60px'}
-                                h={'60px'}
+                                w={"60px"}
+                                h={"60px"}
                                 src={`${apiImg}/${category_image}`}
                             />
                         </motion.button>
@@ -132,15 +137,11 @@ const CategoryHomeItems = ({ category_name, category_image }) => {
                         >
                             {category_name}
                         </motion.text>
-                        <Text
-                            fontSize={'9.2px'}
-                            color={'#6C757D'}
-                            pb={'3px'}
-                        >
+                        <Text fontSize={"9.2px"} color={"#6C757D"} pb={"3px"}>
                             {countProduct} Products
                         </Text>
                     </Box>
-                </GridItem >
+                </GridItem>
             </Box>
         </>
     )

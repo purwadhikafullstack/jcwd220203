@@ -84,7 +84,9 @@ const Navbar = ({ onChange, onKeyDown }) => {
 
     const fetchAllTransaction = async () => {
         try {
-            const response = await axiosInstance.get('/transactions/all-transaction-list')
+            const response = await axiosInstance.get(
+                "/transactions/all-transaction-list"
+            )
             dispatch(fillTrans(response.data.data))
             setTransData(response.data.data)
         } catch (err) {
@@ -94,7 +96,9 @@ const Navbar = ({ onChange, onKeyDown }) => {
 
     const fetchUnpaidTransaction = async () => {
         try {
-            const response = await axiosInstance.get("/transactions/unpaid-transaction")
+            const response = await axiosInstance.get(
+                "/transactions/unpaid-transaction"
+            )
 
             setUnpaidTransaction(response.data.data)
         } catch (err) {
@@ -114,7 +118,6 @@ const Navbar = ({ onChange, onKeyDown }) => {
     const refreshPage = () => {
         window.location.reload(false)
     }
-
 
     const renderCategory = () => {
         return showCategory.map((val) => {
@@ -175,7 +178,12 @@ const Navbar = ({ onChange, onKeyDown }) => {
     let StatusOrderActive = []
 
     for (let i = 0; i < statusOrder.length; i++) {
-        if (statusOrder[i] === 1 || statusOrder[i] === 2 || statusOrder[i] === 3 || statusOrder[i] === 4) {
+        if (
+            statusOrder[i] === 1 ||
+            statusOrder[i] === 2 ||
+            statusOrder[i] === 3 ||
+            statusOrder[i] === 4
+        ) {
             StatusOrderActive.push(statusOrder[i])
         }
     }
@@ -241,7 +249,11 @@ const Navbar = ({ onChange, onKeyDown }) => {
                             {/* Category */}
                             <Popover trigger="hover">
                                 <PopoverTrigger>
-                                    <Box pr={"1px"} pl={"10px"} cursor={"pointer"}>
+                                    <Box
+                                        pr={"1px"}
+                                        pl={"10px"}
+                                        cursor={"pointer"}
+                                    >
                                         <Text
                                             my={"auto"}
                                             fontSize="28px"
@@ -277,7 +289,9 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                             overflow={"auto"}
                                             cursor={"pointer"}
                                         >
-                                            <GridItem>{renderCategory()}</GridItem>
+                                            <GridItem>
+                                                {renderCategory()}
+                                            </GridItem>
                                         </Grid>
                                     </PopoverBody>
                                 </PopoverContent>
@@ -296,7 +310,10 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                         onKeyDown={keyDownBtnHandler}
                                         value={searchValue}
                                     />
-                                    <InputRightElement width="3.5rem" mr={"-5px"}>
+                                    <InputRightElement
+                                        width="3.5rem"
+                                        mr={"-5px"}
+                                    >
                                         <Button
                                             borderLeftRadius="0"
                                             _hover={{ bgColor: "none" }}
@@ -332,11 +349,11 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                 gap="4"
                                 fontSize="14px"
                                 fontWeight={"semibold"}
-                                pl={'8px'}
+                                pl={"8px"}
                             >
                                 {authSelector.username ? (
                                     <Box
-                                        display={'flex'}
+                                        display={"flex"}
                                         mr="2"
                                         ml="1"
                                         cursor={"pointer"}
@@ -359,7 +376,9 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                 >
                                                     <Avatar
                                                         size="sm"
-                                                        name={authSelector.username}
+                                                        name={
+                                                            authSelector.username
+                                                        }
                                                         mr={2}
                                                         width={"25px"}
                                                         height="25px"
@@ -369,9 +388,15 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                     <Text
                                                         my="auto"
                                                         padding={"8px"}
-                                                        textTransform={"capitalize"}
+                                                        textTransform={
+                                                            "capitalize"
+                                                        }
                                                     >
-                                                        {authSelector.username.split(" ")[0]}
+                                                        {
+                                                            authSelector.username.split(
+                                                                " "
+                                                            )[0]
+                                                        }
                                                     </Text>
                                                 </Box>
                                             </PopoverTrigger>
@@ -386,7 +411,9 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                         bgColor={"#E5F9F6"}
                                                     >
                                                         <Box
-                                                            boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                                                            boxShadow={
+                                                                "rgba(0, 0, 0, 0.24) 0px 3px 8px"
+                                                            }
                                                             display={"flex"}
                                                             my="auto"
                                                             padding="6px 12px"
@@ -395,7 +422,9 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                             cursor={"pointer"}
                                                         >
                                                             <Avatar
-                                                                name={authSelector.username}
+                                                                name={
+                                                                    authSelector.username
+                                                                }
                                                                 mr={2}
                                                                 width={"50px"}
                                                                 height="50px"
@@ -406,9 +435,15 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                                 my="auto"
                                                                 padding={"8px"}
                                                                 fontSize="16px"
-                                                                fontWeight={"bold"}
-                                                                color={"rgba(0,0,0,.54)"}
-                                                                textTransform={"capitalize"}
+                                                                fontWeight={
+                                                                    "bold"
+                                                                }
+                                                                color={
+                                                                    "rgba(0,0,0,.54)"
+                                                                }
+                                                                textTransform={
+                                                                    "capitalize"
+                                                                }
                                                             >
                                                                 {
                                                                     authSelector.username
@@ -423,10 +458,14 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                             <Link to="/user/profile">
                                                                 <Box
                                                                     _hover={{
-                                                                        bgColor: "#A5D8F8",
-                                                                        borderRadius: "7px",
+                                                                        bgColor:
+                                                                            "#A5D8F8",
+                                                                        borderRadius:
+                                                                            "7px",
                                                                     }}
-                                                                    p={"5px 4px"}
+                                                                    p={
+                                                                        "5px 4px"
+                                                                    }
                                                                 >
                                                                     <Text>
                                                                         Profile
@@ -435,14 +474,20 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                             </Link>
 
                                                             <Link
-                                                                to={"/transaction-list"}
+                                                                to={
+                                                                    "/transaction-list"
+                                                                }
                                                             >
                                                                 <Box
                                                                     _hover={{
-                                                                        bgColor: "#A5D8F8",
-                                                                        borderRadius: "7px",
+                                                                        bgColor:
+                                                                            "#A5D8F8",
+                                                                        borderRadius:
+                                                                            "7px",
                                                                     }}
-                                                                    p={"5px 4px"}
+                                                                    p={
+                                                                        "5px 4px"
+                                                                    }
                                                                 >
                                                                     <Text>
                                                                         Transaction-list
@@ -451,30 +496,40 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                             </Link>
                                                             {location.pathname ===
                                                                 "/cart" ||
-                                                                location.pathname ===
+                                                            location.pathname ===
                                                                 "/transaction-list" ||
-                                                                location.pathname ===
+                                                            location.pathname ===
                                                                 "/user/profile" ||
-                                                                location.pathname ===
+                                                            location.pathname ===
                                                                 "/user/profile/change-password" ||
-                                                                location.pathname ===
+                                                            location.pathname ===
                                                                 "/user/profile/address" ? (
                                                                 <Link
-                                                                    to={"/login"}
+                                                                    to={
+                                                                        "/login"
+                                                                    }
                                                                     replace
                                                                     state={{
                                                                         from: location,
                                                                     }}
                                                                 >
                                                                     <Box
-                                                                        display={"flex"}
+                                                                        display={
+                                                                            "flex"
+                                                                        }
                                                                         _hover={{
-                                                                            bgColor: "#A5D8F8",
-                                                                            borderRadius: "7px",
+                                                                            bgColor:
+                                                                                "#A5D8F8",
+                                                                            borderRadius:
+                                                                                "7px",
                                                                         }}
-                                                                        p={"5px 4px"}
+                                                                        p={
+                                                                            "5px 4px"
+                                                                        }
                                                                         b="0"
-                                                                        onClick={logoutBtnHandler}
+                                                                        onClick={
+                                                                            logoutBtnHandler
+                                                                        }
                                                                     >
                                                                         <Text>
                                                                             Logout
@@ -489,14 +544,22 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                                 </Link>
                                                             ) : (
                                                                 <Box
-                                                                    display={"flex"}
+                                                                    display={
+                                                                        "flex"
+                                                                    }
                                                                     _hover={{
-                                                                        bgColor: "#A5D8F8",
-                                                                        borderRadius: "7px",
+                                                                        bgColor:
+                                                                            "#A5D8F8",
+                                                                        borderRadius:
+                                                                            "7px",
                                                                     }}
-                                                                    p={"5px 4px"}
+                                                                    p={
+                                                                        "5px 4px"
+                                                                    }
                                                                     b="0"
-                                                                    onClick={logoutBtnHandler}
+                                                                    onClick={
+                                                                        logoutBtnHandler
+                                                                    }
                                                                 >
                                                                     <Text>
                                                                         Logout
@@ -516,7 +579,7 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                         </Popover>
                                     </Box>
                                 ) : (
-                                    // navbar if user not logged in 
+                                    // navbar if user not logged in
                                     <Box
                                         gap="2"
                                         display={"flex"}
@@ -565,260 +628,309 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                     </Box>
                                 )}
                             </Box>
-                        </HStack >
-                    </Box >
-                </Box >
-            </Container >
+                        </HStack>
+                    </Box>
+                </Box>
+            </Container>
 
             {/* mobile responsive */}
-            {location.pathname !== '/' ?
-                null : (
-                    <Container display={{ lg: "none", base: "flex" }} p={'0px'}>
+            {location.pathname !== "/" ? null : (
+                <Container display={{ lg: "none", base: "flex" }} p={"0px"}>
+                    <Box
+                        boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                        position={"fixed"}
+                        left="0"
+                        right={"0"}
+                        top="0"
+                        zIndex="9998"
+                    >
                         <Box
-                            boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-                            position={"fixed"}
-                            left="0"
-                            right={"0"}
-                            top="0"
-                            zIndex="9998"
+                            bgColor={"#E5F9F6"}
+                            display={"flex"}
+                            flexDir={"row"}
+                            p={"8px 10px 4px 16px"}
+                            h={"52px"}
+                            justifyContent={"flex-start"}
+                            gap={"4px"}
+                            maxW={"500px"}
                         >
-                            <Box
-                                bgColor={'#E5F9F6'}
-                                display={'flex'}
-                                flexDir={'row'}
-                                p={'8px 10px 4px 16px'}
-                                h={'52px'}
-                                justifyContent={'flex-start'}
-                                gap={'4px'}
-                                maxW={'500px'}
-                            >
-                                {/* logo */}
-                                <Link to={"/"}>
-                                    <Image
-                                        src={logo}
-                                        minWidth={"28px"}
-                                        maxWidth={'28px'}
-                                        display={"inline"}
-                                        mt={"4px"}
-                                    />
+                            {/* logo */}
+                            <Link to={"/"}>
+                                <Image
+                                    src={logo}
+                                    minWidth={"28px"}
+                                    maxWidth={"28px"}
+                                    display={"inline"}
+                                    mt={"4px"}
+                                />
+                            </Link>
+                            {/* search bar */}
+                            <InputGroup pl={"3px"}>
+                                <InputLeftElement>
+                                    <Box
+                                        display={"flex"}
+                                        justifyContent={"center"}
+                                        alignItems={"center"}
+                                        h={"24px"}
+                                        w={"24px"}
+                                        pr={"5px"}
+                                        pb={"2px"}
+                                    >
+                                        <BiSearch color={"#F7931E"} />
+                                    </Box>
+                                </InputLeftElement>
+                                <Input
+                                    p={"0px 12px 2px 28px"}
+                                    placeholder="Find in Shopedia"
+                                    _placeholder={{ fontSize: "14px" }}
+                                    bgColor={"#fff"}
+                                    border={"1px solid #FFD7B1"}
+                                    borderRadius={"12px"}
+                                    onChange={changeBtnHandler}
+                                    onKeyDown={keyDownBtnHandler}
+                                    value={searchValue}
+                                    w={"100%"}
+                                    h={"36px"}
+                                    fontFamily={
+                                        "Open Sauce One,Nunito Sans, sans-serif"
+                                    }
+                                    fontSize={"14px"}
+                                    color={"#31353BAD"}
+                                />
+                            </InputGroup>
+                            {/* cart */}
+                            <Box display={"flex"} justifyContent={"flex-end"}>
+                                <Link to="/cart">
+                                    <Box
+                                        w={"36px"}
+                                        h={"36px"}
+                                        display={"flex"}
+                                        justifyContent={"center"}
+                                        alignItems={"center"}
+                                        ml={"1px"}
+                                    >
+                                        <IoMdCart
+                                            style={{
+                                                height: "20px",
+                                                width: "20px",
+                                            }}
+                                        />
+                                        {cartSelector.cart.length &&
+                                        authSelector.id ? (
+                                            <sup>
+                                                <Box
+                                                    fontSize={"9px"}
+                                                    backgroundColor={"#EF144A"}
+                                                    borderRadius={"50%"}
+                                                    m={"-6px -8px 0px -8px"}
+                                                    p={"7px 3px 8px 3px"}
+                                                    color={"white"}
+                                                    fontWeight={700}
+                                                    textAlign={"center"}
+                                                >
+                                                    {totalCartQuantity}
+                                                </Box>
+                                            </sup>
+                                        ) : null}
+                                    </Box>
                                 </Link>
-                                {/* search bar */}
-                                <InputGroup pl={'3px'}>
-                                    <InputLeftElement>
-                                        <Box display={'flex'}
-                                            justifyContent={'center'}
-                                            alignItems={'center'}
-                                            h={'24px'}
-                                            w={'24px'}
-                                            pr={'5px'}
-                                            pb={'2px'}
-                                        >
-                                            <BiSearch color={"#F7931E"} />
-                                        </Box>
-                                    </InputLeftElement>
-                                    <Input
-                                        p={'0px 12px 2px 28px'}
-                                        placeholder="Find in Shopedia"
-                                        _placeholder={{ fontSize: "14px" }}
-                                        bgColor={"#fff"}
-                                        border={"1px solid #FFD7B1"}
-                                        borderRadius={"12px"}
-                                        onChange={changeBtnHandler}
-                                        onKeyDown={keyDownBtnHandler}
-                                        value={searchValue}
-                                        w={'100%'}
-                                        h={'36px'}
-                                        fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-                                        fontSize={'14px'}
-                                        color={"#31353BAD"}
-                                    />
-                                </InputGroup>
-                                {/* cart */}
-                                <Box display={'flex'} justifyContent={'flex-end'} >
-                                    <Link to="/cart">
-                                        <Box w={'36px'} h={'36px'} display={'flex'} justifyContent={'center'} alignItems={'center'} ml={'1px'} >
-                                            <IoMdCart style={{ height: "20px", width: "20px" }} />
-                                            {cartSelector.cart.length &&
-                                                authSelector.id ? (
-                                                <sup>
-                                                    <Box
-                                                        fontSize={"9px"}
-                                                        backgroundColor={"#EF144A"}
-                                                        borderRadius={"50%"}
-                                                        m={'-6px -8px 0px -8px'}
-                                                        p={'7px 3px 8px 3px'}
-                                                        color={"white"}
-                                                        fontWeight={700}
-                                                        textAlign={'center'}
-                                                    >
-                                                        {totalCartQuantity}
-                                                    </Box>
-                                                </sup>
-                                            ) : null}
-                                        </Box>
-                                    </Link>
 
-                                    {/* notification */}
-                                    <Link to="/transaction-list">
-                                        <Box w={'36px'} h={'36px'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                                            <IoIosNotifications style={{ height: "20px", width: "20px" }} />
-                                            {transSelector.trans.length &&
-                                                authSelector.id ? (
-                                                <sup>
-                                                    <Box
-                                                        fontSize={"9px"}
-                                                        backgroundColor={"#EF144A"}
-                                                        borderRadius={"50%"}
-                                                        m={'-6px -8px 0px -8px'}
-                                                        p={'7px 3px 8px 3px'}
-                                                        color={"white"}
-                                                        fontWeight={700}
-                                                        textAlign={'center'}
-                                                    >
-                                                        {StatusOrderActive.length + unpaidTransaction.length}
-                                                    </Box>
-                                                </sup>
-                                            ) : null}
-                                        </Box>
-                                    </Link>
-                                    {!authSelector.id ? (
-                                        // if user not logged in yet
-                                        <Link to={"/login"} replace state={{ from: location }}>
-                                            <Button
-                                                display={'flex'}
-                                                flexDir={'row'}
-                                                color={'#0095DA'}
-                                                justifyContent={'center'}
-                                                alignItems={'center'}
-                                                pl={'7px'}
-                                                h={'35px'}
-                                                bgColor={'#fff'}
-                                                border={'1px solid #0095DA'}
-                                                _hover={'none'}
-                                                _active={'none'}
-                                                ml={'4px'}
+                                {/* notification */}
+                                <Link to="/transaction-list">
+                                    <Box
+                                        w={"36px"}
+                                        h={"36px"}
+                                        display={"flex"}
+                                        justifyContent={"center"}
+                                        alignItems={"center"}
+                                    >
+                                        <IoIosNotifications
+                                            style={{
+                                                height: "20px",
+                                                width: "20px",
+                                            }}
+                                        />
+                                        {transSelector.trans.length &&
+                                        authSelector.id ? (
+                                            <sup>
+                                                <Box
+                                                    fontSize={"9px"}
+                                                    backgroundColor={"#EF144A"}
+                                                    borderRadius={"50%"}
+                                                    m={"-6px -8px 0px -8px"}
+                                                    p={"7px 3px 8px 3px"}
+                                                    color={"white"}
+                                                    fontWeight={700}
+                                                    textAlign={"center"}
+                                                >
+                                                    {StatusOrderActive.length +
+                                                        unpaidTransaction.length}
+                                                </Box>
+                                            </sup>
+                                        ) : null}
+                                    </Box>
+                                </Link>
+                                {!authSelector.id ? (
+                                    // if user not logged in yet
+                                    <Link
+                                        to={"/login"}
+                                        replace
+                                        state={{ from: location }}
+                                    >
+                                        <Button
+                                            display={"flex"}
+                                            flexDir={"row"}
+                                            color={"#0095DA"}
+                                            justifyContent={"center"}
+                                            alignItems={"center"}
+                                            pl={"7px"}
+                                            h={"35px"}
+                                            bgColor={"#fff"}
+                                            border={"1px solid #0095DA"}
+                                            _hover={"none"}
+                                            _active={"none"}
+                                            ml={"4px"}
+                                        >
+                                            <BiLogIn
+                                                style={{
+                                                    height: "20px",
+                                                    width: "20px",
+                                                }}
+                                            />
+                                            <Text
+                                                ml={"4px"}
+                                                fontSize={"12px"}
+                                                mt={"0px"}
+                                                fontWeight={600}
                                             >
-                                                <BiLogIn style={{ height: "20px", width: "20px" }} />
-                                                <Text ml={'4px'} fontSize={'12px'} mt={'0px'} fontWeight={600}
+                                                Login
+                                            </Text>
+                                        </Button>
+                                    </Link>
+                                ) : (
+                                    // if user login
+                                    <Box display={"flex"} cursor={"pointer"}>
+                                        <Popover>
+                                            <PopoverTrigger>
+                                                <Button
+                                                    display={"flex"}
+                                                    paddingLeft="5px"
+                                                    paddingRight={"0px"}
+                                                    color={"rgba(0,0,0,.54)"}
+                                                    pl={"5px"}
+                                                    justifyContent={
+                                                        "space-between"
+                                                    }
+                                                    alignItems={"center"}
+                                                    h={"36px"}
+                                                    bgColor={"transparent"}
+                                                    _hover={"none"}
+                                                    _active={"none"}
                                                 >
-                                                    Login
-                                                </Text>
-                                            </Button>
-                                        </Link>
-                                    ) : (
-                                        // if user login
-                                        <Box
-                                            display={'flex'}
-                                            cursor={"pointer"}
-                                        >
-                                            <Popover >
-                                                <PopoverTrigger>
-                                                    <Button
-                                                        display={"flex"}
-                                                        paddingLeft="5px"
-                                                        paddingRight={"0px"}
-                                                        color={"rgba(0,0,0,.54)"}
-                                                        pl={'5px'}
-                                                        justifyContent={'space-between'}
-                                                        alignItems={'center'}
-                                                        h={'36px'}
-                                                        bgColor={'transparent'}
-                                                        _hover={"none"}
-                                                        _active={"none"}
+                                                    <Text
+                                                        fontSize={"15px"}
+                                                        padding={"6px"}
+                                                        textTransform={
+                                                            "capitalize"
+                                                        }
+                                                        fontWeight={600}
+                                                        color={"#31353BF5"}
+                                                        fontFamily={
+                                                            "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                                                        }
                                                     >
-                                                        <Text
-                                                            fontSize={'15px'}
-                                                            padding={"6px"}
-                                                            textTransform={"capitalize"}
-                                                            fontWeight={600}
-                                                            color={'#31353BF5'}
-                                                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                                                        >
-                                                            {authSelector.username.split(" ")[0]}
-                                                        </Text>
-                                                        <MdKeyboardArrowDown style={{ height: "16px", marginTop: "2px" }} />
-                                                    </Button>
-                                                </PopoverTrigger>
-                                                <PopoverContent
-                                                    w={"110px"}
-                                                    bgColor={"#E5F9F6"}
-                                                    mt={'-10px'}
-                                                    p={'0px'}
-                                                >
-                                                    <PopoverBody>
+                                                        {
+                                                            authSelector.username.split(
+                                                                " "
+                                                            )[0]
+                                                        }
+                                                    </Text>
+                                                    <MdKeyboardArrowDown
+                                                        style={{
+                                                            height: "16px",
+                                                            marginTop: "2px",
+                                                        }}
+                                                    />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent
+                                                w={"110px"}
+                                                bgColor={"#E5F9F6"}
+                                                mt={"-10px"}
+                                                p={"0px"}
+                                            >
+                                                <PopoverBody>
+                                                    <Box
+                                                        p="0px"
+                                                        bgColor={"#E5F9F6"}
+                                                    >
                                                         <Box
-                                                            p="0px"
-                                                            bgColor={"#E5F9F6"}
+                                                            fontSize={"14px"}
+                                                            p="5px 0"
                                                         >
-                                                            <Box
-                                                                fontSize={"14px"}
-                                                                p="5px 0"
-                                                            >
-                                                                <Link to="/user/profile">
-                                                                    <Box
-                                                                        p={"5px 4px"}
-                                                                    >
-                                                                        <Text>
-                                                                            Profile
-                                                                        </Text>
-                                                                    </Box>
-                                                                </Link>
+                                                            <Link to="/user/profile">
+                                                                <Box
+                                                                    p={
+                                                                        "5px 4px"
+                                                                    }
+                                                                >
+                                                                    <Text>
+                                                                        Profile
+                                                                    </Text>
+                                                                </Box>
+                                                            </Link>
 
+                                                            <Link
+                                                                to={
+                                                                    "/transaction-list"
+                                                                }
+                                                            >
+                                                                <Box
+                                                                    p={
+                                                                        "5px 4px"
+                                                                    }
+                                                                >
+                                                                    <Text>
+                                                                        Transaction
+                                                                    </Text>
+                                                                </Box>
+                                                            </Link>
+                                                            {location.pathname ===
+                                                                "/cart" ||
+                                                            location.pathname ===
+                                                                "/transaction-list" ||
+                                                            location.pathname ===
+                                                                "/user/profile" ||
+                                                            location.pathname ===
+                                                                "/user/profile/change-password" ||
+                                                            location.pathname ===
+                                                                "/user/profile/address" ? (
                                                                 <Link
-                                                                    to={"/transaction-list"}
+                                                                    to={
+                                                                        "/login"
+                                                                    }
+                                                                    replace
+                                                                    state={{
+                                                                        from: location,
+                                                                    }}
                                                                 >
                                                                     <Box
-                                                                        p={"5px 4px"}
-                                                                    >
-                                                                        <Text>
-                                                                            Transaction
-                                                                        </Text>
-                                                                    </Box>
-                                                                </Link>
-                                                                {location.pathname ===
-                                                                    "/cart" ||
-                                                                    location.pathname ===
-                                                                    "/transaction-list" ||
-                                                                    location.pathname ===
-                                                                    "/user/profile" ||
-                                                                    location.pathname ===
-                                                                    "/user/profile/change-password" ||
-                                                                    location.pathname ===
-                                                                    "/user/profile/address" ? (
-                                                                    <Link
-                                                                        to={"/login"}
-                                                                        replace
-                                                                        state={{
-                                                                            from: location,
+                                                                        display={
+                                                                            "flex"
+                                                                        }
+                                                                        _hover={{
+                                                                            bgColor:
+                                                                                "#A5D8F8",
+                                                                            borderRadius:
+                                                                                "7px",
                                                                         }}
-                                                                    >
-                                                                        <Box
-                                                                            display={"flex"}
-                                                                            _hover={{
-                                                                                bgColor: "#A5D8F8",
-                                                                                borderRadius: "7px",
-                                                                            }}
-                                                                            p={"5px 4px"}
-                                                                            b="0"
-                                                                            onClick={logoutBtnHandler}
-                                                                        >
-                                                                            <Text>
-                                                                                Logout
-                                                                            </Text>
-                                                                            <Box
-                                                                                my="auto"
-                                                                                ml="1"
-                                                                            >
-                                                                                <BiLogOutCircle />
-                                                                            </Box>
-                                                                        </Box>
-                                                                    </Link>
-                                                                ) : (
-                                                                    <Box
-                                                                        display={"flex"}
-                                                                        p={"5px 4px"}
+                                                                        p={
+                                                                            "5px 4px"
+                                                                        }
                                                                         b="0"
-                                                                        onClick={logoutBtnHandler}
+                                                                        onClick={
+                                                                            logoutBtnHandler
+                                                                        }
                                                                     >
                                                                         <Text>
                                                                             Logout
@@ -830,175 +942,199 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                                             <BiLogOutCircle />
                                                                         </Box>
                                                                     </Box>
-                                                                )}
-                                                            </Box>
+                                                                </Link>
+                                                            ) : (
+                                                                <Box
+                                                                    display={
+                                                                        "flex"
+                                                                    }
+                                                                    p={
+                                                                        "5px 4px"
+                                                                    }
+                                                                    b="0"
+                                                                    onClick={
+                                                                        logoutBtnHandler
+                                                                    }
+                                                                >
+                                                                    <Text>
+                                                                        Logout
+                                                                    </Text>
+                                                                    <Box
+                                                                        my="auto"
+                                                                        ml="1"
+                                                                    >
+                                                                        <BiLogOutCircle />
+                                                                    </Box>
+                                                                </Box>
+                                                            )}
                                                         </Box>
-                                                    </PopoverBody>
-                                                </PopoverContent>
-                                            </Popover>
-                                        </Box>
-                                    )}
-                                </Box>
+                                                    </Box>
+                                                </PopoverBody>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </Box>
+                                )}
                             </Box>
                         </Box>
-                    </Container>
-                )}
-
+                    </Box>
+                </Container>
+            )}
 
             {/* mobile Navbar 2 */}
-            {location.pathname === '/transaction-list'
-                || location.pathname === '/cart'
-                || location.pathname === '/user/profile/change-password'
-                || location.pathname === '/user/profile'
-                || location.pathname === `/user/profile/address`
-                || location.pathname === '/cart/shipment'
-                || location.pathname === '/transaction/payment-list'
-                || location.pathname === '/' ?
-                null : (
-                    <Box display={{ lg: "none", base: "flex" }} p={'0px'}>
+            {location.pathname === "/transaction-list" ||
+            location.pathname === "/cart" ||
+            location.pathname === "/user/profile/change-password" ||
+            location.pathname === "/user/profile" ||
+            location.pathname === `/user/profile/address` ||
+            location.pathname === "/cart/shipment" ||
+            location.pathname === "/transaction/payment-list" ||
+            location.pathname === "/" ? null : (
+                <Box
+                    display={{ lg: "none", base: "flex" }}
+                    p={"0px"}
+                    mx="auto"
+                    maxW={"500px"}
+                >
+                    <Box
+                        position={"fixed"}
+                        left="0"
+                        right={"0"}
+                        top="0"
+                        zIndex="9998"
+                        bgColor="white"
+                    >
                         <Box
-                            position={"fixed"}
-                            left="0"
-                            right={"0"}
-                            top="0"
-                            zIndex="9998"
-                            bgColor={'#fff'}
+                            p={"8px 10px 4px"}
+                            h={"52px"}
+                            maxW={"500px"}
+                            display={"flex"}
+                            justifyContent={"flex-start"}
+                            flexDir={"row"}
+                            alignItems={"center"}
+                            columnGap={"8px"}
                         >
-                            <Box
-                                p={'8px 10px 4px'}
-                                h={'52px'}
-                                maxW={'500px'}
-                                display={'flex'}
-                                justifyContent={'flex-start'}
-                                flexDir={'row'}
-                                alignItems={'center'}
-                                columnGap={'8px'}
-                            >
-                                <Link to={'/'} maxH={'36px'} w={'36px'}>
-                                    <Box w={'36px'} h={'24px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                                        <HiOutlineArrowLeft style={{ height: "24px", width: "24px", color: "#7d8086" }} />
-                                    </Box>
-                                </Link>
-                                <InputGroup w={'100%'}>
-                                    <InputLeftElement>
-                                        <Box
-                                            display={'flex'}
-                                            justifyContent={'center'}
-                                            alignItems={'center'}
-                                            h={'24px'}
-                                            w={'24px'}
-                                            pr={'5px'}
-                                            pb={'5px'}
-                                        >
-                                            <BiSearch color={"#9fa6b0"} />
-                                        </Box>
-                                    </InputLeftElement>
-                                    <Input
-                                        p={'0px 12px 2px 31px'}
-                                        placeholder="Find in Shopedia"
-                                        _placeholder={{ fontSize: "14px" }}
-                                        border={"1px solid #FFD7B1"}
-                                        borderRadius={"15px"}
-                                        onChange={changeBtnHandler}
-                                        onKeyDown={keyDownBtnHandler}
-                                        value={searchValue}
-                                        fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-                                        fontSize={'14px'}
-                                        h={'36px'}
-                                        color={"#31353BAD"}
+                            <Link to={"/"} maxH={"36px"} w={"36px"}>
+                                <Box
+                                    w={"36px"}
+                                    h={"24px"}
+                                    display={"flex"}
+                                    alignItems={"center"}
+                                    justifyContent={"center"}
+                                >
+                                    <HiOutlineArrowLeft
+                                        style={{
+                                            height: "24px",
+                                            width: "24px",
+                                            color: "#7d8086",
+                                        }}
                                     />
-                                </InputGroup>
-                                <Popover >
-                                    <PopoverTrigger>
-                                        <Button maxH={'32px'} maxW={'36px'} display={'flex'} alignItems={'center'} justifyContent={'center'} bgColor={'transparent'} p={'0px'} _active={'none'} _hover={'none'}>
-                                            <GrMenu style={{ width: '24px', height: '24px', color: '#7c7e82' }} />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                        w={"110px"}
-                                        bgColor={"#fff"}
-                                        mt={'-10px'}
-                                        p={'0px'}
+                                </Box>
+                            </Link>
+                            <InputGroup w={"100%"}>
+                                <InputLeftElement>
+                                    <Box
+                                        display={"flex"}
+                                        justifyContent={"center"}
+                                        alignItems={"center"}
+                                        h={"24px"}
+                                        w={"24px"}
+                                        pr={"5px"}
+                                        pb={"5px"}
                                     >
-                                        <PopoverBody>
-                                            <Box
-                                                p="0px"
-                                                bgColor={"#fff"}
-                                            >
-                                                <Box
-                                                    fontSize={"14px"}
-                                                    p="5px 0"
-                                                >
-                                                    <Link to="/user/profile">
-                                                        <Box
-                                                            p={"5px 4px"}
-                                                        >
-                                                            <Text>
-                                                                Profile
-                                                            </Text>
-                                                        </Box>
-                                                    </Link>
+                                        <BiSearch color={"#9fa6b0"} />
+                                    </Box>
+                                </InputLeftElement>
+                                <Input
+                                    p={"0px 12px 2px 31px"}
+                                    placeholder="Find in Shopedia"
+                                    _placeholder={{ fontSize: "14px" }}
+                                    border={"1px solid #FFD7B1"}
+                                    borderRadius={"15px"}
+                                    onChange={changeBtnHandler}
+                                    onKeyDown={keyDownBtnHandler}
+                                    value={searchValue}
+                                    fontFamily={
+                                        "Open Sauce One,Nunito Sans, sans-serif"
+                                    }
+                                    fontSize={"14px"}
+                                    h={"36px"}
+                                    color={"#31353BAD"}
+                                />
+                            </InputGroup>
+                            <Popover>
+                                <PopoverTrigger>
+                                    <Button
+                                        maxH={"32px"}
+                                        maxW={"36px"}
+                                        display={"flex"}
+                                        alignItems={"center"}
+                                        justifyContent={"center"}
+                                        bgColor={"transparent"}
+                                        p={"0px"}
+                                        _active={"none"}
+                                        _hover={"none"}
+                                    >
+                                        <GrMenu
+                                            style={{
+                                                width: "24px",
+                                                height: "24px",
+                                                color: "#7c7e82",
+                                            }}
+                                        />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                    w={"110px"}
+                                    bgColor={"#fff"}
+                                    mt={"-10px"}
+                                    p={"0px"}
+                                >
+                                    <PopoverBody>
+                                        <Box p="0px" bgColor={"#fff"}>
+                                            <Box fontSize={"14px"} p="5px 0">
+                                                <Link to="/user/profile">
+                                                    <Box p={"5px 4px"}>
+                                                        <Text>Profile</Text>
+                                                    </Box>
+                                                </Link>
 
+                                                <Link to={"/transaction-list"}>
+                                                    <Box p={"5px 4px"}>
+                                                        <Text>Transaction</Text>
+                                                    </Box>
+                                                </Link>
+                                                {location.pathname ===
+                                                    "/cart" ||
+                                                location.pathname ===
+                                                    "/transaction-list" ||
+                                                location.pathname ===
+                                                    "/user/profile" ||
+                                                location.pathname ===
+                                                    "/user/profile/change-password" ||
+                                                location.pathname ===
+                                                    "/user/profile/address" ? (
                                                     <Link
-                                                        to={"/transaction-list"}
+                                                        to={"/login"}
+                                                        replace
+                                                        state={{
+                                                            from: location,
+                                                        }}
                                                     >
                                                         <Box
-
-                                                            p={"5px 4px"}
-                                                        >
-                                                            <Text>
-                                                                Transaction
-                                                            </Text>
-                                                        </Box>
-                                                    </Link>
-                                                    {location.pathname ===
-                                                        "/cart" ||
-                                                        location.pathname ===
-                                                        "/transaction-list" ||
-                                                        location.pathname ===
-                                                        "/user/profile" ||
-                                                        location.pathname ===
-                                                        "/user/profile/change-password" ||
-                                                        location.pathname ===
-                                                        "/user/profile/address" ? (
-                                                        <Link
-                                                            to={"/login"}
-                                                            replace
-                                                            state={{
-                                                                from: location,
-                                                            }}
-                                                        >
-                                                            <Box
-                                                                display={"flex"}
-                                                                _hover={{
-                                                                    bgColor: "#A5D8F8",
-                                                                    borderRadius: "7px",
-                                                                }}
-                                                                p={"5px 4px"}
-                                                                b="0"
-                                                                onClick={logoutBtnHandler}
-                                                            >
-                                                                <Text>
-                                                                    Logout
-                                                                </Text>
-                                                                <Box
-                                                                    my="auto"
-                                                                    ml="1"
-                                                                >
-                                                                    <BiLogOutCircle />
-                                                                </Box>
-                                                            </Box>
-                                                        </Link>
-                                                    ) : (
-                                                        <Box
                                                             display={"flex"}
+                                                            _hover={{
+                                                                bgColor:
+                                                                    "#A5D8F8",
+                                                                borderRadius:
+                                                                    "7px",
+                                                            }}
                                                             p={"5px 4px"}
                                                             b="0"
-                                                            onClick={logoutBtnHandler}
+                                                            onClick={
+                                                                logoutBtnHandler
+                                                            }
                                                         >
-                                                            <Text>
-                                                                Logout
-                                                            </Text>
+                                                            <Text>Logout</Text>
                                                             <Box
                                                                 my="auto"
                                                                 ml="1"
@@ -1006,16 +1142,31 @@ const Navbar = ({ onChange, onKeyDown }) => {
                                                                 <BiLogOutCircle />
                                                             </Box>
                                                         </Box>
-                                                    )}
-                                                </Box>
+                                                    </Link>
+                                                ) : (
+                                                    <Box
+                                                        display={"flex"}
+                                                        p={"5px 4px"}
+                                                        b="0"
+                                                        onClick={
+                                                            logoutBtnHandler
+                                                        }
+                                                    >
+                                                        <Text>Logout</Text>
+                                                        <Box my="auto" ml="1">
+                                                            <BiLogOutCircle />
+                                                        </Box>
+                                                    </Box>
+                                                )}
                                             </Box>
-                                        </PopoverBody>
-                                    </PopoverContent>
-                                </Popover>
-                            </Box>
+                                        </Box>
+                                    </PopoverBody>
+                                </PopoverContent>
+                            </Popover>
                         </Box>
                     </Box>
-                )}
+                </Box>
+            )}
         </>
     )
 }
