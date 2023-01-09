@@ -38,7 +38,9 @@ const Product = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [catId, setCatId] = useState([])
     const catPerRow = 5
-    const [next, setNext] = useState(catPerRow)
+    const [catLimit, setCatLimit] = useState(catPerRow)
+    const [maxCategory, setMaxCategory] = useState(0)
+    const [next, setNext] = useState()
     const query = new URLSearchParams(useLocation().search)
     const category_id = query.get("category")
 
@@ -74,12 +76,13 @@ const Product = () => {
         try {
             const response = await axiosInstance.get(`/product/category`, {
                 params: {
-                    _limit: 12,
+                    _limit: catLimit,
                     _page: catPage,
                     _sortDir: "ASC",
                 },
             })
             setCatTotalCount(response.data.dataCount)
+            setMaxCategory(response.data.categoryCount)
             if (catPage === 1) {
                 setCategoryData(response.data.data)
             } else {
@@ -157,10 +160,13 @@ const Product = () => {
         }
     }
     const seeMoreBtnHandler = () => {
-        setNext(next + categoryData.length)
+        // setNext(next + categoryData.length)
+        setCatLimit()
     }
+
     const seeLessBtnHandler = () => {
-        setNext(catPerRow)
+        // setNext(catPerRow)
+        setCatLimit(catPerRow)
     }
     const resetBtnHandler = () => {
         setSearchParam(false)
@@ -184,7 +190,16 @@ const Product = () => {
         fetchProduct()
         fetchCategory()
         test()
-    }, [page, sortBy, sortDir, category, searchValue, catPage, searchParam])
+    }, [
+        page,
+        sortBy,
+        sortDir,
+        category,
+        searchValue,
+        catPage,
+        searchParam,
+        catLimit,
+    ])
     return (
         <>
             <Navbar
@@ -256,25 +271,27 @@ const Product = () => {
                                 Categories
                             </Text>
                             <Grid gap="5px">
-                                {categoryData.slice(0, next).map((val, i) => (
-                                    <Button
-                                        onClick={filterBtnHandler}
-                                        value={val.id}
-                                        bgColor="white"
-                                        borderBottom="1px solid #dfe1e3"
-                                        justifyContent="flex-start"
-                                        _hover={{
-                                            bgColor: "#dfe1e3",
-                                            borderRadius: "10px",
-                                            color: "#0095DA",
-                                        }}
-                                        key={i}
-                                    >
-                                        {val.category_name}
-                                    </Button>
-                                ))}
+                                {categoryData
+                                    .slice(0, catLimit)
+                                    .map((val, i) => (
+                                        <Button
+                                            onClick={filterBtnHandler}
+                                            value={val.id}
+                                            bgColor="white"
+                                            borderBottom="1px solid #dfe1e3"
+                                            justifyContent="flex-start"
+                                            _hover={{
+                                                bgColor: "#dfe1e3",
+                                                borderRadius: "10px",
+                                                color: "#0095DA",
+                                            }}
+                                            key={i}
+                                        >
+                                            {val.category_name}
+                                        </Button>
+                                    ))}
                             </Grid>
-                            {next < categoryData.length ? (
+                            {catLimit === catPerRow ? (
                                 <Button
                                     onClick={() => seeMoreBtnHandler()}
                                     mt="6"

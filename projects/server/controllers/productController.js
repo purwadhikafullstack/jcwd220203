@@ -138,16 +138,20 @@ const productController = {
 
     getCategory: async (req, res) => {
         try {
-            const { _limit = 5, _page = 1 } = req.query
+            const { _limit = 50, _page = 1 } = req.query
             const findCategory = await Category.findAll({
                 limit: Number(_limit),
                 offset: (_page - 1) * _limit,
                 order: [["category_name", "ASC"]],
             })
+
+            const getCategoryId = findCategory.map((val) => val.id)
+            const categoryCount = getCategoryId.length
             return res.status(200).json({
                 message: "Get category",
                 data: findCategory,
                 dataCount: findCategory.count,
+                categoryCount: categoryCount,
             })
         } catch (err) {
             console.log(err)

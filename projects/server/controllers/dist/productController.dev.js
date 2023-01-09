@@ -194,14 +194,14 @@ var productController = {
     }, null, null, [[0, 8]]);
   },
   getCategory: function getCategory(req, res) {
-    var _req$query2, _req$query2$_limit, _limit, _req$query2$_page, _page, findCategory;
+    var _req$query2, _req$query2$_limit, _limit, _req$query2$_page, _page, findCategory, getCategoryId, categoryCount;
 
     return regeneratorRuntime.async(function getCategory$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
             _context4.prev = 0;
-            _req$query2 = req.query, _req$query2$_limit = _req$query2._limit, _limit = _req$query2$_limit === void 0 ? 5 : _req$query2$_limit, _req$query2$_page = _req$query2._page, _page = _req$query2$_page === void 0 ? 1 : _req$query2$_page;
+            _req$query2 = req.query, _req$query2$_limit = _req$query2._limit, _limit = _req$query2$_limit === void 0 ? 50 : _req$query2$_limit, _req$query2$_page = _req$query2._page, _page = _req$query2$_page === void 0 ? 1 : _req$query2$_page;
             _context4.next = 4;
             return regeneratorRuntime.awrap(Category.findAll({
               limit: Number(_limit),
@@ -211,26 +211,31 @@ var productController = {
 
           case 4:
             findCategory = _context4.sent;
+            getCategoryId = findCategory.map(function (val) {
+              return val.id;
+            });
+            categoryCount = getCategoryId.length;
             return _context4.abrupt("return", res.status(200).json({
               message: "Get category",
               data: findCategory,
-              dataCount: findCategory.count
+              dataCount: findCategory.count,
+              categoryCount: categoryCount
             }));
 
-          case 8:
-            _context4.prev = 8;
+          case 10:
+            _context4.prev = 10;
             _context4.t0 = _context4["catch"](0);
             console.log(_context4.t0);
             return _context4.abrupt("return", res.status(200).json({
               message: "Server Error"
             }));
 
-          case 12:
+          case 14:
           case "end":
             return _context4.stop();
         }
       }
-    }, null, null, [[0, 8]]);
+    }, null, null, [[0, 10]]);
   },
   getCategoryId: function getCategoryId(req, res) {
     var id, findCategoryById;
