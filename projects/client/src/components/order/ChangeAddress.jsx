@@ -51,6 +51,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
   const [selectedNewProvince, setSelectedNewProvince] = useState(0)
   const [selectedNewCity, setSelectedNewCity] = useState(0)
   const [selectedEditProvince, setSelectedEditProvince] = useState(0)
+  console.log(selectedEditProvince)
   const [selectedEditCity, setSelectedEditCity] = useState(0)
   const [openedEdit, setOpenedEdit] = useState(null)
   const [currentSearch, setCurrentSearch] = useState("")
@@ -211,12 +212,13 @@ const ChangeAddress = ({ defaultAddressUser }) => {
             recipients_name,
             phone_number,
             address_labels,
-            province: selectedEditProvince,
-            city: selectedEditCity,
+            province: selectedEditProvince || editFormik.values.provinceId,
+            city: selectedEditCity || editFormik.values.cityId,
             districts,
             full_address,
           }
         )
+        console.log(response)
         toast({
           title: "Address Edited",
           description: response.data.message,
@@ -264,11 +266,11 @@ const ChangeAddress = ({ defaultAddressUser }) => {
   }
 
   const doubleOnClick1 = () => {
-    setRefreshAddress(true)
     editFormik.handleSubmit()
     setSelectedEditProvince(0)
     setSelectedEditCity(0)
     onCloseAlert()
+    setRefreshAddress(true)
   }
 
   const formikSearch = useFormik({
@@ -300,6 +302,8 @@ const ChangeAddress = ({ defaultAddressUser }) => {
       editFormik.setFieldValue("recipients_name", openedEdit.recipients_name)
       editFormik.setFieldValue("phone_number", openedEdit.phone_number)
       editFormik.setFieldValue("districts", openedEdit.districts)
+      editFormik.setFieldValue("cityId", openedEdit.cityId)
+      editFormik.setFieldValue("provinceId", openedEdit.provinceId)
     }
   }, [openedEdit])
   return (
