@@ -157,6 +157,7 @@ const AdminOrderHistory = () => {
                         fontSize="3xl"
                         fontWeight="bold"
                         fontFamily="sans-serif"
+                        color="#F7931E"
                     >
                         Order History
                     </Text>

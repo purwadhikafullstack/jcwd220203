@@ -128,6 +128,7 @@ const Navbar = ({ onChange, onKeyDown }) => {
                         borderRadius: "5px",
                     }}
                     p="5px"
+                    // onClick={navigate(`/product?category=${val.id}`)}
                 >
                     {val.category_name}
                 </Text>

@@ -161,6 +161,7 @@ const AdminSalesReport = () => {
                         fontSize="3xl"
                         fontWeight="bold"
                         fontFamily="sans-serif"
+                        color="#F7931E"
                     >
                         Sales Report
                     </Text>
