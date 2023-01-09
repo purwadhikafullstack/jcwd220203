@@ -3,6 +3,6 @@ const express = require("express")
 
 const router = express.Router()
 
-router.get("/get", adminOrderHistoryController.getOrder)
-router.get("/get2", adminOrderHistoryController.getByWarehouseId)
+router.get("/getOrder", adminOrderHistoryController.getAllOrderHistory)
+router.get("/findWarehouse", adminOrderHistoryController.findWarehouse)
 module.exports = router

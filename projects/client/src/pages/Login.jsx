@@ -115,7 +115,9 @@ const LoginPage = () => {
             }
         },
         validationSchema: Yup.object({
-            email: Yup.string().required().email("Email must be a valid email*"),
+            email: Yup.string()
+                .required()
+                .email("Email must be a valid email*"),
             password: Yup.string().required(),
         }),
         validateOnChange: false,
@@ -261,7 +263,12 @@ const LoginPage = () => {
                 justifyContent={"center"}
             >
                 <Link to={"/"}>
-                    <Image src={logo} width={"50px"} display={"inline"} mt={"5px"} />
+                    <Image
+                        src={logo}
+                        width={"50px"}
+                        display={"inline"}
+                        mt={"5px"}
+                    />
                 </Link>
                 <Link to={"/"}>
                     <Text
@@ -269,7 +276,9 @@ const LoginPage = () => {
                         fontWeight="bold"
                         color={"#0095DA"}
                         display="inline"
-                        fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                        fontFamily={
+                            "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                        }
                     >
                         Shop
                     </Text>
@@ -302,14 +311,20 @@ const LoginPage = () => {
                     pr="80px"
                 >
                     <Box mt={"40px"}>
-                        <Image src={Oshop} width="480px" justifyContent={"end"} />
+                        <Image
+                            src={Oshop}
+                            width="480px"
+                            justifyContent={"end"}
+                        />
                         <Text
                             m="27px 0 8px"
                             fontSize={"22.4px"}
                             fontWeight="bold"
                             textAlign={"center"}
                             color={"#009CE2"}
-                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                            fontFamily={
+                                "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                            }
                         >
                             It's not complicated at Shopedia
                         </Text>
@@ -319,9 +334,12 @@ const LoginPage = () => {
                             fontWeight="semibold"
                             textAlign={"center"}
                             color={"#009CE2"}
-                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                            fontFamily={
+                                "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                            }
                         >
-                            Join and feel the convenience of transactions on Shopedia
+                            Join and feel the convenience of transactions on
+                            Shopedia
                         </Text>
                     </Box>
                 </Box>
@@ -344,14 +362,28 @@ const LoginPage = () => {
                             fontWeight={"bold"}
                             textAlign={"left"}
                             color={"#0095DA"}
-                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                            fontFamily={
+                                "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                            }
                         >
                             Log in{" "}
                         </Text>
-                        <Box mt="8px" fontSize={"12px"} textAlign="left" color={"#F7931E"}>
-                            <Text display={"inline"} mr="1" color={{ lg: "#31353BAD", base: "#31353BF5" }} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
-                                Welcome to Shopedia, please put your login credentials below to
-                                access our website
+                        <Box
+                            mt="8px"
+                            fontSize={"12px"}
+                            textAlign="left"
+                            color={"#F7931E"}
+                        >
+                            <Text
+                                display={"inline"}
+                                mr="1"
+                                color={{ lg: "#31353BAD", base: "#31353BF5" }}
+                                fontFamily={
+                                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                                }
+                            >
+                                Welcome to Shopedia, please put your login
+                                credentials below to access our website
                             </Text>
                         </Box>
 
@@ -365,18 +397,23 @@ const LoginPage = () => {
                                         name="email"
                                         type="text"
                                         onChange={formChangeHandler}
-                                        borderColor={{ lg: "#e2e8f0", base: "#A6B0DD" }}
+                                        borderColor={{
+                                            lg: "#e2e8f0",
+                                            base: "#A6B0DD",
+                                        }}
                                         placeholder={"Email"}
                                         bgColor={{ lg: "#fff", base: "#fff" }}
                                     />
                                     <FormErrorMessage
                                         fontSize={"12px"}
-                                        fontFamily={"Open Sauce One, sans-serif"}
+                                        fontFamily={
+                                            "Open Sauce One, sans-serif"
+                                        }
                                         color={"#EF144A"}
                                         m={"4px 0px 0px"}
                                         lineHeight={"18px"}
-                                        textAlign={'start'}
-                                        pl={'2px'}
+                                        textAlign={"start"}
+                                        pl={"2px"}
                                     >
                                         {formik.errors.email}
                                     </FormErrorMessage>
@@ -384,12 +421,14 @@ const LoginPage = () => {
                                 {emailNotFound ? (
                                     <Text
                                         fontSize={"12px"}
-                                        fontFamily={"Open Sauce One, sans-serif"}
+                                        fontFamily={
+                                            "Open Sauce One, sans-serif"
+                                        }
                                         color={"#EF144A"}
                                         m={"4px 0px 0px"}
                                         lineHeight={"18px"}
-                                        textAlign={'start'}
-                                        pl={'2px'}
+                                        textAlign={"start"}
+                                        pl={"2px"}
                                     >
                                         Email not registered*
                                     </Text>
@@ -397,12 +436,14 @@ const LoginPage = () => {
                                 {userVerified ? (
                                     <Text
                                         fontSize={"12px"}
-                                        fontFamily={"Open Sauce One, sans-serif"}
+                                        fontFamily={
+                                            "Open Sauce One, sans-serif"
+                                        }
                                         color={"#EF144A"}
                                         m={"4px 0px 0px"}
                                         lineHeight={"18px"}
-                                        textAlign={'start'}
-                                        pl={'3px'}
+                                        textAlign={"start"}
+                                        pl={"3px"}
                                     >
                                         User not verified*
                                     </Text>
@@ -416,11 +457,21 @@ const LoginPage = () => {
                                                 pl={"10px"}
                                                 value={formik.values.password}
                                                 name="password"
-                                                type={showPassword ? "text" : "password"}
+                                                type={
+                                                    showPassword
+                                                        ? "text"
+                                                        : "password"
+                                                }
                                                 onChange={formChangeHandler}
-                                                borderColor={{ lg: "#e2e8f0", base: "#A6B0DD" }}
+                                                borderColor={{
+                                                    lg: "#e2e8f0",
+                                                    base: "#A6B0DD",
+                                                }}
                                                 placeholder={"Password"}
-                                                bgColor={{ lg: "#fff", base: "#fff" }}
+                                                bgColor={{
+                                                    lg: "#fff",
+                                                    base: "#fff",
+                                                }}
                                             />
                                             <InputRightElement width={"4.5rem"}>
                                                 <Button
@@ -451,8 +502,8 @@ const LoginPage = () => {
                                             color={"#EF144A"}
                                             m={"4px 0px 0px"}
                                             lineHeight={"18px"}
-                                            textAlign={'start'}
-                                            pl={'3px'}
+                                            textAlign={"start"}
+                                            pl={"3px"}
                                         >
                                             Incorrect password*
                                         </Text>
@@ -465,7 +516,9 @@ const LoginPage = () => {
                                                 color={"#0095DA"}
                                                 fontSize={"11px"}
                                                 mt={"5px"}
-                                                fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                                fontFamily={
+                                                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                                                }
                                             >
                                                 Forgot password?
                                             </Text>
@@ -481,10 +534,20 @@ const LoginPage = () => {
                                 _hover={false}
                                 m="16px 0"
                                 color={"white"}
-                                isDisabled={formik.values.email.includes("@") && formik.values.email.includes(".co") ? false : true}
+                                isDisabled={
+                                    formik.values.email.includes("@") &&
+                                    formik.values.email.includes(".co")
+                                        ? false
+                                        : true
+                                }
                                 type={"submit"}
                             >
-                                <Text fontWeight={"bold"} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                <Text
+                                    fontWeight={"bold"}
+                                    fontFamily={
+                                        "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                                    }
+                                >
                                     Log in
                                 </Text>
                             </Button>
@@ -507,7 +570,9 @@ const LoginPage = () => {
                                     mt="-13px"
                                     mx={"auto"}
                                     color={"#B0BFBF"}
-                                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                    fontFamily={
+                                        "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                                    }
                                     bgColor={{ lg: "#fff", base: "#E5F9F6" }}
                                 >
                                     or
@@ -535,7 +600,12 @@ const LoginPage = () => {
                                             <Box ml="-7px" my={"auto"}>
                                                 <FcGoogle fontSize={"25px"} />
                                             </Box>
-                                            <Text pl={'2px'} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                            <Text
+                                                pl={"2px"}
+                                                fontFamily={
+                                                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                                                }
+                                            >
                                                 Google
                                             </Text>
                                         </Button>
@@ -563,7 +633,11 @@ const LoginPage = () => {
                                                     size={"25px"}
                                                 />
                                             </Box>
-                                            <Text fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                            <Text
+                                                fontFamily={
+                                                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                                                }
+                                            >
                                                 FaceBook
                                             </Text>
                                         </Button>
@@ -573,7 +647,13 @@ const LoginPage = () => {
 
                             {/* redirect register */}
                             <Box textAlign={"center"} mt={"30px"}>
-                                <Text color={"#31353BF5"} fontSize={"12px"} fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}>
+                                <Text
+                                    color={"#31353BF5"}
+                                    fontSize={"12px"}
+                                    fontFamily={
+                                        "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                                    }
+                                >
                                     Don't have an account?
                                     <span style={myStyle}>
                                         <Link to={"/register"}>Sign up</Link>
