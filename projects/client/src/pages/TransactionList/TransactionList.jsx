@@ -1,5 +1,5 @@
-import { Box, Button, CircularProgress, FormControl, Image, Input, InputGroup, InputRightElement, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react"
-import { BiSearchAlt2 } from "react-icons/bi"
+import { Box, Button, CircularProgress, FormControl, Image, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react"
+import { BiSearch, BiSearchAlt2 } from "react-icons/bi"
 import rupiah from "../../assets/rupiah.svg"
 import { MdKeyboardArrowDown, MdOutlineKeyboardArrowRight } from "react-icons/md"
 import { axiosInstance } from "../../api"
@@ -9,6 +9,7 @@ import { Link, useLocation, useSearchParams } from "react-router-dom"
 import noTransaction from "../../assets/noTransaction.png"
 import Pagination from "./Pagination"
 import { useFormik } from "formik"
+import { HiOutlineArrowLeft } from "react-icons/hi"
 
 const TransactionList = () => {
 
@@ -1075,8 +1076,167 @@ const TransactionList = () => {
                     </Box>
                 </Box >
             </Box>
+
+            {/* Mobile Responsive */}
+            <Box display={{ lg: 'none', base: 'inline' }}>
+                <Box
+                    position={'fixed'}
+                    left="0"
+                    right={"0"}
+                    top="0"
+                    zIndex="9998"
+                    h={'148px'}
+                    bgColor={'#fff'}
+                >
+                    <Box
+                        h={'52px'}
+                        maxW={'500px'}
+                        display={'flex'}
+                        alignItems={'center'}
+                        flexdir={'row'}
+                        justifyContent={'flex-start'}
+                        bgColor={'white'}
+                    >
+                        <Link to={'/'}>
+                            <Box w={'52px'} h={'52px'} p={'1px 6px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+                                <HiOutlineArrowLeft style={{ height: "24px", width: "24px", color: "#7d8086" }} />
+                            </Box>
+                        </Link>
+                        <Text
+                            fontSize={'16px'}
+                            color={'#31353BF5'}
+                            fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                            lineHeight={'20px'}
+                            fontWeight={700}
+                        >
+                            Transaction List
+                        </Text>
+                    </Box>
+                    <Box m={'4px 16px'} maxW={'500px'}>
+                        <form onSubmit={searchFormik.handleSubmit}>
+                            <FormControl>
+                                <InputGroup w={'100%'}>
+                                    <InputLeftElement>
+                                        <Box
+                                            display={'flex'}
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                            h={'24px'}
+                                            w={'24px'}
+                                            pr={'8px'}
+                                            pb={'5px'}
+                                        >
+                                            <BiSearch color={"#9fa6b0"} />
+                                        </Box>
+                                    </InputLeftElement>
+                                    <Input
+                                        h={'36px'}
+                                        p={'12px 24px 12px 28px'}
+                                        placeholder={'Find transaction'}
+                                        fontSize={'14px'}
+                                        fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                        color={'#31353BF5'}
+                                        borderRadius={"10px"}
+                                        onChange={searchKeywordHandler}
+                                        name="search"
+                                        value={searchFormik.values.search}
+                                    />
+                                </InputGroup>
+                            </FormControl>
+                        </form>
+                    </Box>
+                    <Box h={'52px'} pl={'16px'} pt={'8px'}>
+                        <Menu>
+                            <MenuButton borderRadius={'12px'} border={'1px solid #d6dce7'} h={'32px'} mr={'4px'} p={'0px 12px'}>
+                                <Box display={'flex'} flexDir={'row'} justifyContent={'flex-start'} alignItems={'center'}>
+                                    <Text
+                                        fontSize={'14px'}
+                                        fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                        color={'#6D7588'}
+                                        lineHeight={'18px'}
+                                    >
+                                        All Status
+                                    </Text>
+                                    <Box m={'0px -4px 0px 4px'}>
+                                        <MdKeyboardArrowDown style={{ fontSize: "25px" }} />
+                                    </Box>
+                                </Box>
+                            </MenuButton>
+                            <MenuButton borderRadius={'12px'} border={'1px solid #d6dce7'} h={'32px'} mr={'4px'} p={'0px 12px'}>
+                                <Box display={'flex'} flexDir={'row'} justifyContent={'flex-start'} alignItems={'center'}>
+                                    <Text
+                                        fontSize={'14px'}
+                                        fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                        color={'#6D7588'}
+                                        lineHeight={'18px'}
+                                    >
+                                        All Transaction
+                                    </Text>
+                                    <Box m={'0px -4px 0px 4px'}>
+                                        <MdKeyboardArrowDown style={{ fontSize: "25px" }} />
+                                    </Box>
+                                </Box>
+                            </MenuButton>
+                        </Menu>
+
+                    </Box>
+                </Box>
+                <Box w={'100%'} h={'148px'} />
+                {payment === false ? null : (
+                    <Link to={'/transaction/payment-list'}>
+                        <Box
+                            cursor={'pointer'}
+                            h={'42px'}
+                            m={'2px 16px 0px 16px'}
+                            p={'8px 12px'}
+                            border={'1px solid #dce4ee'}
+                            borderRadius={'8px'}
+                            display={'flex'}
+                            alignItems={'center'}
+                        >
+                            <Image
+                                w={'24px'}
+                                h={'24px'}
+                                src={rupiah}
+                            />
+                            <Text
+                                color={'#31353BAD'}
+                                fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
+                                fontSize={'12px'}
+                                m={'0px 8px 0px 12px'}
+                                fontWeight={400}
+                                lineHeight={'18px'}
+                                letterSpacing={'0px'}
+                                w={'100%'}
+                            >
+                                Waiting For Payment
+                            </Text>
+                            <Text
+                                fontSize={'10px '}
+                                fontFamily={'Open Sauce One, sans-serif'}
+                                bgColor={unpaidTransaction.length === 0 ? null : '#ef144a'}
+                                p={'0px 2px'}
+                                minW={'15px'}
+                                h={'16px'}
+                                fontWeight={700}
+                                textAlign={'center'}
+                                borderRadius={'6px'}
+                                color={'#fff'}
+                                display={'inline-block'}
+                            >
+                                {unpaidTransaction.length === 0 ? null : unpaidTransaction.length}
+                            </Text>
+                            <MdOutlineKeyboardArrowRight style={{ height: "24px", minWidth: "24px", color: "rgba(0,0,0,.54)" }} />
+                        </Box>
+                    </Link>
+                )}
+                <Box mt={'15px'}>
+                    {renderTransactionList()}
+                </Box>
+            </Box>
         </>
     )
 }
 
 export default TransactionList
+
