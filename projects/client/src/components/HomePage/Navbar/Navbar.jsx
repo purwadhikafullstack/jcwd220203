@@ -42,6 +42,7 @@ import { IoIosNotifications, IoMdCart } from "react-icons/io"
 import { MdKeyboardArrowDown } from "react-icons/md"
 import { HiOutlineArrowLeft } from "react-icons/hi"
 import { GrMenu } from "react-icons/gr"
+import CategoryNavbarItems from "./CategoryNavbarItems"
 
 const Navbar = ({ onChange, onKeyDown }) => {
     const authSelector = useSelector((state) => state.auth)
@@ -122,16 +123,10 @@ const Navbar = ({ onChange, onKeyDown }) => {
     const renderCategory = () => {
         return showCategory.map((val) => {
             return (
-                <Text
-                    _hover={{
-                        bgColor: "#A5D8F8",
-                        borderRadius: "5px",
-                    }}
-                    p="5px"
-                    // onClick={navigate(`/product?category=${val.id}`)}
-                >
-                    {val.category_name}
-                </Text>
+                <CategoryNavbarItems
+                    category_name={val.category_name}
+                    id={val.id}
+                />
             )
         })
     }
