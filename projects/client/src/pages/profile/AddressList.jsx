@@ -27,11 +27,9 @@ const AddressList = () => {
   const [selectedNewProvince, setSelectedNewProvince] = useState(0)
   const [selectedNewCity, setSelectedNewCity] = useState(0)
   const [selectedEditProvince, setSelectedEditProvince] = useState(0)
-  const [selectedEditCity, setSelectedEditCity] = useState(0)
+  const [selectedEditCity, setSelectedEditCity] = useState("")
   console.log(selectedEditCity)
-  console.log(selectedEditProvince)
   const [openedEdit, setOpenedEdit] = useState(null)
-  console.log(openedEdit?.id)
   const [address, setAddress] = useState([])
   const [deleteAlert, setDeleteAlert] = useState(null)
   const [defaultAlert, setDefaultAlert] = useState(null)
@@ -169,6 +167,7 @@ const AddressList = () => {
     const { name, value } = target
     formikAddNewAddress.setFieldValue(name, value)
   }
+  const [sementara, setSementara] = useState("")
 
   const editFormik = useFormik({
     initialValues: {
@@ -192,8 +191,8 @@ const AddressList = () => {
             recipients_name,
             phone_number,
             address_labels,
-            province: selectedEditProvince,
-            city: selectedEditCity,
+            province: selectedEditProvince || editFormik.values.provinceId,
+            city: selectedEditCity || editFormik.values.cityId,
             districts,
             full_address,
           }
@@ -204,6 +203,7 @@ const AddressList = () => {
           status: "success",
         })
 
+        console.log(response)
         editFormik.setFieldValue("recipients_name", "")
         editFormik.setFieldValue("phone_number", "")
         editFormik.setFieldValue("address_labels", "")
@@ -292,6 +292,9 @@ const AddressList = () => {
     formikSearch.setFieldValue(name, value)
   }
 
+  let citySelect = editFormik.values.cityId
+  console.log("select city", citySelect)
+
   useEffect(() => {
     fetchAddress()
   }, [openedEdit, currentSearch])
@@ -303,6 +306,8 @@ const AddressList = () => {
       editFormik.setFieldValue("recipients_name", openedEdit.recipients_name)
       editFormik.setFieldValue("phone_number", openedEdit.phone_number)
       editFormik.setFieldValue("districts", openedEdit.districts)
+      editFormik.setFieldValue("cityId", openedEdit.cityId)
+      editFormik.setFieldValue("provinceId", openedEdit.provinceId)
     }
   }, [openedEdit])
 

@@ -37,150 +37,139 @@ const ProductDetail = ({ product_name, id }) => {
     const [inputNote, setInputNote] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
-    const authSelector = useSelector((state) => state.auth)
+  const authSelector = useSelector((state) => state.auth)
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
-    const toast = useToast()
+  const toast = useToast()
 
-    const location = useLocation()
+  const location = useLocation()
 
-    const params = useParams()
+  const params = useParams()
 
-    const fetchProductDetail = async () => {
-        try {
-            const response = await axiosInstance.get(`/product/${params.id}`)
-            setProductDetail(response.data.data)
-            setImage(response.data.data.Image_Urls)
-            setProductId(response.data.data.id)
+  const fetchProductDetail = async () => {
+    try {
+      const response = await axiosInstance.get(`/product/${params.id}`)
+      setProductDetail(response.data.data)
+      setImage(response.data.data.Image_Urls)
+      setProductId(response.data.data.id)
 
-            const cartStock = response.data.data.Total_Stocks.map(
-                (val) => val.stock
-            )
+      const cartStock = response.data.data.Total_Stocks.map((val) => val.stock)
 
-            let Total = 0
+      let Total = 0
 
-            for (let i = 0; i < cartStock.length; i++) {
-                Total += Number(cartStock[i])
-            }
-
+      for (let i = 0; i < cartStock.length; i++) {
+        Total += Number(cartStock[i])
+      }
             setStock(Total)
             setIsLoading(true)
         } catch (err) {
             console.log(err)
         }
     }
+  }
 
-    const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } =
-        useNumberInput({
-            step: 1,
-            defaultValue: 1,
-            min: 1,
-            max: stock,
+  const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } =
+    useNumberInput({
+      step: 1,
+      defaultValue: 1,
+      min: 1,
+      max: stock,
+    })
+
+  const inc = getIncrementButtonProps()
+  const dec = getDecrementButtonProps()
+  const input = getInputProps()
+  const addQuantity = Number(input.value)
+
+  const userMustLogin = () => {
+    if (!authSelector.id) {
+      onOpen()
+    }
+  }
+
+  const fetchCartByProductId = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/carts/cartBy/ProductId/${productId}`
+      )
+
+      if (response.data.data === null) {
+        setCartItemQuantity(null)
+      } else {
+        setCartItemQuantity(response.data.data.quantity)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const addToCart = async () => {
+    try {
+      let addToCart = {
+        ProductId: productId,
+        quantity: addQuantity,
+        note: inputNote,
+      }
+
+      await axiosInstance.post("/carts", addToCart)
+
+      toast({
+        title: "Cart Items Added",
+        status: "success",
+      })
+
+      fetchCartByProductId()
+    } catch (err) {
+      console.log(err)
+
+      if (stock === 0) {
+        toast({
+          title: `Failed Added Cart Items`,
+          status: "error",
+          description: "Product out of stock",
         })
-
-    const inc = getIncrementButtonProps()
-    const dec = getDecrementButtonProps()
-    const input = getInputProps()
-    const addQuantity = Number(input.value)
-
-    const userMustLogin = () => {
-        if (!authSelector.id) {
-            onOpen()
-        }
+      } else {
+        toast({
+          title: `Failed Added Cart Items`,
+          status: "error",
+          description: err.response.data.message,
+        })
+      }
     }
+  }
 
-    const fetchCartByProductId = async () => {
-        try {
-            const response = await axiosInstance.get(
-                `/carts/cartBy/ProductId/${productId}`
-            )
+  const addToExistingCart = async () => {
+    try {
+      let newQuantity = {
+        quantity: addQuantity,
+        note: inputNote,
+      }
+      await axiosInstance.patch(`/carts/addCartItems/${productId}`, newQuantity)
+      toast({
+        title: "Cart Items Added",
+        status: "success",
+      })
 
-            if (response.data.data === null) {
-                setCartItemQuantity(null)
-            } else {
-                setCartItemQuantity(response.data.data.quantity)
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
+      fetchCartByProductId()
+    } catch (err) {
+      console.log(err)
 
-    const addToCart = async () => {
-        try {
-            let addToCart = {
-                ProductId: productId,
-                quantity: addQuantity,
-                note: inputNote,
-            }
+      const itemLeft = stock - cartItemQuantity
 
-            await axiosInstance.post("/carts", addToCart)
-
-            toast({
-                title: "Cart Items Added",
-                status: "success",
-            })
-
-            fetchCartByProductId()
-        } catch (err) {
-            console.log(err)
-
-            if (stock === 0) {
-                toast({
-                    title: `Failed Added Cart Items`,
-                    status: "error",
-                    description: "Product out of stock",
-                })
-            } else {
-                toast({
-                    title: `Failed Added Cart Items`,
-                    status: "error",
-                    description: err.response.data.message,
-                })
-            }
-        }
-    }
-
-    const addToExistingCart = async () => {
-        try {
-            let newQuantity = {
-                quantity: addQuantity,
-                note: inputNote,
-            }
-            await axiosInstance.patch(
-                `/carts/addCartItems/${productId}`,
-                newQuantity
-            )
-            toast({
-                title: "Cart Items Added",
-                status: "success",
-            })
-
-            fetchCartByProductId()
-        } catch (err) {
-            console.log(err)
-
-            const itemLeft = stock - cartItemQuantity
-
-            if (stock === 0) {
-                toast({
-                    title: `Failed Added Cart Items`,
-                    status: "error",
-                    description: "Product out of stock",
-                })
-            } else {
-                toast({
-                    title: `Only ${itemLeft} left and you already have ${cartItemQuantity} of this item in your cart.`,
-                    status: "error",
-                    description: err.response.data.message,
-                })
-            }
-        }
-    }
-
-    const cancelNotes = () => {
-        setAddNote(false)
-        setInputNote("")
+      if (stock === 0) {
+        toast({
+          title: `Failed Added Cart Items`,
+          status: "error",
+          description: "Product out of stock",
+        })
+      } else {
+        toast({
+          title: `Only ${itemLeft} left and you already have ${cartItemQuantity} of this item in your cart.`,
+          status: "error",
+          description: err.response.data.message,
+        })
+      }
     }
 
     useEffect(() => {
@@ -708,18 +697,109 @@ const ProductDetail = ({ product_name, id }) => {
                 )}
             </Box>
 
-            {/* if user not logged in */}
-            <AlertDialog
-                isCentered
-                closeOnOverlayClick={false}
-                isOpen={isOpen}
-                onClose={onClose}
-                size={"sm"}
-                closeOnEsc={false}
+              {cartItemQuantity === null ? (
+                <Button
+                  letterSpacing={"0px"}
+                  borderRadius={"8px"}
+                  bgColor="#F7931E"
+                  color="white"
+                  w={"100%"}
+                  h={"40px"}
+                  fontFamily={
+                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                  }
+                  margin={"8px 0px"}
+                  padding={"0px 16px"}
+                  fontWeight={700}
+                  alignItems={"center"}
+                  _hover={{
+                    bgColor: "#B86401",
+                  }}
+                  _active={{
+                    bgColor: "#B86401",
+                  }}
+                  onClick={authSelector.id ? addToCart : userMustLogin}
+                  isDisabled={
+                    addQuantity === null || addQuantity === 0 || stock === 0
+                      ? true
+                      : false
+                  }
+                >
+                  Add to Cart
+                </Button>
+              ) : (
+                <Button
+                  letterSpacing={"0px"}
+                  borderRadius={"8px"}
+                  bgColor="#F7931E"
+                  color="white"
+                  w={"100%"}
+                  h={"40px"}
+                  fontFamily={
+                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                  }
+                  margin={"8px 0px"}
+                  padding={"0px 16px"}
+                  fontWeight={700}
+                  alignItems={"center"}
+                  _hover={{
+                    bgColor: "#B86401",
+                  }}
+                  _active={{
+                    bgColor: "#B86401",
+                  }}
+                  onClick={authSelector.id ? addToExistingCart : userMustLogin}
+                  isDisabled={
+                    addQuantity === null || addQuantity === 0 || stock === 0
+                      ? true
+                      : false
+                  }
+                >
+                  Add to Cart
+                </Button>
+              )}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* if user not logged in */}
+      <AlertDialog
+        isCentered
+        closeOnOverlayClick={false}
+        isOpen={isOpen}
+        onClose={onClose}
+        size={"sm"}
+        closeOnEsc={false}
+      >
+        <AlertDialogOverlay
+          bg="blackAlpha.400"
+          backdropFilter="blur(50px) hue-rotate(90deg)"
+        >
+          <AlertDialogContent borderRadius={"30px"} mt={"-50px"}>
+            <AlertDialogHeader
+              fontSize="lg"
+              fontWeight="bold"
+              color={"#F7931E"}
+              pt={"20px"}
             >
-                <AlertDialogOverlay
-                    bg="blackAlpha.400"
-                    backdropFilter="blur(50px) hue-rotate(90deg)"
+              Notification!
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Box
+                display={"flex"}
+                flexDirection={"column"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                boxSizing={"border-box"}
+              >
+                <Text
+                  pb={"10px"}
+                  fontFamily={
+                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                  }
+                  fontWeight={500}
                 >
                     <AlertDialogContent borderRadius={"30px"} mt={"-50px"}>
                         <AlertDialogHeader
