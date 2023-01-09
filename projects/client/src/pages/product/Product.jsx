@@ -37,7 +37,6 @@ const Product = () => {
     const [catTotalCount, setCatTotalCount] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
     const [catId, setCatId] = useState([])
-
     const catPerRow = 5
     const [next, setNext] = useState(catPerRow)
     const query = new URLSearchParams(useLocation().search)
@@ -134,7 +133,7 @@ const Product = () => {
         setCategory(value)
         // setSearchParam(value)
         const params = {}
-        params["category"] = category
+        params["category"] = value
         setSearchParam(params)
     }
 
@@ -169,7 +168,6 @@ const Product = () => {
         setCategory(false)
         window.location.reload(false)
     }
-
     useEffect(() => {
         for (let entry of searchParam.entries()) {
             if (entry[0] === "name") {
@@ -261,7 +259,7 @@ const Product = () => {
                                 {categoryData.slice(0, next).map((val, i) => (
                                     <Button
                                         onClick={filterBtnHandler}
-                                        value={val.id || val.category_name}
+                                        value={val.id}
                                         bgColor="white"
                                         borderBottom="1px solid #dfe1e3"
                                         justifyContent="flex-start"
