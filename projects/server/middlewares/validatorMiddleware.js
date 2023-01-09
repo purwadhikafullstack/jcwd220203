@@ -21,10 +21,9 @@ exports.validateRegisterEmail = [
 exports.validateRegisterPassword = [
   check("username")
     .optional({ checkFalsy: true })
-    .isAlphanumeric()
-    .withMessage(
-      "username must be at least 3 characters and only contain alphanumeric chars"
-    ),
+    .isString()
+    .isLength({ min: 3 })
+    .withMessage("username must be at least 3 characters"),
   check("password").optional({ checkFalsy: true }).isStrongPassword({
     minLength: 8,
     minNumbers: 1,

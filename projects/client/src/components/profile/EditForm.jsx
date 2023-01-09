@@ -105,11 +105,6 @@ const EditForm = ({
     setSelectedCity(value)
   }
 
-  const defaultValue = (city, value) => {
-    console.log("value here", value)
-    return city ? city.find((val) => val.value === value) : ""
-  }
-
   useEffect(() => {
     fetchProvince()
   }, [])
@@ -157,6 +152,7 @@ const EditForm = ({
                     mt={{ md: "-2", base: "-2" }}
                     bgColor={"#fff"}
                     _hover={false}
+                    _active={false}
                   >
                     <CgClose fontSize={"20px"} />
                   </Button>
@@ -236,16 +232,6 @@ const EditForm = ({
                   />
 
                   <FormErrorMessage>{formik.errors.districts}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={formik.errors.cityId}>
-                  <Input
-                    value={formik.values.cityId}
-                    name="cityId"
-                    type={"text"}
-                    onChange={editFormChangeHandler}
-                  />
-
-                  <FormErrorMessage>{formik.errors.cityId}</FormErrorMessage>
                 </FormControl>
               </Box>
 

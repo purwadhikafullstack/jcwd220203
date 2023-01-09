@@ -28,6 +28,8 @@ const ResponsiveProductDetail = ({
   addToCart,
   userMustLogin,
   addToCartByProductId,
+  addQuantity,
+  stock,
 }) => {
   const authSelector = useSelector((state) => state.auth)
   const [productDetail, setProductDetail] = useState([])
@@ -165,6 +167,11 @@ const ResponsiveProductDetail = ({
                 _hover={false}
                 _active={false}
                 onClick={authSelector.id ? addToCart : userMustLogin}
+                isDisabled={
+                  addQuantity === null || addQuantity === 0 || stock === 0
+                    ? true
+                    : false
+                }
               >
                 Add to Cart
               </Button>
@@ -178,6 +185,11 @@ const ResponsiveProductDetail = ({
                 _hover={false}
                 _active={false}
                 onClick={authSelector.id ? addToCartByProductId : userMustLogin}
+                isDisabled={
+                  addQuantity === null || addQuantity === 0 || stock === 0
+                    ? true
+                    : false
+                }
               >
                 Add to Cart
               </Button>

@@ -705,6 +705,8 @@ const ProductDetail = ({ product_name, id }) => {
         addToCart={addToCart}
         addToCartByProductId={addToExistingCart}
         cartItemQuantity={cartItemQuantity}
+        addQuantity={addQuantity}
+        stock={stock}
         userMustLogin={userMustLogin}
       />
     </>

@@ -1,10 +1,4 @@
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Box,
   Button,
   FormControl,
@@ -158,12 +152,18 @@ const Register = () => {
           textAlign={"center"}
           mt="20px"
           minW={{ lg: "960px", md: null, base: null }}
-          fontSize={"26px"}
+          fontSize={{ lg: "40px", md: "20px", base: "20px" }}
           fontWeight="bold"
+          fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
         >
-          <Image src={logo} height={"29px"} display={"inline"} />
+          <Image
+            src={logo}
+            width={{ lg: "50px", md: "25pxpx", base: "25px" }}
+            mt="5px"
+            display={"inline"}
+          />
 
-          <Text color={"#0095DA"} display="inline" my="auto">
+          <Text color={"#0095DA"} display="inline">
             Shop
           </Text>
           <Text color={"#F7931E"} display="inline">
@@ -176,7 +176,6 @@ const Register = () => {
         display={"flex"}
         mt={{ lg: "20px", md: "10%", base: "10%" }}
         pt={{ lg: "50px", md: "25%", base: "25%" }}
-        mx={"auto"}
         alignItems="center"
       >
         <Box
