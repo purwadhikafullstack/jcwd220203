@@ -75,7 +75,7 @@ const EditAdmin = ({
 
   useEffect(() => {
     fetchAllWarehouse()
-  }, [])
+  }, [editFormChangeHandler])
   return (
     <>
       <Modal

@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Warehouse.hasOne(models.User)
+      Warehouse.belongsTo(models.User)
       Warehouse.hasMany(models.Transaction)
     }
   }
