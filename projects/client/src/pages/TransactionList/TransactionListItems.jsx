@@ -212,8 +212,8 @@ const TransactionListItems = ({
                                 p={"0px 8px"}
                                 h={"20px"}
                                 fontSize={"11.429px"}
-                                bgColor={orderStatusName === "Done" ? "#E5F9F6" : orderStatusName === "Cancelled" ? "rgb(255, 234, 239)" : "#fff0b3"}
-                                color={orderStatusName === "Done" ? "#0095DA" : orderStatusName === "Cancelled" ? "#EF144A" : "#F7931E"}
+                                bgColor={orderStatusName === "Done" ? "#E5F9F6" : orderStatusName === "Canceled" ? "rgb(255, 234, 239)" : "#fff0b3"}
+                                color={orderStatusName === "Done" ? "#0095DA" : orderStatusName === "Canceled" ? "#EF144A" : "#F7931E"}
                                 justifyContent={"center"}
                                 mr={"10px"}
                             >
@@ -564,8 +564,8 @@ const TransactionListItems = ({
                                         // h={'20px'}
                                         p={'4px'}
                                         lineHeight={'16px'}
-                                        bgColor={orderStatusName === "Done" ? "#E5F9F6" : orderStatusName === "Cancelled" ? "rgb(255, 234, 239)" : "#fff0b3"}
-                                        color={orderStatusName === "Done" ? "#0095DA" : orderStatusName === "Cancelled" ? "#EF144A" : "#FA591D"}
+                                        bgColor={orderStatusName === "Done" ? "#E5F9F6" : orderStatusName === "Canceled" ? "rgb(255, 234, 239)" : "#fff0b3"}
+                                        color={orderStatusName === "Done" ? "#0095DA" : orderStatusName === "Canceled" ? "#EF144A" : "#FA591D"}
                                     >
                                         {orderStatusName}
                                     </Text>

@@ -323,7 +323,7 @@ const TransactionList = () => {
     }
 
     const failedBtnHandler = () => {
-        setStatus("Cancelled")
+        setStatus("Canceled")
         setPayment(false)
         setGoingOn(false)
         setPage(1)
@@ -346,7 +346,7 @@ const TransactionList = () => {
             params["keyword"] = searchParam.get("keyword")
         }
 
-        params["status"] = "Cancelled"
+        params["status"] = "Canceled"
         setSearchParam(params)
     }
 
@@ -686,7 +686,7 @@ const TransactionList = () => {
                             </Box>
 
                             {/* transaction status */}
-                            <Box display={'flex'} h={'48px'} justifyContent={'flex-start'} p={'0px 16px'} mb={search_keyword !== null || order_status === "Done" || order_status === "Cancelled" ? '12px' : null} alignItems={'center'}>
+                            <Box display={'flex'} h={'48px'} justifyContent={'flex-start'} p={'0px 16px'} mb={search_keyword !== null || order_status === "Done" || order_status === "Canceled" ? '12px' : null} alignItems={'center'}>
                                 <Text
                                     fontSize={'13px'}
                                     fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
@@ -770,7 +770,7 @@ const TransactionList = () => {
                                 </Box>
                                 <Box
                                     h={'40px'}
-                                    border={order_status === "Cancelled" ? '2px solid #0095DA' : '1px solid #E5E7E9'}
+                                    border={order_status === "Canceled" ? '2px solid #0095DA' : '1px solid #E5E7E9'}
                                     m={'4px 8px 4px 0px'}
                                     p={'0px 13px'}
                                     display={'flex'}
@@ -780,13 +780,13 @@ const TransactionList = () => {
                                     alignItems={'center'}
                                     borderRadius={'16px'}
                                     onClick={failedBtnHandler}
-                                    bgColor={order_status === "Cancelled" ? '#ebffef' : 'fff'}
+                                    bgColor={order_status === "Canceled" ? '#ebffef' : 'fff'}
                                 >
                                     <Text
                                         fontSize={'13px'}
                                         lineHeight={'16px'}
                                         textAlign={'center'}
-                                        color={order_status === "Cancelled" ? '#0095DA' : '#31353BAD'}
+                                        color={order_status === "Canceled" ? '#0095DA' : '#31353BAD'}
                                     >
                                         Failed
                                     </Text>
