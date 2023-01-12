@@ -469,7 +469,7 @@ const AdminCategory = () => {
 
       {/* Change Page */}
       <GridItem>
-        <HStack justifyContent={"center"} mt={"50px"} mb={"50px"} ml={"50px"}>
+        <HStack justifyContent={"center"} mt={"50px"} mb={"50px"} mr={"150px"}>
           <Button
             bgColor={"white"}
             color={"#0095DA"}
