@@ -11,7 +11,6 @@ import {
   ModalContent,
   ModalOverlay,
   Select,
-  Skeleton,
   Table,
   Tbody,
   Td,
@@ -25,25 +24,17 @@ import {
 import { useFormik } from "formik"
 import React, { useEffect } from "react"
 import { useState } from "react"
-import {
-  TbArrowWaveLeftDown,
-  TbCircleCheck,
-  TbCircleMinus,
-  TbSearch,
-} from "react-icons/tb"
+import { TbCircleCheck, TbCircleMinus, TbSearch } from "react-icons/tb"
 import { axiosInstance } from "../../api"
 import Alert from "../../components/profile/Alert"
 import RejectForm from "../order/RejectForm"
-import {
-  AiFillCheckCircle,
-  AiFillCloseCircle,
-  AiOutlineLeftCircle,
-  AiOutlineRightCircle,
-} from "react-icons/ai"
 import { Link } from "react-router-dom"
 import moment from "moment"
 import { IoIosAlert } from "react-icons/io"
 import { useSelector } from "react-redux"
+import LoadingAdminOrder from "../../components/loading/LoadingAdminOrder"
+import Search from "../../components/Search"
+import Pagination from "../../components/admin/Pagination"
 
 const AdminOrder = () => {
   const [order, setOrder] = useState([])
@@ -83,14 +74,14 @@ const AdminOrder = () => {
 
   const fetchOrder = async () => {
     try {
-      const maxItemsPerPage = 10
+      const maxItemsPerPage = 3
       const response = await axiosInstance.get(
         "/adminOrder/waitingConfirmation",
         {
           params: {
             _page: page,
             _limit: maxItemsPerPage,
-            // username: currentSearch,
+            username: currentSearch,
             transaction_name: currentSearch,
             PaymentStatusId: paymentSort,
             OrderStatusId: orderSort,
@@ -267,6 +258,7 @@ const AdminOrder = () => {
     onSubmit: ({ search }) => {
       setCurrentSearch(search)
       setPage(1)
+      setIsLoading(false)
     },
   })
 
@@ -278,34 +270,42 @@ const AdminOrder = () => {
   const doubleOnClick = () => {
     approveBtnHandler(approve.id)
     setApprove(null)
+    setIsLoading(false)
   }
 
   const doubleOnClick1 = () => {
     formik.handleSubmit()
     onCloseAlert()
+    setIsLoading(false)
   }
 
   const doubleOnClick2 = () => {
     sendOrderBtnHandler(send.id)
     setSend(null)
+    setIsLoading(false)
   }
 
   const doubleOnClick3 = () => {
     cancelOrderBtnHandler(cancel.id)
+    setSend(null)
     setCancel(null)
+    setIsLoading(false)
   }
 
   const doubleOnClick4 = () => {
     deliverOrderBtnHandler(deliver.id)
     setDeliver(null)
+    setIsLoading(false)
   }
 
   const nextPage = () => {
     setPage(page + 1)
+    setIsLoading(false)
   }
 
   const previousPage = () => {
     setPage(page - 1)
+    setIsLoading(false)
   }
 
   const orderStatusHandler = ({ target }) => {
@@ -360,7 +360,7 @@ const AdminOrder = () => {
     fetchWarehouse()
   }, [])
   return (
-    <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} height="100%">
+    <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} height="100vh">
       <Box mb="16px">
         <Text fontSize={"2xl"} fontWeight="bold" color={"#F7931E"}>
           Order List
@@ -437,31 +437,12 @@ const AdminOrder = () => {
             </Select>
           ) : null}
 
-          <form onSubmit={formikSearch.handleSubmit}>
-            <FormControl>
-              <InputGroup textAlign={"right"}>
-                <Input
-                  type={"text"}
-                  placeholder="Search here"
-                  name="search"
-                  bgColor={"white"}
-                  onChange={searchHandler}
-                  borderRightRadius="0"
-                  value={formikSearch.values.search}
-                />
-
-                <Button
-                  borderLeftRadius={"0"}
-                  type="submit"
-                  bgColor={"white"}
-                  border="1px solid #e2e8f0"
-                  borderLeft={"0px"}
-                >
-                  <TbSearch />
-                </Button>
-              </InputGroup>
-            </FormControl>
-          </form>
+          <Search
+            formikSearch={formikSearch}
+            searchHandler={searchHandler}
+            placeholder="Search by transaction name or username"
+            width={"100%"}
+          />
         </Grid>
       ) : (
         <Grid gap="4" templateColumns={"repeat(6, 1fr)"} mt="4" mb="4">
@@ -606,7 +587,7 @@ const AdminOrder = () => {
                     )}
                   </Td>
                   <Td p={"10px "}>Rp. {val.total_price.toLocaleString()}</Td>
-                  <Td p={"10px "}>{val.User.username}</Td>
+                  <Td p={"10px "}>{val.User?.username}</Td>
                   {authSelector.RoleId === 3 ? (
                     <Td>{val.Warehouse?.warehouse_name}</Td>
                   ) : null}
@@ -693,134 +674,7 @@ const AdminOrder = () => {
                 </Tr>
               )
             })}
-          {isLoading === false ? (
-            <Tr>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                />
-              </Td>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                />
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                  mt="2"
-                />
-              </Td>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                />
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                  mt="2"
-                />
-              </Td>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  w="60%"
-                  borderRadius="8px"
-                />
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  w="70%"
-                  borderRadius="8px"
-                  mt="2"
-                />
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                  mt="2"
-                />
-              </Td>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  w="100%"
-                  borderRadius="8px"
-                />
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  w="45%"
-                  borderRadius="8px"
-                  mt="2"
-                />
-              </Td>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="120px"
-                  borderRadius="8px"
-                  mt="2"
-                />
-              </Td>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  w="30%"
-                  borderRadius="8px"
-                  mt="2"
-                />
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                  mt="2"
-                />
-              </Td>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                  mt="2"
-                />
-              </Td>
-              <Td p="10px">
-                <Skeleton
-                  startColor="#bab8b8"
-                  endColor="#d4d2d2"
-                  height="20px"
-                  borderRadius="8px"
-                  mt="2"
-                />
-              </Td>
-              <Td p="10px"></Td>
-            </Tr>
-          ) : null}
+          {isLoading === false ? <LoadingAdminOrder /> : null}
         </Tbody>
       </Table>
       {!order.length && isLoading === true ? (
@@ -904,32 +758,12 @@ const AdminOrder = () => {
         color={"#0095DA"}
       />
 
-      <Box p="20px" fontSize={"16px"}>
-        <Box textAlign={"center"}>
-          <Button
-            onClick={previousPage}
-            disabled={page === 1 ? true : null}
-            _hover={false}
-            _active={false}
-          >
-            <AiOutlineLeftCircle fontSize={"20px"} />
-          </Button>
-
-          <Box display={"inline"}>{page}</Box>
-
-          <Button
-            onClick={nextPage}
-            disabled={page >= maxPage ? true : null}
-            _hover={false}
-            _active={false}
-          >
-            <AiOutlineRightCircle fontSize={"20px"} />
-          </Button>
-          <Box>
-            Page: {page} of {maxPage}
-          </Box>
-        </Box>
-      </Box>
+      <Pagination
+        maxPage={maxPage}
+        nextPage={nextPage}
+        page={page}
+        previousPage={previousPage}
+      />
 
       <Modal
         isOpen={modalImage}

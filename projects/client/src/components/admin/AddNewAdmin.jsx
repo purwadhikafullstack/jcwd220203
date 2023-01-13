@@ -67,7 +67,7 @@ const AddNewAdmin = ({
 
   useEffect(() => {
     fetchAllWarehouse()
-  }, [])
+  }, [formChangeHandler])
   return (
     <Modal
       isOpen={isOpenAddNewAdmin}

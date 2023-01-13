@@ -2,6 +2,7 @@ import {
     Box,
     Button,
     FormControl,
+    FormErrorMessage,
     FormHelperText,
     Input,
     Link,
@@ -53,7 +54,9 @@ const RequestResetPassword = () => {
             } catch (error) {
                 console.log(error.response)
 
-                setEmailMatch(true)
+                if (error.response.data.message === "Email not found") {
+                    setEmailMatch(true)
+                }
 
                 toast({
                     title: "Registration Failed",
@@ -63,7 +66,7 @@ const RequestResetPassword = () => {
             }
         },
         validationSchema: Yup.object({
-            email: Yup.string().required().email("invalid email"),
+            email: Yup.string().required().email("Invalid email*"),
         }),
         validateOnChange: false,
     })
@@ -85,7 +88,7 @@ const RequestResetPassword = () => {
             {/* reset password box */}
             <Box display={'flex'} fontSize="14px" justifyContent={'center'} mt={'50px'}>
                 <Box
-                    w="500px"
+                    w={{ lg: "450px", base: "400px" }}
                     boxShadow={"0 0 10px 3px rgb(0 0 0 / 10%)"}
                     borderRadius={"10px"}
                     p="24px 40px 32px "
@@ -116,10 +119,29 @@ const RequestResetPassword = () => {
                                     variant='flushed'
                                     fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                                 />
+                                <FormErrorMessage
+                                    fontSize={"12px"}
+                                    fontFamily={"Open Sauce One, sans-serif"}
+                                    color={"#EF144A"}
+                                    m={"4px 0px 0px"}
+                                    lineHeight={"18px"}
+                                    textAlign={'start'}
+                                    pl={'2px'}
+                                >
+                                    {formik.errors.email}
+                                </FormErrorMessage>
                                 {emailMatch ? (
-                                    <FormHelperText color={"red"} fontSize={'12px'} textAlign={'left'}>
-                                        Email not registered
-                                    </FormHelperText>
+                                    <Text
+                                        fontSize={"12px"}
+                                        fontFamily={"Open Sauce One, sans-serif"}
+                                        color={"#EF144A"}
+                                        m={"4px 0px 0px"}
+                                        lineHeight={"18px"}
+                                        textAlign={'start'}
+                                        pl={'2px'}
+                                    >
+                                        Email not registered*
+                                    </Text>
                                 ) : null}
                             </FormControl>
                         </Box>
@@ -130,7 +152,7 @@ const RequestResetPassword = () => {
                             _hover={false}
                             m="16px 0"
                             color={"white"}
-                            isDisabled={!formik.values.email}
+                            isDisabled={formik.values.email.includes("@") && formik.values.email.includes(".co") ? false : true}
                             type={'submit'}
                             fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
                         >

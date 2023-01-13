@@ -1,7 +1,6 @@
 import {
     Box,
     Button,
-    Flex,
     Text,
     Th,
     Thead,
@@ -10,88 +9,55 @@ import {
     TableContainer,
     Tbody,
     Td,
-    Image,
-    Spacer,
     Select,
     HStack,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalCloseButton,
-    ModalBody,
-    Stack,
+    Skeleton,
+    Input,
+    InputGroup,
+    GridItem,
+    Grid,
 } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useState } from "react"
-import { CgChevronLeft, CgChevronRight } from "react-icons/cg"
 import { axiosInstance } from "../../api"
-import { Carousel } from "react-responsive-carousel"
 import "react-responsive-carousel/lib/styles/carousel.min.css"
 import { useSelector } from "react-redux"
+import { AiOutlineLeftCircle, AiOutlineRightCircle } from "react-icons/ai"
+import { TbSearch } from "react-icons/tb"
+import TransactionOrderList from "../../components/admin/order/TransactionOrderList"
 
 const AdminOrderHistory = () => {
     const [transactionData, setTransactionData] = useState([])
     const [warehouseData, setWarehouseData] = useState([])
-    const [imageData, setImageData] = useState([])
-    const [productData, setProductData] = useState({
-        product_name: "",
-        description: "",
-        price: "",
-        id: "",
-    })
-    const [productId, setProductId] = useState(0)
     const [page, setPage] = useState(1)
     const [maxPage, setMaxPage] = useState(1)
-    const [filter, setFilter] = useState("")
-    const { isOpen, onOpen, onClose } = useDisclosure()
     const authSelector = useSelector((state) => state.auth)
+    const [isLoading, setIsLoading] = useState(false)
+    const [filterWarehouse, setFilterWarehouse] = useState("")
+    const [filterMonth, setFilterMonth] = useState("")
+    const [sortBy, setSortBy] = useState("id")
+    const [sortDir, setSortDir] = useState("DESC")
+    const [searchValue, setSearchValue] = useState("")
+    const [searchInput, setSearchInput] = useState("")
 
-    const maxItemsPerPage = 7
-    // const fetchData = async () => {
-    //     try {
-    //         let url = `/admin/order-history/get`
-
-    //         console.log("CCCCCC", authSelector)
-    //         if (authSelector.WarehouseId) {
-    //             await axiosInstance.get(
-    //                 (url += `?WarehouseId=${authSelector.WarehouseId}`)
-    //             )
-    //         }
-    //         console.log("URLLL", url)
-    //         const response = await axiosInstance.get(url, {
-    //             params: {
-    //                 _page: page,
-    //                 _limit: maxItemsPerPage,
-    //                 WarehouseId: filter,
-    //             },
-    //         })
-    //         console.log(`AAAAAAAAAAAAA`, authSelector.WarehouseId)
-    //         setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage))
-    //         console.log("response", response.data)
-    //         if (page === 1) {
-    //             setTransactionData(response.data.data)
-    //         } else {
-    //             setTransactionData(response.data.data)
-    //         }
-    //     } catch (err) {
-    //         console.log(err)
-    //     }
-    // }
-
-    const fetchData2 = async () => {
+    const maxItemsPerPage = 10
+    const fetchData = async () => {
         try {
-            let url = `/admin/order-history/get2`
-
+            let url = `/admin/order-history/getOrder`
             if (authSelector.WarehouseId) {
-                url += `?WarehouseId=${authSelector.WarehouseId}`
+                await axiosInstance.get(
+                    (url += `?WarehouseId=${authSelector.WarehouseId}`)
+                )
             }
-
             const response = await axiosInstance.get(url, {
                 params: {
                     _page: page,
                     _limit: maxItemsPerPage,
-                    WarehouseId: filter,
+                    WarehouseId: filterWarehouse,
+                    createdAt: filterMonth,
+                    _sortBy: sortBy,
+                    _sortDir: sortDir,
+                    transaction_name: searchValue,
                 },
             })
             setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage))
@@ -100,49 +66,89 @@ const AdminOrderHistory = () => {
             } else {
                 setTransactionData(response.data.data)
             }
+            setIsLoading(true)
         } catch (err) {
             console.log(err)
         }
     }
+
     const fetchWarehouse = async () => {
         try {
-            const response = await axiosInstance.get("/warehouse")
+            const response = await axiosInstance.get(
+                "/admin/order-history/findWarehouse"
+            )
             setWarehouseData(response.data.data)
         } catch (err) {
             console.log(err)
         }
     }
 
-    const fetchProduct = async () => {
-        try {
-            const response = await axiosInstance.get(`/product/${productId}`)
-            setProductData(response.data.data)
-            setImageData(response.data.data.Image_Urls)
-        } catch (err) {
-            console.log(err)
+    const filterWarehouseBtnHandler = ({ target }) => {
+        const { value } = target
+        setFilterWarehouse(value)
+        setIsLoading(false)
+    }
+
+    const filterMonthBtnHandler = ({ target }) => {
+        const { value } = target
+        setFilterMonth(value)
+        setIsLoading(false)
+    }
+
+    const sortHandler = ({ target }) => {
+        const { value } = target
+        setSortBy(value.split(" ")[0])
+        setSortDir(value.split(" ")[1])
+        setIsLoading(false)
+    }
+    const searchBtnHandler = () => {
+        setSearchValue(searchInput)
+        setIsLoading(false)
+    }
+    const handleKeyEnter = (e) => {
+        if (e.key === "Enter") {
+            setSearchValue(searchInput)
         }
     }
-
-    const filterBtnHandler = ({ target }) => {
-        const { value } = target
-        setFilter(value)
-        // setSortBy(value)
-    }
-
     const nextPageBtnHandler = () => {
         setPage(page + 1)
+        setIsLoading(false)
     }
 
     const prevPageBtnHandler = () => {
         setPage(page - 1)
+        setIsLoading(false)
     }
-    console.log("trans", transactionData.map((val) => val.WarehouseId)[0])
+
+    const renderOrderData = () => {
+        return transactionData.map((val) => {
+            return (
+                <TransactionOrderList
+                    key={val.id.toString()}
+                    transactionItems={val.TransactionItems}
+                    transaction_name={val.transaction_name}
+                    username={val.User.username}
+                    order_date={val.createdAt}
+                    total_quantity={val.total_quantity}
+                    total_price={val.total_price}
+                    order_status={val.Order_status.order_status_name}
+                    warehouse_name={val.Warehouse.warehouse_name}
+                />
+            )
+        })
+    }
     useEffect(() => {
-        // fetchData()
-        fetchData2()
+        fetchData()
         fetchWarehouse()
-        fetchProduct()
-    }, [page, filter, productId, authSelector])
+    }, [
+        page,
+        filterMonth,
+        filterWarehouse,
+        sortBy,
+        sortDir,
+        authSelector,
+        searchValue,
+    ])
     return (
         <>
             <Box ml="250px" mr="1.5em">
@@ -151,57 +157,69 @@ const AdminOrderHistory = () => {
                         fontSize="3xl"
                         fontWeight="bold"
                         fontFamily="sans-serif"
+                        color="#F7931E"
                     >
-                        Transaction History
+                        Order History
                     </Text>
-                    <Flex mt="3vh">
-                        {/* <Box
-                            display="flex"
-                            border="1px solid #dfe1e3"
-                            borderRadius="8px"
+                    <Box mt="3vh">
+                        <Grid
                             p="5px"
-                            gap="2"
-                            w="40vh"
+                            gap="5"
+                            w="full"
+                            gridTemplateColumns="repeat(4,1fr)"
                         >
-                            <Button
-                                bgColor="#F7931E"
-                                color="white"
-                                _hover="white"
+                            {/* Sort */}
+                            <GridItem
+                                w="full"
+                                justifySelf="center"
+                                border="1px solid #dfe1e3"
+                                borderRadius="8px"
+                                onChange={sortHandler}
                             >
-                                <Text fontSize="sm">All transaction</Text>
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                _hover={{ bgColor: "#F7931E", color: "white" }}
-                            >
-                                <Text fontSize="sm">Completed</Text>
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                _hover={{ bgColor: "#F7931E", color: "white" }}
-                            >
-                                <Text fontSize="sm">Pending</Text>
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                _hover={{ bgColor: "#F7931E", color: "white" }}
-                            >
-                                <Text fontSize="sm">Canceled</Text>
-                            </Button>
-                        </Box> */}
-                        <Spacer />
-                        <Box display="flex" alignSelf="center">
-                            <HStack gap="2">
-                                <Text alignSelf="center">Filter: </Text>
-                                <Select onChange={filterBtnHandler}>
-                                    <option value="">---Select---</option>
-                                    {/* raw query */}
-                                    {/* {warehouseData.map((val) => (
-                                        <option value={val.id}>
-                                            {val.warehouse_name}
-                                        </option>
-                                    ))} */}
+                                <Select>
+                                    <option value="id">Sort</option>
+                                    <option value="createdAt DESC">
+                                        Latest
+                                    </option>
+                                    <option value="createdAt ASC">Old</option>
+                                </Select>
+                            </GridItem>
 
+                            {/* Month */}
+                            <GridItem
+                                w="full"
+                                justifySelf="center"
+                                border="1px solid #dfe1e3"
+                                borderRadius="8px"
+                                onChange={filterMonthBtnHandler}
+                            >
+                                <Select>
+                                    <option value="">By Month</option>
+                                    <option value={1}>January</option>
+                                    <option value={2}>February</option>
+                                    <option value={3}>March</option>
+                                    <option value={4}>April</option>
+                                    <option value={5}>May</option>
+                                    <option value={6}>June</option>
+                                    <option value={7}>July</option>
+                                    <option value={8}>August</option>
+                                    <option value={9}>September</option>
+                                    <option value={10}>October</option>
+                                    <option value={11}>November</option>
+                                    <option value={12}>December</option>
+                                </Select>
+                            </GridItem>
+
+                            {/* Warehouse */}
+                            <GridItem
+                                w="full"
+                                justifySelf="center"
+                                onChange={filterWarehouseBtnHandler}
+                                border="1px solid #dfe1e3"
+                                borderRadius="8px"
+                            >
+                                <Select>
+                                    <option value="">By Warehouse</option>
                                     {authSelector.WarehouseId ===
                                     transactionData.map(
                                         (val) => val.WarehouseId
@@ -217,129 +235,186 @@ const AdminOrderHistory = () => {
                                               </option>
                                           ))}
                                 </Select>
-                            </HStack>
-                        </Box>
-                    </Flex>
+                            </GridItem>
 
+                            {/* Search */}
+                            <GridItem
+                                w="full"
+                                justifySelf="center"
+                                border="1px solid #dfe1e3"
+                                borderRadius="8px"
+                            >
+                                <InputGroup>
+                                    <Input
+                                        placeholder="Search here"
+                                        _placeholder={{ fontSize: "14px" }}
+                                        onChange={(e) =>
+                                            setSearchInput(e.target.value)
+                                        }
+                                        onKeyDown={handleKeyEnter}
+                                        value={searchInput}
+                                    />
+                                    <Button
+                                        borderLeftRadius={"0"}
+                                        type="submit"
+                                        bgColor={"white"}
+                                        border="1px solid #e2e8f0"
+                                        borderLeft={"0px"}
+                                        onClick={searchBtnHandler}
+                                    >
+                                        <TbSearch />
+                                    </Button>
+                                </InputGroup>
+                            </GridItem>
+                        </Grid>
+                    </Box>
                     <TableContainer
                         border="1px solid #dfe1e3"
                         mt="3vh"
                         borderRadius="8px"
+                        boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                        bgColor="white"
                     >
-                        <Table variant="simple">
+                        <Table variant={"striped"} colorScheme={"blue"}>
                             <Thead>
                                 <Tr>
-                                    <Th w="100px">
+                                    <Th p="10px">
                                         <Text fontSize="10px">invoice</Text>
                                     </Th>
-                                    <Th w="100px">
+                                    <Th p="10px">
                                         <Text fontSize="10px">User</Text>
                                     </Th>
-                                    <Th w="100px">
+                                    <Th p="10px">
                                         <Text fontSize="10px">Order Date</Text>
                                     </Th>
-                                    <Th w="100px">
+                                    <Th p="10px">
                                         <Text fontSize="10px">
                                             Total quantity
                                         </Text>
                                     </Th>
-                                    <Th w="100px">
+                                    <Th p="10px">
                                         <Text fontSize="10px">Total Price</Text>
                                     </Th>
-                                    <Th w="150px">
+                                    <Th p="10px">
                                         <Text fontSize="10px">
                                             Order status
                                         </Text>
                                     </Th>
-                                    <Th w="200px">
-                                        <Text fontSize="10px">
-                                            Warehouse Branch
-                                        </Text>
+                                    <Th p="10px">
+                                        <Text fontSize="10px">Warehouse</Text>
                                     </Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {transactionData.map((val) => (
+                                {isLoading && renderOrderData()}
+                                {isLoading === false ? (
                                     <Tr>
-                                        <Td>
-                                            <Button
-                                                variant="link"
-                                                onClick={() => {
-                                                    setProductId(
-                                                        val.TransactionItems.map(
-                                                            (val) =>
-                                                                val.ProductId
-                                                        )
-                                                    )
-
-                                                    // val.productId  //raw query
-                                                    // )
-                                                    onOpen()
-                                                }}
-                                            >
-                                                <Text color="#0095DA">
-                                                    #
-                                                    {
-                                                        val.transaction_name
-
-                                                        // val.transaction_name //raw query
-                                                    }
-                                                </Text>
-                                            </Button>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                            />
                                         </Td>
-                                        <Td maxW="100px">
-                                            <Text
-                                                overflow="hidden"
-                                                textOverflow="ellipsis"
-                                            >
-                                                {val.User.username}
-
-                                                {/* raw query */}
-                                                {/* {val.username}  */}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
-                                        <Td>
-                                            <Text>
-                                                {val.createdAt.split("T")[0]}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="60%"
+                                                borderRadius="8px"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="70%"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
-                                        <Td>
-                                            <Text>{val.total_quantity}</Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
-                                        <Td>
-                                            <Text>
-                                                {new Intl.NumberFormat(
-                                                    "id-ID",
-                                                    {
-                                                        style: "currency",
-                                                        currency: "IDR",
-                                                        minimumFractionDigits: 0,
-                                                    }
-                                                ).format(val.total_price)}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="100%"
+                                                borderRadius="8px"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="45%"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
-                                        <Td>
-                                            <Text>
-                                                {
-                                                    val.Order_status
-                                                        .order_status_name
-                                                }
-
-                                                {/* raw query */}
-                                                {/* {val.order_status} */}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                            />
                                         </Td>
-
-                                        <Td>
-                                            <Text>
-                                                {val.Warehouse.warehouse_name}
-
-                                                {/* raw query */}
-                                                {/* {val.warehouse_name} */}
-                                            </Text>
+                                        <Td p="10px">
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                w="30%"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
+                                            <Skeleton
+                                                startColor="#bab8b8"
+                                                endColor="#d4d2d2"
+                                                h="20px"
+                                                borderRadius="8px"
+                                                mt="2"
+                                            />
                                         </Td>
                                     </Tr>
-                                ))}
+                                ) : null}
                             </Tbody>
                         </Table>
                     </TableContainer>
@@ -347,7 +422,7 @@ const AdminOrderHistory = () => {
                     {/* Page */}
                     <HStack justifyContent="center" gap="2" mt="1em">
                         {page === 1 ? null : (
-                            <CgChevronLeft
+                            <AiOutlineLeftCircle
                                 bgColor="#0095DA"
                                 onClick={prevPageBtnHandler}
                                 color="#0095DA"
@@ -357,7 +432,7 @@ const AdminOrderHistory = () => {
                         )}
                         <Text color="#0095DA">{page}</Text>
                         {page >= maxPage ? null : (
-                            <CgChevronRight
+                            <AiOutlineRightCircle
                                 bgColor="#0095DA"
                                 color="#0095DA"
                                 onClick={nextPageBtnHandler}
@@ -368,108 +443,6 @@ const AdminOrderHistory = () => {
                     </HStack>
                 </Box>
             </Box>
-
-            {/* Modal */}
-            <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
-                <ModalOverlay />
-                <ModalContent h="410px">
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <Box
-                            mx="auto"
-                            mt="20px"
-                            w="auto"
-                            h="350px"
-                            display="block"
-                        >
-                            <Box display="flex" gap="20px">
-                                <Box
-                                    borderRadius="12px"
-                                    display="block"
-                                    w="348px"
-                                    h="420px"
-                                >
-                                    <Carousel
-                                        showStatus={false}
-                                        showArrows={true}
-                                        showIndicators={false}
-                                        verticalSwipe="natural"
-                                        swipeable={true}
-                                    >
-                                        {imageData.map((val) => (
-                                            <Stack>
-                                                <Box
-                                                    w="348px"
-                                                    h="348px"
-                                                    borderRadius="12px"
-                                                    display="block"
-                                                >
-                                                    <Image
-                                                        src={val.image_url}
-                                                        w="348px"
-                                                        h="348px"
-                                                        objectFit="cover"
-                                                        borderRadius="12px"
-                                                    />
-                                                </Box>
-                                            </Stack>
-                                        ))}
-                                    </Carousel>
-                                </Box>
-                                <Box
-                                    borderRadius="12px"
-                                    w="468px"
-                                    h="700px"
-                                    display="block"
-                                >
-                                    <Box display="grid" gap="20px">
-                                        <Stack w="468px" h="48px">
-                                            <Text
-                                                fontSize="16"
-                                                fontFamily="sans-serif"
-                                                fontWeight="bold"
-                                            >
-                                                {productData?.product_name}
-                                            </Text>
-                                        </Stack>
-                                        <Stack
-                                            w="468px"
-                                            h="80px"
-                                            borderBottom="1px solid #dfe1e3"
-                                        >
-                                            <Text
-                                                fontSize="28"
-                                                fontFamily="sans-serif"
-                                                fontWeight="bold"
-                                            >
-                                                {new Intl.NumberFormat(
-                                                    "id-ID",
-                                                    {
-                                                        style: "currency",
-                                                        currency: "IDR",
-                                                        minimumFractionDigits: 0,
-                                                    }
-                                                ).format(productData?.price)}
-                                            </Text>
-                                        </Stack>
-                                        <Stack w="468px" h="110px">
-                                            <Text
-                                                fontSize="14"
-                                                fontFamily="sans-serif"
-                                                overflow="hidden"
-                                                textOverflow="ellipsis"
-                                                noOfLines={[1, 5]}
-                                            >
-                                                {productData?.description}
-                                            </Text>
-                                        </Stack>
-                                    </Box>
-                                </Box>
-                            </Box>
-                        </Box>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
         </>
     )
 }

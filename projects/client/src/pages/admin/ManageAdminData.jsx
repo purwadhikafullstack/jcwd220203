@@ -1,15 +1,9 @@
 import {
-  AlertIcon,
-  AlertTitle,
   Avatar,
   Box,
   Button,
-  FormControl,
   Grid,
-  Input,
-  InputGroup,
   Select,
-  Skeleton,
   Table,
   Tbody,
   Td,
@@ -28,9 +22,13 @@ import * as Yup from "yup"
 import AddNewAdmin from "../../components/admin/AddNewAdmin"
 import Alert from "../../components/profile/Alert"
 import EditAdmin from "../../components/admin/EditAdmin"
-import { TbSearch } from "react-icons/tb"
 import { IoIosAlert } from "react-icons/io"
-import { AiOutlineLeftCircle, AiOutlineRightCircle } from "react-icons/ai"
+import { BiEdit } from "react-icons/bi"
+import { RiDeleteBin2Fill } from "react-icons/ri"
+import { GoDiffAdded } from "react-icons/go"
+import LoadingManageAdmin from "../../components/loading/LoadingManageAdmin"
+import Search from "../../components/Search"
+import Pagination from "../../components/admin/Pagination"
 
 const ManageAdminData = () => {
   const [userData, setUserData] = useState([])
@@ -63,7 +61,7 @@ const ManageAdminData = () => {
   const [deleteAlert, setDeleteAlert] = useState(null)
 
   const fetchAdminData = async () => {
-    const maxItemsPerPage = 10
+    const maxItemsPerPage = 5
     try {
       const response = await axiosInstance.get(
         "/userData/getAllWarehouseAdmin",
@@ -94,64 +92,14 @@ const ManageAdminData = () => {
 
   const apiImg = process.env.REACT_APP_IMAGE_URL
 
-  const renderUser = () => {
-    return userData.map((val) => {
-      return (
-        <Tr key={val.id.toString()}>
-          <Td p={"10px"} w="100px">
-            <Avatar
-              size={"lg"}
-              borderRadius={"0"}
-              name={val.username}
-              src={`${apiImg}/${val.profile_picture}`}
-            />
-          </Td>
-          <Td p={"10px"}>{val.username}</Td>
-          <Td p={"10px"} w="240px">
-            {val.email}
-          </Td>
-          <Td p={"10px"} w="160px">
-            {val.phone_number || "null"}
-          </Td>
-          <Td p={"10px"}>{val.Role.role_name || "null"}</Td>
-          <Td p={"10px"}>{val.Warehouse?.warehouse_name || "null "}</Td>
-          <Td p={"10px"}>
-            <Box>
-              <Box mb={"2"}>
-                <Button
-                  width={"100px"}
-                  bgColor={"#0095DA"}
-                  _hover={false}
-                  color="white"
-                  onClick={() => setOpenedEdit(val)}
-                >
-                  Edit
-                </Button>
-              </Box>
-              <Box>
-                <Button
-                  width={"100px"}
-                  bgColor={"#F7931E"}
-                  _hover={false}
-                  color="white"
-                  onClick={() => setDeleteAlert(val)}
-                >
-                  Delete
-                </Button>
-              </Box>
-            </Box>
-          </Td>
-        </Tr>
-      )
-    })
-  }
-
   const nextPage = () => {
     setPage(page + 1)
+    setIsLoading(false)
   }
 
   const previousPage = () => {
     setPage(page - 1)
+    setIsLoading(false)
   }
 
   const formikAddNewAdmin = useFormik({
@@ -166,7 +114,6 @@ const ManageAdminData = () => {
       email,
       password,
       phone_number,
-
       profile_picture,
       username,
       WarehouseId,
@@ -215,7 +162,7 @@ const ManageAdminData = () => {
         formikAddNewAdmin.setFieldValue("WarehouseId", "")
         fetchAdminData()
       } catch (error) {
-        console.log(error.response)
+        console.log(error)
         toast({
           title: "Registration Failed",
           description: error.response.data.message,
@@ -231,9 +178,9 @@ const ManageAdminData = () => {
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
           "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
         ),
-      phone_number: Yup.number().required(9),
+      phone_number: Yup.number().required().min(9),
       profile_picture: Yup.string().required(),
-      username: Yup.string().required(6),
+      username: Yup.string().required().min(3),
     }),
     validateOnChange: false,
   })
@@ -241,12 +188,10 @@ const ManageAdminData = () => {
   const editFormik = useFormik({
     initialValues: {
       phone_number: "",
-      profile_picture: "",
       username: "",
       WarehouseId: "",
     },
     onSubmit: async ({
-      email,
       phone_number,
       profile_picture,
       username,
@@ -254,10 +199,6 @@ const ManageAdminData = () => {
     }) => {
       try {
         const adminData = new FormData()
-
-        if (email) {
-          adminData.append("email", email)
-        }
 
         if (phone_number) {
           adminData.append("phone_number", phone_number)
@@ -301,12 +242,8 @@ const ManageAdminData = () => {
       }
     },
     validationSchema: Yup.object({
-      password: Yup.string().matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-        "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
-      ),
-      phone_number: Yup.number(),
-      username: Yup.string(),
+      phone_number: Yup.number().min(9),
+      username: Yup.string().min(3),
     }),
     validateOnChange: false,
   })
@@ -338,10 +275,11 @@ const ManageAdminData = () => {
     onSubmit: ({ search }) => {
       setCurrentSearch(search)
       setPage(1)
+      setIsLoading(false)
     },
   })
 
-  const searchAdminHandler = ({ target }) => {
+  const searchHandler = ({ target }) => {
     const { name, value } = target
     formikSearch.setFieldValue(name, value)
   }
@@ -349,22 +287,26 @@ const ManageAdminData = () => {
     const { value } = target
     setSortBy(value.split(" ")[0])
     setSortDir(value.split(" ")[1])
+    setIsLoading(false)
   }
   const doubleOnClick = () => {
     onClose()
     onCloseAddNewAdmin()
     formikAddNewAdmin.handleSubmit()
+    setIsLoading(false)
   }
 
   const doubleOnClick1 = () => {
     editFormik.handleSubmit()
     onCloseAlert()
     setSelectedImage(null)
+    setIsLoading(false)
   }
 
   const doubleOnClick2 = () => {
     setDeleteAlert(null)
     deleteAdminHandler(deleteAlert.id)
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -396,13 +338,12 @@ const ManageAdminData = () => {
         </Text>
       </Box>
 
-      <Grid gap="4" templateColumns={"repeat(3, 1fr)"} mt="4" mb="4">
+      <Grid gap="4" templateColumns={"1fr 1fr auto"} mt="4" mb="4">
         <Select
           onChange={sortCategoryHandler}
           fontSize={"15px"}
           fontWeight="normal"
           color={"#6D6D6F"}
-          placeholder="Sort By"
           bgColor={"white"}
         >
           <option value="username ASC" selected>
@@ -413,41 +354,22 @@ const ManageAdminData = () => {
           <option value="createdAt ASC">Old</option>
         </Select>
 
-        <form onSubmit={formikSearch.handleSubmit}>
-          <FormControl>
-            <InputGroup textAlign={"right"}>
-              <Input
-                type={"text"}
-                placeholder="Search by username"
-                name="search"
-                onChange={searchAdminHandler}
-                borderRightRadius="0"
-                value={formikSearch.values.search}
-                bgColor={"white"}
-                _hover={false}
-              />
-
-              <Button
-                borderLeftRadius={"0"}
-                type="submit"
-                bgColor={"white"}
-                _hover={false}
-                border="1px solid #e2e8f0"
-                borderLeft={"0px"}
-              >
-                <TbSearch />
-              </Button>
-            </InputGroup>
-          </FormControl>
-        </form>
+        <Search
+          formikSearch={formikSearch}
+          searchHandler={searchHandler}
+          placeholder="Search by username"
+          width={"100%"}
+        />
 
         <Button
           bgColor={"#0095DA"}
           color="white"
           _hover={false}
+          _active={false}
+          title="Add New"
           onClick={onOpenAddNewAdmin}
         >
-          Add New Admin
+          <GoDiffAdded fontSize={"17px"} />
         </Button>
       </Grid>
 
@@ -460,16 +382,70 @@ const ManageAdminData = () => {
       >
         <Thead>
           <Tr>
-            <Th p="10px">Photo Profile</Th>
+            <Th p="10px" w="64px">
+              Photo Profile
+            </Th>
             <Th p="10px">Username</Th>
             <Th p="10px">Email</Th>
             <Th p="10px">Phone Number</Th>
             <Th p="10px">Role</Th>
             <Th p="10px">Warehouse</Th>
-            <Th p="10px">Option</Th>
+            <Th p="10px" w={"120px"}>
+              Option
+            </Th>
           </Tr>
         </Thead>
-        <Tbody>{isLoading && renderUser()}</Tbody>
+        <Tbody>
+          {isLoading &&
+            userData.map((val) => {
+              return (
+                <Tr key={val.id.toString()}>
+                  <Td p={"10px"} w="64px">
+                    <Avatar
+                      size={"lg"}
+                      borderRadius={"0"}
+                      name={val.username}
+                      src={`${apiImg}/${val.profile_picture}`}
+                    />
+                  </Td>
+                  <Td p={"10px"}>{val.username}</Td>
+                  <Td p={"10px"} w="240px">
+                    {val.email}
+                  </Td>
+                  <Td p={"10px"} w="160px">
+                    {val.phone_number || "null"}
+                  </Td>
+                  <Td p={"10px"}>{val.Role.role_name || "null"}</Td>
+                  <Td p={"10px"}>{val.Warehouse?.warehouse_name || "null "}</Td>
+                  <Td p={"10px"}>
+                    <Box gap="2" display="flex">
+                      <Button
+                        bgColor={"#0095DA"}
+                        _hover={false}
+                        title="Edit"
+                        _active={false}
+                        color="white"
+                        onClick={() => setOpenedEdit(val)}
+                      >
+                        <BiEdit fontSize={"17px"} />
+                      </Button>
+                      <Button
+                        bgColor={"#F7931E"}
+                        _hover={false}
+                        title="Delete"
+                        _active={false}
+                        color="white"
+                        onClick={() => setDeleteAlert(val)}
+                      >
+                        <RiDeleteBin2Fill fontSize={"17px"} />
+                      </Button>
+                    </Box>
+                  </Td>
+                </Tr>
+              )
+            })}
+          {isLoading === false ? <LoadingManageAdmin /> : null}
+        </Tbody>
       </Table>
       {!userData.length && isLoading === true ? (
         <Box p="10px" bgColor={"#E5F9F6"}>
@@ -482,14 +458,6 @@ const ManageAdminData = () => {
             </Box>
           </Box>
         </Box>
-      ) : null}
-      {isLoading === false ? (
-        <Skeleton
-          startColor="#bab8b8"
-          endColor="#d4d2d2"
-          height="100px"
-          borderRadius="8px"
-        />
       ) : null}
 
       {/* Alert Delete */}
@@ -506,7 +474,6 @@ const ManageAdminData = () => {
       />
 
       {/* Modal Add New Admin */}
-
       <AddNewAdmin
         formikAddNewAdmin={formikAddNewAdmin}
         isOpenAddNewAdmin={isOpenAddNewAdmin}
@@ -553,32 +520,12 @@ const ManageAdminData = () => {
         rightButton={"Edit Admin"}
       />
 
-      <Box p="20px">
-        <Box textAlign={"center"}>
-          <Button
-            onClick={previousPage}
-            disabled={page === 1 ? true : null}
-            _hover={false}
-            _active={false}
-          >
-            <AiOutlineLeftCircle fontSize={"20px"} />
-          </Button>
-
-          <Box display={"inline"}>{page}</Box>
-
-          <Button
-            onClick={nextPage}
-            disabled={page >= maxPage ? true : null}
-            _hover={false}
-            _active={false}
-          >
-            <AiOutlineRightCircle fontSize={"20px"} />
-          </Button>
-          <Box>
-            Page: {page} of {maxPage}
-          </Box>
-        </Box>
-      </Box>
+      <Pagination
+        maxPage={maxPage}
+        nextPage={nextPage}
+        page={page}
+        previousPage={previousPage}
+      />
     </Box>
   )
 }

@@ -78,7 +78,7 @@ const userProfileController = {
                 },
                 { where: { id: req.user.id } }
             )
-            fs.unlinkSync(path + fileName.profile_picture)
+            // fs.unlinkSync(path + fileName.profile_picture)
             const findUserById = await User.findByPk(req.user.id)
             return res.status(200).json({
                 message: "Data updated",

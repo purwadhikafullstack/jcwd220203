@@ -22,6 +22,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Textarea,
 } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -30,7 +31,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import CarouselProductSlider from "../../components/CarouselProduct";
 import { TbCameraPlus } from "react-icons/tb";
-import upload from "../../assets/upload.png"
+import upload from "../../assets/upload.png";
 
 const AdminProductDataDetail = () => {
   const [dataDetail, setDataDetail] = useState({});
@@ -43,7 +44,6 @@ const AdminProductDataDetail = () => {
   const inputFileRef = useRef();
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageData, setImageData] = useState({});
-
 
   const {
     isOpen: isOpenAddNewProduct,
@@ -59,9 +59,7 @@ const AdminProductDataDetail = () => {
 
       setDataDetail(response.data.data);
       setImageData(dataDetail.Image_Urls);
-      console.log(dataDetail);
-      // console.log(dataDetail.Image_Urls)
-      // console.warn(response.data.data.Image_Urls)
+
       editDetailFormik.setFieldValue(
         "product_name",
         response.data.data.product_name
@@ -69,6 +67,10 @@ const AdminProductDataDetail = () => {
       editDetailFormik.setFieldValue(
         "description",
         response.data.data.description
+      );
+      editDetailFormik.setFieldValue(
+        "product_weight",
+        response.data.data.product_weight
       );
       editDetailFormik.setFieldValue("price", response.data.data.price);
       editDetailFormik.setFieldValue(
@@ -83,7 +85,6 @@ const AdminProductDataDetail = () => {
       setIsLoading(true);
       const categoryRes = await axiosInstance.get("/admin/product/category");
       setCategory(categoryRes.data.data);
-      //console.log(category);
     } catch (err) {
       console.log(err);
     }
@@ -138,6 +139,7 @@ const AdminProductDataDetail = () => {
     initialValues: {
       product_name: "",
       description: "",
+      product_weight: "",
       price: "",
       CategoryId: "",
     },
@@ -146,10 +148,10 @@ const AdminProductDataDetail = () => {
         let updateProduct = {
           product_name: values.product_name,
           description: values.description,
+          product_weight: values.product_weight,
           price: values.price,
           CategoryId: values.CategoryId,
         };
-        console.log("test");
         await axiosInstance.patch(
           `/admin/product/detail/${params.id}`,
           updateProduct
@@ -175,17 +177,13 @@ const AdminProductDataDetail = () => {
       image_url: "",
     },
 
-    onSubmit: async ({
-      image_url,
-    }) => {
+    onSubmit: async ({ image_url }) => {
       try {
         const data = new FormData();
 
         if (image_url) {
-          console.log(image_url);
           data.append("image_url", image_url);
         }
-        console.log("test");
         await axiosInstance.post(`/admin/product/detail/${params.id}`, data);
 
         setAdminUpdate(false);
@@ -246,9 +244,10 @@ const AdminProductDataDetail = () => {
             <Heading size={"lg"}>Description</Heading>
             <Text fontSize={"2xl"}>{dataDetail.description}</Text>
             <br />
-            {/* <Heading size={"lg"}>Image</Heading>
-            <Image src={dataDetail.Image_Urls[0].image_url} />
-            <br /> */}
+            <Heading size={"lg"}>Weight (Grams)</Heading>
+            <Text fontSize={"2xl"}>{dataDetail.product_weight}</Text>
+            <br />
+
             <Heading size={"lg"}>Price</Heading>
             <Text fontSize={"2xl"}>
               {dataDetail?.price
@@ -276,6 +275,8 @@ const AdminProductDataDetail = () => {
               mt="2"
               mr="8"
               width="150px"
+              color="white"
+              _hover={false}
               onClick={() => setAdminUpdate(true)}
               bgColor="#0095DA"
             >
@@ -287,6 +288,8 @@ const AdminProductDataDetail = () => {
                 mt="2"
                 mr="8"
                 width="150px"
+                color="white"
+                _hover={false}
                 onClick={destroyProduct}
                 bgColor="red"
               >
@@ -295,7 +298,14 @@ const AdminProductDataDetail = () => {
             </Link>
             <br />
             <Link to="/admin/product">
-              <Button mt="2" mr="8" width="150px" bgColor="#F7931E">
+              <Button
+                mt="2"
+                mr="8"
+                width="150px"
+                _hover={false}
+                bgColor="#F7931E"
+                color="white"
+              >
                 Back
               </Button>
             </Link>
@@ -308,7 +318,6 @@ const AdminProductDataDetail = () => {
               <FormLabel>Product name</FormLabel>
               <Input
                 value={editDetailFormik.values.product_name}
-                defaultValue={"Otw"}
                 name="product_name"
                 onChange={formChangeHandler}
               />
@@ -318,13 +327,25 @@ const AdminProductDataDetail = () => {
             </FormControl>
             <FormControl isInvalid={editDetailFormik.errors.description}>
               <FormLabel>Description</FormLabel>
-              <Input
-                value={editDetailFormik.values.description}
-                name="description"
-                onChange={formChangeHandler}
+              <Textarea
+              height="100px"
+              value={editDetailFormik.values.description}
+              name="description"
+              onChange={formChangeHandler}
               />
               <FormErrorMessage>
                 {editDetailFormik.errors.description}
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={editDetailFormik.errors.product_weight}>
+              <FormLabel>Weight (Grams)</FormLabel>
+              <Input
+                value={editDetailFormik.values.product_weight}
+                name="product_weight"
+                onChange={formChangeHandler}
+              />
+              <FormErrorMessage>
+                {editDetailFormik.errors.product_weight}
               </FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={editDetailFormik.errors.price}>
@@ -339,7 +360,7 @@ const AdminProductDataDetail = () => {
               </FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={editDetailFormik.errors.CategoryId}>
-            <FormLabel>Category</FormLabel>
+              <FormLabel>Category</FormLabel>
               <Select
                 name="CategoryId"
                 onChange={formChangeHandler}
@@ -395,11 +416,7 @@ const AdminProductDataDetail = () => {
                     border="3px solid"
                     color={"#0095DA"}
                     mx="auto"
-                    src={
-                      selectedImage
-                        ? selectedImage
-                        : upload
-                    }
+                    src={selectedImage ? selectedImage : upload}
                   />
                   <Button
                     borderRadius={"50%"}

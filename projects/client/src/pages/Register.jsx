@@ -1,10 +1,4 @@
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Box,
   Button,
   FormControl,
@@ -29,6 +23,7 @@ import GoogleLogin from "react-google-login"
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props"
 import { useDispatch } from "react-redux"
 import { login } from "../redux/features/authSlice"
+import Alert from "../components/profile/Alert"
 
 const clientId = process.env.REACT_APP_CLIENT_ID
 const appId = process.env.REACT_APP_APP_ID
@@ -157,29 +152,32 @@ const Register = () => {
           textAlign={"center"}
           mt="20px"
           minW={{ lg: "960px", md: null, base: null }}
+          fontSize={{ lg: "40px", md: "20px", base: "20px" }}
+          fontWeight="bold"
+          fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
         >
-          <Image src={logo} height={"27px"} display={"inline"} />
+          <Image
+            src={logo}
+            width={{ lg: "50px", md: "25pxpx", base: "25px" }}
+            mt="5px"
+            display={"inline"}
+          />
 
-          <Text
-            fontSize={"24px"}
-            fontWeight="bold"
-            color={"#0095DA"}
-            display="inline"
-            my="auto"
-          >
+          <Text color={"#0095DA"} display="inline">
             Shop
           </Text>
-          <Text
-            fontSize={"24px"}
-            fontWeight="bold"
-            color={"#F7931E"}
-            display="inline"
-          >
+          <Text color={"#F7931E"} display="inline">
             edia
           </Text>
         </Box>
       </Link>
-      <Box display={"flex"} maxW="1190px" mt="20px" pt="50px" mx={"auto"}>
+
+      <Box
+        display={"flex"}
+        mt={{ lg: "20px", md: "10%", base: "10%" }}
+        pt={{ lg: "50px", md: "25%", base: "25%" }}
+        alignItems="center"
+      >
         <Box
           width={"50%"}
           display={{ lg: "flex", md: "none", base: "none" }}
@@ -212,10 +210,22 @@ const Register = () => {
             w="400px"
             mx={{ lg: null, md: "auto", base: "auto" }}
             ml={{ lg: "50px", md: null, base: null }}
-            boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%)"}
-            border="1px solid var(--N75,#E5E7E9)"
+            boxShadow={{
+              lg: "0 0 10px 0 rgb(0 0 0 / 10%)",
+              md: "none",
+              base: "none",
+            }}
+            border={{
+              lg: "1px solid var(--N75,#E5E7E9)",
+              md: "none",
+              base: "none",
+            }}
             borderRadius={"3px"}
-            p="24px 40px 32px "
+            p={{
+              lg: "24px 40px 32px ",
+              md: "12px 20px 16px",
+              base: "12px 20px 16px",
+            }}
             textAlign={"center"}
           >
             <Text fontSize="22px" fontWeight={"bold"}>
@@ -248,6 +258,7 @@ const Register = () => {
                     bgColor={"white"}
                     border="1px solid #ecf0f5"
                     _hover={false}
+                    _active={false}
                   >
                     <Box mr="6px" my={"auto"}>
                       <FcGoogle fontSize={"25px"} />
@@ -270,6 +281,7 @@ const Register = () => {
                     bgColor={"white"}
                     border="1px solid #ecf0f5"
                     _hover={false}
+                    _active={false}
                   >
                     <Box mr="6px" my={"auto"}>
                       <FaFacebook color="#3b5998" size={"25px"} />
@@ -337,6 +349,7 @@ const Register = () => {
                 w="100%"
                 bgColor={"#F7931E"}
                 _hover={false}
+                _active={false}
                 m="16px 0"
                 color={"white"}
                 onClick={onOpen}
@@ -345,61 +358,18 @@ const Register = () => {
                 <Text fontWeight={"bold"}>Register</Text>
               </Button>
 
-              <AlertDialog
+              <Alert
+                body={"Is the email you entered correct?"}
+                cancelRef={cancelRef}
+                color={"#F7931E"}
+                header={formik.values.email}
                 isOpen={isOpen}
-                leastDestructiveRef={cancelRef}
+                leftButton={"Change"}
                 onClose={onClose}
-              >
-                <AlertDialogOverlay>
-                  <AlertDialogContent
-                    p={"32px 32px 24px"}
-                    my="auto"
-                    boxSize={"-moz-fit-content"}
-                    maxW="600px"
-                  >
-                    <AlertDialogHeader p="0"></AlertDialogHeader>
-                    <AlertDialogBody textAlign={"center"} p="0">
-                      <Text fontWeight={"bold"} fontSize="26px" mb={"14px"}>
-                        {formik.values.email}
-                      </Text>
-                      <Text fontSize={"16px"} m="0px 16px 16px">
-                        Is the email you entered correct?
-                      </Text>
-                    </AlertDialogBody>
-
-                    <AlertDialogFooter p="0" alignSelf="center">
-                      <Button
-                        ref={cancelRef}
-                        onClick={onClose}
-                        w="164px"
-                        h="48px"
-                        mr={"6px"}
-                        borderRadius="8px"
-                        fontWeight={"bold"}
-                        bgColor="white"
-                        border="1px solid #F7931E"
-                        color={" #F7931E"}
-                        _hover={false}
-                      >
-                        Change
-                      </Button>
-                      <Button
-                        fontWeight={"bold"}
-                        bgColor="#F7931E"
-                        color={"white"}
-                        type="submit"
-                        onClick={onClick2}
-                        w="164px"
-                        h="48px"
-                        borderRadius="8px"
-                        _hover={false}
-                      >
-                        Yes, right
-                      </Button>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialogOverlay>
-              </AlertDialog>
+                onSubmit={onClick2}
+                responsive="Is the email you entered correct?"
+                rightButton={"Yes, right"}
+              />
             </form>
 
             <Box mt="15px" fontSize={"12px"} fontWeight={"normal"}>

@@ -10,6 +10,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Skeleton,
   Text,
   useDisclosure,
   useToast,
@@ -48,14 +49,16 @@ const ChangeAddress = ({ defaultAddressUser }) => {
   const toast = useToast()
   const [address, setAddress] = useState([])
   const [allAddress, setAllAddress] = useState([])
-  const [defaultAlert, setDefaultAlert] = useState(null)
   const [selectedNewProvince, setSelectedNewProvince] = useState(0)
   const [selectedNewCity, setSelectedNewCity] = useState(0)
   const [selectedEditProvince, setSelectedEditProvince] = useState(0)
+  console.log(selectedEditProvince)
   const [selectedEditCity, setSelectedEditCity] = useState(0)
   const [openedEdit, setOpenedEdit] = useState(null)
   const [currentSearch, setCurrentSearch] = useState("")
   const [defaultAddressId, setDefaultAddressId] = useState(0)
+  const [refreshAddress, setRefreshAddress] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   defaultAddressUser(defaultAddressId)
 
   const fetchAddress = async () => {
@@ -65,6 +68,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
       )
       setAddress(response.data.data)
       setDefaultAddressId(response.data.data.id)
+      setIsLoading(true)
     } catch (error) {
       console.log(error.response)
     }
@@ -84,6 +88,19 @@ const ChangeAddress = ({ defaultAddressUser }) => {
     }
   }
 
+  const refreshPage = () => {
+    window.location.reload(false)
+  }
+
+  const onCloseAddressModal = () => {
+    if (refreshAddress === false) {
+      onClose()
+    }
+    if (refreshAddress === true) {
+      refreshPage()
+    }
+  }
+
   const setAsDefault = async (id) => {
     try {
       const response = await axiosInstance.patch(`/address/setDefault/${id}`)
@@ -95,7 +112,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
       })
       fetchAllAddress()
       fetchAddress()
-      // refreshPage()
+      setRefreshAddress(true)
     } catch (error) {
       console.log(error.response)
       toast({
@@ -198,12 +215,13 @@ const ChangeAddress = ({ defaultAddressUser }) => {
             recipients_name,
             phone_number,
             address_labels,
-            province: selectedEditProvince,
-            city: selectedEditCity,
+            province: selectedEditProvince || editFormik.values.provinceId,
+            city: selectedEditCity || editFormik.values.cityId,
             districts,
             full_address,
           }
         )
+        console.log(response)
         toast({
           title: "Address Edited",
           description: response.data.message,
@@ -255,6 +273,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
     setSelectedEditProvince(0)
     setSelectedEditCity(0)
     onCloseAlert()
+    setRefreshAddress(true)
   }
 
   const formikSearch = useFormik({
@@ -286,95 +305,247 @@ const ChangeAddress = ({ defaultAddressUser }) => {
       editFormik.setFieldValue("recipients_name", openedEdit.recipients_name)
       editFormik.setFieldValue("phone_number", openedEdit.phone_number)
       editFormik.setFieldValue("districts", openedEdit.districts)
+      editFormik.setFieldValue("cityId", openedEdit.cityId)
+      editFormik.setFieldValue("provinceId", openedEdit.provinceId)
     }
   }, [openedEdit])
   return (
     <>
-      <Box borderBottom="1px solid #fcd4a5">
-        <Text
-          fontSize={'14px'}
-          fontFamily={'Open Sauce One, sans-serif'}
-          fontWeight={700}
-          color={'#31353B'}
-          pb="14px">
-          Shipping Address
-        </Text>
-      </Box>
-      <Box pb="20px" pt="20px">
-        <Box>
-          <Box display={"flex"} mb="4px">
-            <Text fontWeight={'bolder'} mr="2px" fontSize={'13px'} color={'#31353B'} lineHeight={'1.4'} fontFamily={'Open Sauce One, sans-serif'}>
-              {address.recipients_name}
-            </Text>
-            <Text mr="2px" color={'#31353B'} lineHeight={'1.4'} fontFamily={'Open Sauce One, sans-serif'} fontSize={'13px'}>
-              {`(${address.address_labels})`}
-            </Text>
+      <Box display={{ lg: "inline", base: "none" }}>
+        <Box borderBottom="1px solid #fcd4a5">
+          <Text
+            fontSize={"14px"}
+            fontFamily={"Open Sauce One, sans-serif"}
+            fontWeight={700}
+            color={"#31353B"}
+            pb="14px"
+          >
+            Shipping Address
+          </Text>
+        </Box>
+        <Box pb="20px" pt="20px">
+          <Box>
+            <Box display={"flex"} mb="4px">
+              <Text
+                fontWeight={"bolder"}
+                mr="2px"
+                fontSize={"13px"}
+                color={"#31353B"}
+                lineHeight={"1.4"}
+                fontFamily={"Open Sauce One, sans-serif"}
+              >
+                {isLoading && address.recipients_name}
+                {isLoading === false ? (
+                  <Skeleton
+                    height={"16px"}
+                    startColor="#bab8b8"
+                    endColor="#d4d2d2"
+                    w="70px"
+                    borderRadius="8px"
+                  />
+                ) : null}
+              </Text>
+              <Text
+                mr="2px"
+                color={"#31353B"}
+                lineHeight={"1.4"}
+                fontFamily={"Open Sauce One, sans-serif"}
+                fontSize={"13px"}
+              >
+                {`(${isLoading && address.address_labels})`}
+                {isLoading === false ? (
+                  <Skeleton
+                    height={"16px"}
+                    startColor="#bab8b8"
+                    endColor="#d4d2d2"
+                    w="60px"
+                    borderRadius="8px"
+                  />
+                ) : null}
+              </Text>
+              <Box
+                display={"inline-flex"}
+                alignItems={"center"}
+                fontWeight={700}
+                lineHeight={"16px"}
+                fontSize="10px"
+                backgroundColor="#E5F9F6"
+                p="0 8px"
+                borderRadius={"3px"}
+                color="#0095DA"
+                w={"52.2px"}
+                h={"20px"}
+                fontFamily={"Open Sauce One, sans-serif"}
+                m={"0px"}
+                justifyContent={"center"}
+                ml={"2px"}
+              >
+                Main
+              </Box>
+            </Box>
+            <Box>
+              <Text
+                color={"#31353B"}
+                lineHeight={"1.4"}
+                fontFamily={"Open Sauce One, sans-serif"}
+                fontSize={"13px"}
+                mb="4px"
+              >
+                {isLoading && address.phone_number}
+                {isLoading === false ? (
+                  <Skeleton
+                    height={"16px"}
+                    startColor="#bab8b8"
+                    endColor="#d4d2d2"
+                    w="90px"
+                    borderRadius="8px"
+                  />
+                ) : null}
+              </Text>
+            </Box>
             <Box
-              display={'inline-flex'}
-              alignItems={'center'}
-              fontWeight={700}
-              lineHeight={'16px'}
-              fontSize="10px"
-              backgroundColor="#E5F9F6"
-              p="0 8px"
-              borderRadius={"3px"}
-              color="#0095DA"
-              w={'52.2px'}
-              h={'20px'}
-              fontFamily={'Open Sauce One, sans-serif'}
-              m={'0px'}
-              justifyContent={'center'}
-              ml={'2px'}
+              fontFamily={"Open Sauce One, sans-serif"}
+              fontSize={"13px"}
+              color={"#0000008A"}
+              wordBreak={"break-word"}
+              lineHeight={"1.4"}
             >
-              Main
+              <Text>
+                {isLoading && address.full_address}
+                {isLoading === false ? (
+                  <Skeleton
+                    height={"14px"}
+                    startColor="#bab8b8"
+                    endColor="#d4d2d2"
+                    w="150px"
+                    borderRadius="8px"
+                  />
+                ) : null}
+              </Text>
+              <Text>
+                {isLoading && address.districts}, {isLoading && address.city},
+                {isLoading && address.province}
+                {isLoading === false ? (
+                  <Skeleton
+                    height={"14px"}
+                    startColor="#bab8b8"
+                    endColor="#d4d2d2"
+                    w="240px"
+                    borderRadius="8px"
+                  />
+                ) : null}
+              </Text>
             </Box>
           </Box>
-          <Box>
+        </Box>
+        <Box borderTop="1px solid #fcd4a5" p={"25px 0px 10px"}>
+          <Button
+            p="0 17px"
+            mb="18px"
+            border="1px solid #0095DA"
+            bgColor={"white"}
+            onClick={onOpen}
+            fontSize={"14px"}
+            fontFamily={"Open Sauce One, sans-serif"}
+            color={"#0095DA"}
+            _hover={"none"}
+            display={"flex"}
+            alignContent={"center"}
+          >
+            <Text fontWeight={"bold"}>Choose Another Address</Text>
+          </Button>
+        </Box>
+      </Box>
+
+      {/* mobile responsive */}
+      <Box display={{ lg: "none", base: "inline" }}>
+        <Box
+          w={"500px"}
+          mt={"6px"}
+          display={"flex"}
+          flexDir={"column"}
+          boxShadow={"rgb(0 0 0 / 15%) 0px 1px 3px 0px"}
+        >
+          <Box m={"16px"}>
             <Text
-              color={'#31353B'}
-              lineHeight={'1.4'}
-              fontFamily={'Open Sauce One, sans-serif'}
-              fontSize={'13px'}
-              mb="4px"
+              fontSize={"14px"}
+              color={"#31353BF5"}
+              fontFamily={"Open Sauce One, sans-serif"}
+              fontWeight={700}
+              lineHeight={"18px"}
             >
-              {address.phone_number}
+              Shipping Destination
             </Text>
           </Box>
           <Box
-            fontFamily={'Open Sauce One, sans-serif'}
-            fontSize={'13px'}
-            color={'#0000008A'}
-            wordBreak={'break-word'}
-            lineHeight={'1.4'}
+            w={"500px"}
+            p={"16px"}
+            display={"flex"}
+            flexDir={"column"}
+            gap={"1px"}
           >
-            <Text>{address.full_address}</Text>
-            <Text>
-              {address.districts}, {address.city}, {address.province}
+            <Box
+              display={"flex"}
+              flexDir={"row"}
+              justifyContent={"flex-start"}
+              color={"#31353BF5"}
+              fontSize={"12px"}
+              fontFamily={"Open Sauce One, sans-serif"}
+              lineHeight={"16px"}
+            >
+              <Text fontWeight={700}>{address.recipients_name}</Text>
+              <Text pl={"3px"}>{`(${address.address_labels})`}</Text>
+            </Box>
+            <Text
+              color={"#31353BAD"}
+              fontSize={"12px"}
+              fontFamily={"Open Sauce One, sans-serif"}
+              lineHeight={"16px"}
+              fontWeight={400}
+            >
+              {address.phone_number}
             </Text>
+            <Text
+              fontSize={"11px"}
+              color={"#31353BAD"}
+              fontFamily={"Open Sauce One, sans-serif"}
+              lineHeight={"14px"}
+              fontWeight={400}
+            >
+              {address.full_address},{address.districts}, {address.city},{" "}
+              {address.province}
+            </Text>
+            <Button
+              mt={"12px"}
+              border="1px solid #0095DA"
+              bgColor={"white"}
+              onClick={onOpen}
+              fontSize={"14px"}
+              fontFamily={"Open Sauce One, sans-serif"}
+              color={"#0095DA"}
+              _hover={"none"}
+              display={"flex"}
+              alignContent={"center"}
+              w={"187.2px"}
+              h={"32px"}
+            >
+              <Text
+                fontSize={"12px"}
+                fontFamily={"Open Sauce One, sans-serif"}
+                fontWeight={"600"}
+                lineHeight={"16px"}
+              >
+                Choose Another Address
+              </Text>
+            </Button>
           </Box>
         </Box>
-      </Box>
-      <Box borderTop="1px solid #fcd4a5" p={'25px 0px 10px'}>
-        <Button
-          p="0 17px"
-          mb="18px"
-          border="1px solid #0095DA"
-          bgColor={"white"}
-          onClick={onOpen}
-          fontSize={'14px'}
-          fontFamily={'Open Sauce One, sans-serif'}
-          color={'#0095DA'}
-          _hover={'none'}
-          display={'flex'}
-          alignContent={'center'}
-        >
-          <Text fontWeight={"bold"}>Choose Another Address</Text>
-        </Button>
+        <Box h={"6px"} bgColor={"#edeff1"} />
       </Box>
 
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={onCloseAddressModal}
         motionPreset="slideInBottom"
         size={"3xl"}
       >
