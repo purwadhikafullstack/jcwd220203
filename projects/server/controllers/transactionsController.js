@@ -194,6 +194,7 @@ const transactionsController = {
             const findTransactionByTransactionName = await Transaction.findOne({
                 where: {
                     transaction_name: transaction_name,
+                    UserId: req.user.id
                 },
                 include: [
                     {
@@ -234,6 +235,7 @@ const transactionsController = {
                 {
                     where: {
                         transaction_name: transaction_name,
+                        UserId: req.user.id
                     },
                 }
             )
@@ -241,6 +243,7 @@ const transactionsController = {
             const findpaymentProof = await Transaction.findOne({
                 where: {
                     transaction_name: transaction_name,
+                    UserId: req.user.id
                 },
             })
 
@@ -267,6 +270,7 @@ const transactionsController = {
                 {
                     where: {
                         transaction_name,
+                        UserId: req.user.id
                     },
                 }
             )
@@ -749,6 +753,7 @@ const transactionsController = {
                 {
                     where: {
                         transaction_name: transaction_name,
+                        UserId: req.user.id
                     },
                 }
             )
@@ -777,6 +782,7 @@ const transactionsController = {
                 {
                     where: {
                         transaction_name: transaction_name,
+                        UserId: req.user.id
                     },
                 }
             )
@@ -803,6 +809,7 @@ const transactionsController = {
                 {
                     where: {
                         transaction_name: transaction_name,
+                        UserId: req.user.id
                     },
                 }
             )

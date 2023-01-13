@@ -41,7 +41,7 @@ app.use(
     // }
 )
 
-app.use(express.json());
+app.use(express.json())
 
 //#region API ROUTES
 
@@ -52,7 +52,7 @@ app.use("/admin", verifyToken, adminCategoriesRoute)
 app.use("/userData", userDataRoute)
 app.use("/product", productRoute)
 app.use("/categories", categoryRoute)
-app.use("/carts", cartsRoute)
+app.use("/carts", verifyToken, cartsRoute)
 app.use("/transactions", verifyToken, transactionsRoute)
 app.use("/auth", authRoute)
 app.use("/shipment", shipmentRoute)
@@ -73,42 +73,44 @@ app.use("/stock-mutation", verifyToken, stockMutationRoute)
 app.use("/admin/order-history", adminOrderHistoryRoute)
 app.use("/admin/sales-report", salesReportRoute)
 
+app.use("/product", productRoute)
+
 app.get("/api", (req, res) => {
-  res.send(`Hello, this is my API`);
-});
+    res.send(`Hello, this is my API`)
+})
 
 app.get("/api/greetings", (req, res, next) => {
-  res.status(200).json({
-    message: "Hello, Student !",
-  });
-});
+    res.status(200).json({
+        message: "Hello, Student !",
+    })
+})
 
 // ===========================
 
 // not found
 app.use((req, res, next) => {
-  if (req.path.includes("/api/")) {
-    res.status(404).send("Not found !");
-  } else {
-    next();
-  }
-});
+    if (req.path.includes("/api/")) {
+        res.status(404).send("Not found !")
+    } else {
+        next()
+    }
+})
 
 // error
 app.use((err, req, res, next) => {
-  if (req.path.includes("/api/")) {
-    console.error("Error : ", err.stack);
-    res.status(500).send("Error !");
-  } else {
-    next();
-  }
-});
+    if (req.path.includes("/api/")) {
+        console.error("Error : ", err.stack)
+        res.status(500).send("Error !")
+    } else {
+        next()
+    }
+})
 
 //#endregion
 
 //#region CLIENT
-const clientPath = "../../client/build";
-app.use(express.static(join(__dirname, clientPath)));
+const clientPath = "../../client/build"
+app.use(express.static(join(__dirname, clientPath)))
 
 // Serve the HTML page
 // app.get("*", (req, res) => {

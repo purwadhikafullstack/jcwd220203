@@ -103,7 +103,7 @@ const profileController = {
   editUserProfile: async (req, res) => {
     try {
       if (req.file) {
-        req.body.profile_picture = `http://localhost:8000/public/${req.file.filename}`
+        req.body.profile_picture = `${process.env.REACT_APP_IMAGE_URL}${req.file.filename}`
       }
 
       const findUserByUser = await User.findOne({

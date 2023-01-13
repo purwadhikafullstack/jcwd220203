@@ -1,5 +1,4 @@
 const { Op } = require("sequelize")
-const { sequelize } = require("../models")
 const db = require("../models")
 const Product = db.Product
 const Image_Url = db.Image_Url
@@ -10,9 +9,8 @@ const productController = {
     getAllProduct: async (req, res) => {
         try {
             const {
+                category_name = "",
                 product_name = "",
-                description = "",
-                // price = "",
                 CategoryId = "",
                 _sortBy = "id",
                 _sortDir = "ASC",
@@ -20,26 +18,24 @@ const productController = {
                 _page = 1,
             } = req.query
 
-            if (
-                // _sortBy === "product_name" ||
-
-                // _sortBy === "description" ||
-                // _sortBy === "price" ||
-                // _sortBy === "CategoryId" ||
-                // product_name ||
-                // price ||
-                // description ||
-                CategoryId
-            ) {
+            if (CategoryId) {
                 if (!Number(CategoryId)) {
                     const getAllProducts1 = await Product.findAndCountAll({
                         limit: Number(_limit),
                         offset: (_page - 1) * _limit,
-                        include: [{ model: Category }, { model: Image_Url }],
+                        include: [
+                            { model: Category, required: true },
+                            { model: Image_Url },
+                        ],
                         order: [[_sortBy, _sortDir]],
                         where: {
-                            product_name: {
-                                [Op.like]: `%${product_name}%`,
+                            [Op.or]: {
+                                product_name: {
+                                    [Op.like]: `%${product_name}%`,
+                                },
+                                "$Category.category_name$": {
+                                    [Op.like]: `%${category_name}%`,
+                                },
                             },
                         },
                     })
@@ -53,11 +49,20 @@ const productController = {
                 const getAllProducts2 = await Product.findAndCountAll({
                     limit: Number(_limit),
                     offset: (_page - 1) * _limit,
-                    include: [{ model: Category }, { model: Image_Url }],
+                    include: [
+                        { model: Category, required: true },
+                        { model: Image_Url },
+                    ],
+
                     order: [[_sortBy, _sortDir]],
                     where: {
-                        product_name: {
-                            [Op.like]: `%${product_name}%`,
+                        [Op.or]: {
+                            product_name: {
+                                [Op.like]: `%${product_name}%`,
+                            },
+                            "$Category.category_name$": {
+                                [Op.like]: `%${category_name}%`,
+                            },
                         },
 
                         CategoryId,
@@ -133,16 +138,20 @@ const productController = {
 
     getCategory: async (req, res) => {
         try {
-            const { _limit = 5, _page = 1 } = req.query
+            const { _limit = 50, _page = 1 } = req.query
             const findCategory = await Category.findAll({
                 limit: Number(_limit),
                 offset: (_page - 1) * _limit,
                 order: [["category_name", "ASC"]],
             })
+
+            const getCategoryId = findCategory.map((val) => val.id)
+            const categoryCount = getCategoryId.length
             return res.status(200).json({
                 message: "Get category",
                 data: findCategory,
                 dataCount: findCategory.count,
+                categoryCount: categoryCount,
             })
         } catch (err) {
             console.log(err)

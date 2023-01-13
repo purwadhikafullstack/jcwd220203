@@ -26,6 +26,9 @@ const Pagination = ({ searchParam, setPage, number, setSearchParam, transaction_
         setSearchParam(params)
     }
 
+    console.log(transaction_page)
+    console.log(page)
+
     return (
         <Box h={'20px'} w={'32px'} >
             <Box

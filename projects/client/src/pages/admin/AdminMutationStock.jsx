@@ -264,7 +264,7 @@ const AdminMutationStock = () => {
       {/* <br />
         <br /> */}
       {/* </Box> */}
-      <Table>
+      <Table variant='striped' colorScheme='teal'>
         <Thead>
           <Tr>
             <Th>ID</Th>

@@ -63,7 +63,7 @@ const RegisterVerification = () => {
       }
     },
     validationSchema: Yup.object({
-      username: Yup.string().required(6),
+      username: Yup.string().required().min(3),
       password: Yup.string()
         .required(8)
         .matches(
@@ -86,28 +86,32 @@ const RegisterVerification = () => {
           textAlign={"center"}
           mt="20px"
           minW={{ lg: "960px", md: null, base: null }}
+          fontSize={{ lg: "40px", md: "20px", base: "20px" }}
+          fontWeight="bold"
+          fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
         >
-          <Image src={logo} height={"27px"} display={"inline"} />
+          <Image
+            src={logo}
+            width={{ lg: "50px", md: "25pxpx", base: "25px" }}
+            mt="5px"
+            display={"inline"}
+          />
 
-          <Text
-            fontSize={"24px"}
-            fontWeight="bold"
-            color={"#0095DA"}
-            display="inline"
-          >
+          <Text color={"#0095DA"} display="inline">
             Shop
           </Text>
-          <Text
-            fontSize={"24px"}
-            fontWeight="bold"
-            color={"#F7931E"}
-            display="inline"
-          >
+          <Text color={"#F7931E"} display="inline">
             edia
           </Text>
         </Box>
       </Link>
-      <Box display={"flex"} maxW="1190px" mt="20px" pt="50px" mx={"auto"}>
+      <Box
+        display={"flex"}
+        mx={"auto"}
+        mt={{ lg: "20px", md: "10%", base: "10%" }}
+        pt={{ lg: "50px", md: "25%", base: "25%" }}
+        alignItems="center"
+      >
         <Box
           width={"50%"}
           display={{ lg: "flex", md: "none", base: "none" }}
@@ -140,10 +144,22 @@ const RegisterVerification = () => {
             w="400px"
             mx={{ lg: null, md: "auto", base: "auto" }}
             ml={{ lg: "50px", md: null, base: null }}
-            boxShadow={"0 0 10px 0 rgb(0 0 0 / 10%)"}
-            border="1px solid var(--N75,#E5E7E9)"
+            boxShadow={{
+              lg: "0 0 10px 0 rgb(0 0 0 / 10%)",
+              md: "none",
+              base: "none",
+            }}
+            border={{
+              lg: "1px solid var(--N75,#E5E7E9)",
+              md: "none",
+              base: "none",
+            }}
             borderRadius={"3px"}
-            p="24px 40px 32px "
+            p={{
+              lg: "24px 40px 32px ",
+              md: "12px 20px 16px",
+              base: "12px 20px 16px",
+            }}
             textAlign={"center"}
           >
             <Text fontSize="22px" fontWeight={"bold"}>
@@ -232,6 +248,7 @@ const RegisterVerification = () => {
                 w="100%"
                 bgColor={"#0095DA"}
                 _hover={false}
+                _active={false}
                 m="50px 0 0"
                 type="submit"
                 color={"white"}

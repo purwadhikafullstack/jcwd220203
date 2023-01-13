@@ -77,6 +77,7 @@ const Alert = ({
               border="1px solid"
               color={color}
               _hover={false}
+              _active={false}
             >
               {leftButton}
             </Button>
@@ -91,6 +92,7 @@ const Alert = ({
               borderRadius="8px"
               _hover={false}
               textAlign="left"
+              _active={false}
             >
               <Text
                 maxW={"160px"}

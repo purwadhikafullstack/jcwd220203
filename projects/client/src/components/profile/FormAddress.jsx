@@ -336,7 +336,6 @@ const FormAddress = ({
                   !formik.values.districts ||
                   selectedCity === 0 ||
                   selectedProvince === 0
-                  // || formik.errors
                 }
               >
                 Save
