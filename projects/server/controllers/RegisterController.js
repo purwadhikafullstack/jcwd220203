@@ -1,15 +1,15 @@
 const {
   createVerificationToken,
   validateVerificationToken,
-} = require("../Lib/verification");
+} = require("../lib/verification");
 const db = require("../models");
 const User = db.User;
 const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars");
-const emailer = require("../Lib/emailer");
-const { sign } = require("../Lib/verification");
-const { signToken, decode } = require("../Lib/jwt");
+const emailer = require("../lib/emailer");
+const { sign } = require("../lib/verification");
+const { signToken, decode } = require("../lib/jwt");
 const bcrypt = require("bcrypt");
 
 const RegisterController = {
