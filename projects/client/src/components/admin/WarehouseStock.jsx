@@ -334,7 +334,7 @@ const WarehouseStock = ({}) => {
                                         {val.Product.product_name}
                                     </Td>
                                     <Td p="10px">
-                                        {val.Product.Category.category_name}
+                                        {val?.Product?.Category?.category_name}
                                     </Td>
                                     <Td p="10px" fontWeight={"660"} w="200px">
                                         Rp.{" "}
