@@ -4,7 +4,7 @@ const { signToken, decode } = require("../lib/jwt");
 const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars");
-const emailer = require("../Lib/emailer");
+const emailer = require("../lib/emailer");
 
 const User = db.User;
 
