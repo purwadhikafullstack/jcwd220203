@@ -40,7 +40,7 @@ const Password = () => {
 
     const toast = useToast()
     const authSelector = useSelector((state) => state.auth)
-    const apiImg = process.env.REACT_APP_IMAGE_URL
+    const apiImg = process.env.REACT_APP_API_BASE_URL
     const [isLoading, setIsLoading] = useState(false)
 
     const fetchUserData = async () => {

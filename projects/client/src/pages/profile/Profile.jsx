@@ -32,7 +32,7 @@ const Profile = () => {
     const dispatch = useDispatch()
     const toast = useToast()
     const location = useLocation()
-    const apiImg = process.env.REACT_APP_IMAGE_URL
+    const apiImg = process.env.REACT_APP_API_BASE_URL
 
     const refreshPage = () => {
         window.location.reload(false)

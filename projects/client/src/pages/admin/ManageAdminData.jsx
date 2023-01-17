@@ -90,7 +90,7 @@ const ManageAdminData = () => {
     }
   }
 
-  const apiImg = process.env.REACT_APP_IMAGE_URL
+  const apiImg = process.env.REACT_APP_API_BASE_URL
 
   const nextPage = () => {
     setPage(page + 1)
