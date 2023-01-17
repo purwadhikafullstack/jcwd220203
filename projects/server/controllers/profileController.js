@@ -3,8 +3,8 @@ const { Op } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars");
-const emailer = require("../Lib/emailer");
-const { signToken } = require("../Lib/jwt");
+const emailer = require("../lib/emailer");
+const { signToken } = require("../lib/jwt");
 const bcrypt = require("bcrypt");
 
 const User = db.User;
