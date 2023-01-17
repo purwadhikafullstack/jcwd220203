@@ -579,7 +579,7 @@ const AdminOrder = () => {
                     {val.payment_proof ? (
                       <Image
                         w="100px"
-                        src={`${process.env.REACT_APP_IMAGE_URL}/${val.payment_proof}`}
+                        src={`${process.env.REACT_APP_API_BASE_URL}/${val.payment_proof}`}
                         onClick={() => setModalImage(val)}
                       />
                     ) : (
@@ -776,7 +776,7 @@ const AdminOrder = () => {
           <ModalBody p="24px 40px" fontSize={"14px"}>
             <Box textAlign={"center"}>
               <Image
-                src={`${process.env.REACT_APP_IMAGE_URL}/${modalImage?.payment_proof}`}
+                src={`${process.env.REACT_APP_API_BASE_URL}/${modalImage?.payment_proof}`}
               />
             </Box>
           </ModalBody>

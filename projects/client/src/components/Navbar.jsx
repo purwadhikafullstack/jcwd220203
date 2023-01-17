@@ -59,7 +59,7 @@ const Navbar = ({ onChange, onClick, onKeyDown }) => {
     const dispatch = useDispatch()
     const toast = useToast()
     const navigate = useNavigate()
-    const apiImg = process.env.REACT_APP_IMAGE_URL
+    const apiImg = process.env.REACT_APP_API_BASE_URL
     const location = useLocation()
 
     const transSelector = useSelector((state) => state.trans)

@@ -16,7 +16,7 @@ const ImageCard = ({ userData, btnSubmit }) => {
     const [selectImage, setSelectImage] = useState(null)
     const inputFileRef = useRef()
     const authSelector = useSelector((state) => state.auth)
-    const apiImg = process.env.REACT_APP_IMAGE_URL
+    const apiImg = process.env.REACT_APP_API_BASE_URL
 
     return (
         <>

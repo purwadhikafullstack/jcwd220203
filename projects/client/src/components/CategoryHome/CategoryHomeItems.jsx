@@ -36,7 +36,7 @@ const CategoryHomeItems = ({ category_name, category_image }) => {
         textAlign: "center",
     }
 
-    const apiImg = process.env.REACT_APP_IMAGE_URL
+    const apiImg = process.env.REACT_APP_API_BASE_URL
 
     return (
         <GridItem
