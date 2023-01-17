@@ -11,7 +11,7 @@ var fs = require("fs");
 const path = require("path");
 var handlebars = require("handlebars");
 
-var emailer = require("../Lib/emailer");
+var emailer = require("../lib/emailer");
 
 var User = db.User;
 var authController = {
