@@ -72,7 +72,7 @@ const adminOrderHistoryController = {
             ],
           },
           {
-            model: db.Order_status,
+            model: db.Order_Status,
           },
           { model: User },
           { model: Warehouse },

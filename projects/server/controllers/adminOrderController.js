@@ -53,8 +53,8 @@ const adminOrderController = {
                 model: db.User,
                 require: true,
               },
-              { model: db.Order_status },
-              { model: db.Payment_status },
+              { model: db.Order_Status },
+              { model: db.Payment_Status },
               { model: db.Warehouse },
             ],
             where: {
@@ -227,8 +227,8 @@ const adminOrderController = {
                 },
               },
             },
-            { model: db.Order_status },
-            { model: db.Payment_status },
+            { model: db.Order_Status },
+            { model: db.Payment_Status },
             { model: db.Warehouse },
           ],
         });
@@ -246,8 +246,8 @@ const adminOrderController = {
         order: [[_sortBy, _sortDir]],
         include: [
           { model: db.User },
-          { model: db.Order_status },
-          { model: db.Payment_status },
+          { model: db.Order_Status },
+          { model: db.Payment_Status },
           { model: db.Warehouse },
         ],
       });
@@ -266,7 +266,7 @@ const adminOrderController = {
   },
   findOrderStatus: async (req, res) => {
     try {
-      const response = await db.Order_status.findAll();
+      const response = await db.Order_Status.findAll();
 
       return res.status(200).json({
         message: "Find all order status",
@@ -281,7 +281,7 @@ const adminOrderController = {
   },
   findPaymentStatus: async (req, res) => {
     try {
-      const response = await db.Payment_status.findAll();
+      const response = await db.Payment_Status.findAll();
 
       return res.status(200).json({
         message: "Find all payment status",
