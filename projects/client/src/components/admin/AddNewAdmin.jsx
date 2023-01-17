@@ -17,12 +17,12 @@ import {
   ModalOverlay,
   Select,
   Text,
-} from "@chakra-ui/react"
-import { useRef } from "react"
-import { useEffect, useState } from "react"
-import { BiHide, BiShow } from "react-icons/bi"
-import { TbCameraPlus } from "react-icons/tb"
-import { axiosInstance } from "../../api"
+} from "@chakra-ui/react";
+import { useRef } from "react";
+import { useEffect, useState } from "react";
+import { BiHide, BiShow } from "react-icons/bi";
+import { TbCameraPlus } from "react-icons/tb";
+import { axiosInstance } from "../../api";
 
 const AddNewAdmin = ({
   header,
@@ -32,28 +32,28 @@ const AddNewAdmin = ({
   onOpen,
   color,
 }) => {
-  const [selectedImage, setSelectedImage] = useState(null)
-  const inputFileRef = useRef()
-  const [warehouseData, setWarehouseData] = useState([])
-  const [showPassword, setShowPassword] = useState(false)
+  const [selectedImage, setSelectedImage] = useState(null);
+  const inputFileRef = useRef();
+  const [warehouseData, setWarehouseData] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
   const togglePassword = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   const formChangeHandler = ({ target }) => {
-    const { name, value } = target
-    formikAddNewAdmin.setFieldValue(name, value)
-  }
+    const { name, value } = target;
+    formikAddNewAdmin.setFieldValue(name, value);
+  };
 
   const fetchAllWarehouse = async () => {
     try {
-      const response = await axiosInstance.get("/userData/findAllWarehouse")
+      const response = await axiosInstance.get("/userData/findAllWarehouse");
 
-      setWarehouseData(response.data.data)
+      setWarehouseData(response.data.data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const renderWarehouse = () => {
     return warehouseData.map((val) => {
@@ -61,13 +61,13 @@ const AddNewAdmin = ({
         <option key={val.id.toString()} value={val.id.toString()}>
           {val.warehouse_name}
         </option>
-      )
-    })
-  }
+      );
+    });
+  };
 
   useEffect(() => {
-    fetchAllWarehouse()
-  }, [formChangeHandler])
+    fetchAllWarehouse();
+  }, []);
   return (
     <Modal
       isOpen={isOpenAddNewAdmin}
@@ -145,8 +145,8 @@ const AddNewAdmin = ({
                     formikAddNewAdmin.setFieldValue(
                       "profile_picture",
                       e.target.files[0]
-                    )
-                    setSelectedImage(URL.createObjectURL(e.target.files[0]))
+                    );
+                    setSelectedImage(URL.createObjectURL(e.target.files[0]));
                   }}
                   accept="image/*"
                   name="profile_picture"
@@ -294,7 +294,7 @@ const AddNewAdmin = ({
         </ModalContent>
       </form>
     </Modal>
-  )
-}
+  );
+};
 
-export default AddNewAdmin
+export default AddNewAdmin;
