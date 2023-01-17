@@ -56,7 +56,7 @@ const adminProductController = {
     try {
       const { product_name, description, product_weight, price, CategoryId } =
         req.body;
-      const image_url = `${process.env.REACT_APP_API_BASE_URL}/${req.file.filename}`;
+      const image_url = `${process.env.SERVER_URL}/${req.file.filename}`;
 
       const addProductData = await Product.create({
         product_name,
@@ -92,7 +92,7 @@ const adminProductController = {
   },
   addImages: async (req, res) => {
     try {
-      const image_url = `${process.env.REACT_APP_API_BASE_URL}/${req.file.filename}`;
+      const image_url = `${process.env.SERVER_URL}/${req.file.filename}`;
 
       await db.Image_Url.create({
         image_url,
