@@ -44,15 +44,17 @@ const AdminSalesReport = () => {
     try {
       let url = `/admin/sales-report/get`;
 
-      if (authSelector.WarehouseId) {
-        url += `?WarehouseId=${authSelector.WarehouseId}`;
-      }
-      console.log("url", url);
+      // if (authSelector.WarehouseId) {
+      //   url += `?WarehouseId=${authSelector.WarehouseId}`;
+      // }
+      // console.log("url", url);
       const response = await axiosInstance.get(url, {
         params: {
           _page: page,
           _limit: maxItemsPerPage,
-          WarehouseId: filterWarehouse,
+          WarehouseId: authSelector.WarehouseId
+            ? authSelector.WarehouseId
+            : filterWarehouse,
           CategoryId: filterCategory,
           createdAt: filterMonth,
           product_name: searchValue,

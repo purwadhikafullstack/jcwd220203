@@ -6,7 +6,7 @@ const paginationData = require("../lib/sales/paginationData");
 const salesReportController = {
   getReport: async (req, res) => {
     const CategoryId = req.query.CategoryId;
-    const WarehouseId = req.query.WarehouseId[0];
+    const WarehouseId = req.query.WarehouseId;
     const {
       createdAt,
       product_name = "",
