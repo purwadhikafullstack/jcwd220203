@@ -225,10 +225,34 @@ const adminOrderController = {
                     },
                   }
                 : {}),
-              PaymentStatusId,
-              OrderStatusId,
-              payment_method,
-              WarehouseId,
+              ...(Number(PaymentStatusId)
+                ? {
+                    [Op.and]: {
+                      PaymentStatusId,
+                    },
+                  }
+                : {}),
+              ...(Number(OrderStatusId)
+                ? {
+                    [Op.and]: {
+                      OrderStatusId,
+                    },
+                  }
+                : {}),
+              ...(Number(WarehouseId)
+                ? {
+                    [Op.and]: {
+                      WarehouseId,
+                    },
+                  }
+                : {}),
+              ...(payment_method
+                ? {
+                    [Op.and]: {
+                      payment_method,
+                    },
+                  }
+                : {}),
             },
           },
         });

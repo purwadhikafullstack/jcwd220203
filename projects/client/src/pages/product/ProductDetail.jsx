@@ -93,7 +93,6 @@ const ProductDetail = ({ product_name, id }) => {
       onOpen();
     }
   };
-  console.log(cartItemQuantity);
 
   const fetchCartByProductId = async () => {
     try {
