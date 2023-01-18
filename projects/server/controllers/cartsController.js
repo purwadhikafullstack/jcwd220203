@@ -169,7 +169,7 @@ const cartsController = {
       }
 
       if (!quantity) {
-        await Cart.update(
+        const addProductToCart = await Cart.update(
           {
             quantity: findProductinCart.quantity + 1,
             note: note,
@@ -182,13 +182,30 @@ const cartsController = {
           }
         );
 
+        const findCart = await Cart.findByPk(addProductToCart.id, {
+          include: [
+            {
+              model: db.Product,
+              include: [
+                {
+                  model: db.Image_Url,
+                },
+                {
+                  model: db.Total_Stock,
+                },
+              ],
+            },
+          ],
+        });
+
         return res.status(200).json({
           message: "Cart item added",
+          data: findCart,
         });
       }
 
       if (quantity) {
-        await Cart.update(
+        const addProductToCart = await Cart.update(
           {
             quantity: findProductinCart.quantity + quantity,
             note: note,
@@ -201,8 +218,25 @@ const cartsController = {
           }
         );
 
+        const findCart = await Cart.findByPk(addProductToCart.id, {
+          include: [
+            {
+              model: db.Product,
+              include: [
+                {
+                  model: db.Image_Url,
+                },
+                {
+                  model: db.Total_Stock,
+                },
+              ],
+            },
+          ],
+        });
+
         return res.status(200).json({
           message: "Cart item added",
+          data: findCart,
         });
       }
     } catch (err) {
@@ -351,7 +385,7 @@ const cartsController = {
         });
       }
 
-      await Cart.update(
+      const addQuantityToCart = await Cart.update(
         {
           quantity: findCartByid.quantity + 1,
         },
@@ -363,8 +397,25 @@ const cartsController = {
         }
       );
 
+      const findCart = await Cart.findByPk(addQuantityToCart.id, {
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+      });
+
       return res.status(200).json({
         message: "Increment quantity",
+        data: findCart,
       });
     } catch (err) {
       console.log(err);
@@ -382,7 +433,7 @@ const cartsController = {
         });
       }
 
-      await Cart.update(
+      const addQuantityToCart = await Cart.update(
         {
           quantity: findCartByid.quantity - 1,
         },
@@ -394,8 +445,25 @@ const cartsController = {
         }
       );
 
+      const findCart = await Cart.findByPk(addQuantityToCart.id, {
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+      });
+
       return res.status(200).json({
         message: "decrement quantity",
+        data: findCart,
       });
     } catch (err) {
       console.log(err);

@@ -80,6 +80,19 @@ const adminOrderController = {
           limit: Number(_limit),
           offset: (_page - 1) * _limit,
           order: [[_sortBy, _sortDir]],
+          include: [
+            {
+              model: db.User,
+              where: {
+                username: {
+                  [Op.like]: `%${username}%`,
+                },
+              },
+            },
+            { model: db.Order_status },
+            { model: db.Payment_status },
+            { model: db.Warehouse },
+          ],
           where: {
             transaction_name: {
               [Op.like]: `%${transaction_name}%`,
@@ -218,19 +231,6 @@ const adminOrderController = {
               WarehouseId,
             },
           },
-          include: [
-            {
-              model: db.User,
-              where: {
-                username: {
-                  [Op.like]: `%${username}%`,
-                },
-              },
-            },
-            { model: db.Order_status },
-            { model: db.Payment_status },
-            { model: db.Warehouse },
-          ],
         });
 
         return res.status(200).json({

@@ -23,9 +23,14 @@ import { axiosInstance } from "../../api";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MdModeEdit } from "react-icons/md";
 import ResponsiveProductDetail from "./ResponsiveProdutcDetail";
+import {
+  addItemToCart,
+  fillCart,
+  getTotalCartQuantity,
+} from "../../redux/features/cartSlice";
 
 const ProductDetail = ({ product_name, id }) => {
   const [productDetail, setProductDetail] = useState([]);
@@ -36,6 +41,7 @@ const ProductDetail = ({ product_name, id }) => {
   const [addNote, setAddNote] = useState(false);
   const [inputNote, setInputNote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const authSelector = useSelector((state) => state.auth);
 
@@ -87,6 +93,7 @@ const ProductDetail = ({ product_name, id }) => {
       onOpen();
     }
   };
+  console.log(cartItemQuantity);
 
   const fetchCartByProductId = async () => {
     try {
@@ -99,6 +106,26 @@ const ProductDetail = ({ product_name, id }) => {
       } else {
         setCartItemQuantity(response.data.data.quantity);
       }
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchMyCart = async () => {
+    try {
+      const response = await axiosInstance.get("/carts/me");
+      dispatch(fillCart(response.data.data));
+
+      const cartQuantity = response.data.data.map((val) => val.quantity);
+
+      let Total = 0;
+
+      for (let i = 0; i < cartQuantity.length; i++) {
+        Total += Number(cartQuantity[i]);
+      }
+
+      dispatch(getTotalCartQuantity(Total));
     } catch (err) {
       console.log(err);
     }
@@ -112,13 +139,15 @@ const ProductDetail = ({ product_name, id }) => {
         note: inputNote,
       };
 
-      await axiosInstance.post("/carts", addToCart);
+      const response = await axiosInstance.post("/carts", addToCart);
 
+      dispatch(addItemToCart(response.data.data));
       toast({
         title: "Cart Items Added",
         status: "success",
       });
 
+      fetchMyCart();
       fetchCartByProductId();
     } catch (err) {
       console.log(err);
@@ -145,16 +174,20 @@ const ProductDetail = ({ product_name, id }) => {
         quantity: addQuantity,
         note: inputNote,
       };
-      await axiosInstance.patch(
+      const response = await axiosInstance.patch(
         `/carts/addCartItems/${productId}`,
         newQuantity
       );
+
+      dispatch(addItemToCart(response.data.data));
+
       toast({
         title: "Cart Items Added",
         status: "success",
       });
 
       fetchCartByProductId();
+      fetchMyCart();
     } catch (err) {
       console.log(err);
 
@@ -182,9 +215,12 @@ const ProductDetail = ({ product_name, id }) => {
   };
 
   useEffect(() => {
-    fetchCartByProductId();
     fetchProductDetail();
-  }, [cartItemQuantity, addQuantity]);
+  }, []);
+
+  useEffect(() => {
+    isLoading && fetchCartByProductId();
+  }, [cartItemQuantity, productDetail, addQuantity]);
   return (
     <>
       <Box
