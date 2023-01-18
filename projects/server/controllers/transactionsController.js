@@ -344,7 +344,7 @@ const transactionsController = {
                     on p.id = ti.ProductId
                     join Transactions t
                     on ti.TransactionId = t.id
-                    join Order_Statuses os
+                    join Order_statuses os
                     where (p.product_name Like '%${keyword}%' or t.transaction_name Like '%${keyword}%') && UserId =${req.user.id} && is_paid=true && 
                     (t.OrderStatusId = 1 or t.OrderStatusId = 2 or t.OrderStatusId = 3 or t.OrderStatusId = 4)
                     group by t.id;`
@@ -403,7 +403,7 @@ const transactionsController = {
                     on p.id = ti.ProductId
                     join Transactions t
                     on ti.TransactionId = t.id
-                    join Order_Statuses os
+                    join Order_statuses os
                     on t.OrderStatusId = os.id
                     where (p.product_name Like '%${keyword}%' or t.transaction_name Like '%${keyword}%') && is_paid=true && UserId = ${req.user.id} &&
                     order_status_name like '${status}';`
@@ -516,7 +516,7 @@ const transactionsController = {
       if (status === "On Going") {
         const getDataQuery = await db.sequelize.query(
           `select os.order_status_name status,t.UserId,t.is_paid,t.id from Transactions t
-                    join Order_Statuses os
+                    join Order_statuses os
                     on os.id = t.OrderStatusId
                     where (order_status_name like 'Awaiting Confirmation' or order_status_name like 'Processed' 
                     or order_status_name like 'Shipping' or order_status_name like 'Delivered') && is_paid = true && UserId = ${req.user.id};`
@@ -569,7 +569,7 @@ const transactionsController = {
       if (status) {
         const getDataQuery = await db.sequelize.query(
           `select os.order_status_name status,t.UserId,t.is_paid,t.id from Transactions t
-                    join Order_Statuses os
+                    join Order_statuses os
                     on os.id = t.OrderStatusId
                     where order_status_name like '%${status}%' && is_paid = true && UserId = ${req.user.id};`
         );
@@ -762,8 +762,33 @@ const transactionsController = {
         }
       );
 
+      const MyTransactionList = await Transaction.findAll({
+        include: [
+          {
+            model: TransactionItem,
+            include: [
+              {
+                model: db.Product,
+                include: [
+                  {
+                    model: db.Image_Url,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            model: db.Order_status,
+          },
+        ],
+        where: {
+          UserId: req.user.id,
+        },
+      });
+
       return res.status(200).json({
         message: "Order finished",
+        data: MyTransactionList,
       });
     } catch (err) {
       console.log(err);
@@ -772,7 +797,6 @@ const transactionsController = {
       });
     }
   },
-
   cancelUnpaidTransactionHandler: async (req, res) => {
     try {
       const { transaction_name } = req.params;
@@ -818,8 +842,33 @@ const transactionsController = {
         }
       );
 
+      const MyTransactionList = await Transaction.findAll({
+        include: [
+          {
+            model: TransactionItem,
+            include: [
+              {
+                model: db.Product,
+                include: [
+                  {
+                    model: db.Image_Url,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            model: db.Order_status,
+          },
+        ],
+        where: {
+          UserId: req.user.id,
+        },
+      });
+
       return res.status(200).json({
         message: "You have successfully canceled this transaction",
+        data: MyTransactionList,
       });
     } catch (err) {
       console.log(err);

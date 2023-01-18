@@ -13,55 +13,55 @@ import {
   Tr,
   useDisclosure,
   useToast,
-} from "@chakra-ui/react"
-import { useFormik } from "formik"
-import React, { useEffect } from "react"
-import { useState } from "react"
-import { axiosInstance } from "../../api"
-import * as Yup from "yup"
-import AddNewAdmin from "../../components/admin/AddNewAdmin"
-import Alert from "../../components/profile/Alert"
-import EditAdmin from "../../components/admin/EditAdmin"
-import { IoIosAlert } from "react-icons/io"
-import { BiEdit } from "react-icons/bi"
-import { RiDeleteBin2Fill } from "react-icons/ri"
-import { GoDiffAdded } from "react-icons/go"
-import LoadingManageAdmin from "../../components/loading/LoadingManageAdmin"
-import Search from "../../components/Search"
-import Pagination from "../../components/admin/Pagination"
+} from "@chakra-ui/react";
+import { useFormik } from "formik";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { axiosInstance } from "../../api";
+import * as Yup from "yup";
+import AddNewAdmin from "../../components/admin/AddNewAdmin";
+import Alert from "../../components/profile/Alert";
+import EditAdmin from "../../components/admin/EditAdmin";
+import { IoIosAlert } from "react-icons/io";
+import { BiEdit } from "react-icons/bi";
+import { RiDeleteBin2Fill } from "react-icons/ri";
+import { GoDiffAdded } from "react-icons/go";
+import LoadingManageAdmin from "../../components/loading/LoadingManageAdmin";
+import Search from "../../components/Search";
+import Pagination from "../../components/admin/Pagination";
 
 const ManageAdminData = () => {
-  const [userData, setUserData] = useState([])
-  const cancelRef = React.useRef()
-  const [currentSearch, setCurrentSearch] = useState("")
-  const [totalCount, setTotalCount] = useState(0)
-  const [sortBy, setSortBy] = useState("username")
-  const [sortDir, setSortDir] = useState("ASC")
-  const [page, setPage] = useState(1)
-  const [maxPage, setMaxPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
-  const toast = useToast()
+  const [userData, setUserData] = useState([]);
+  const cancelRef = React.useRef();
+  const [currentSearch, setCurrentSearch] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+  const [sortBy, setSortBy] = useState("username");
+  const [sortDir, setSortDir] = useState("ASC");
+  const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
 
   const {
     isOpen: isOpenAddNewAdmin,
     onOpen: onOpenAddNewAdmin,
     onClose: onCloseAddNewAdmin,
-  } = useDisclosure()
+  } = useDisclosure();
 
-  const { onOpen, isOpen, onClose } = useDisclosure()
+  const { onOpen, isOpen, onClose } = useDisclosure();
 
   const {
     onOpen: onOpenAlert,
     isOpen: isOpenAlert,
     onClose: onCloseAlert,
-  } = useDisclosure()
+  } = useDisclosure();
 
-  const [openedEdit, setOpenedEdit] = useState(null)
-  const [selectedImage, setSelectedImage] = useState(null)
-  const [deleteAlert, setDeleteAlert] = useState(null)
+  const [openedEdit, setOpenedEdit] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [deleteAlert, setDeleteAlert] = useState(null);
 
   const fetchAdminData = async () => {
-    const maxItemsPerPage = 5
+    const maxItemsPerPage = 5;
     try {
       const response = await axiosInstance.get(
         "/userData/getAllWarehouseAdmin",
@@ -74,33 +74,33 @@ const ManageAdminData = () => {
             _sortDir: sortDir,
           },
         }
-      )
+      );
 
-      setTotalCount(response.data.dataCount)
-      setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage))
+      setTotalCount(response.data.dataCount);
+      setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage));
 
       if (page === 1) {
-        setUserData(response.data.data)
+        setUserData(response.data.data);
       } else {
-        setUserData(response.data.data)
+        setUserData(response.data.data);
       }
-      setIsLoading(true)
+      setIsLoading(true);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  const apiImg = process.env.REACT_APP_API_BASE_URL
+  const apiImg = process.env.REACT_APP_API_BASE_URL;
 
   const nextPage = () => {
-    setPage(page + 1)
-    setIsLoading(false)
-  }
+    setPage(page + 1);
+    setIsLoading(false);
+  };
 
   const previousPage = () => {
-    setPage(page - 1)
-    setIsLoading(false)
-  }
+    setPage(page - 1);
+    setIsLoading(false);
+  };
 
   const formikAddNewAdmin = useFormik({
     initialValues: {
@@ -119,55 +119,55 @@ const ManageAdminData = () => {
       WarehouseId,
     }) => {
       try {
-        const adminData = new FormData()
+        const adminData = new FormData();
 
         if (email) {
-          adminData.append("email", email)
+          adminData.append("email", email);
         }
 
         if (password) {
-          adminData.append("password", password)
+          adminData.append("password", password);
         }
 
         if (phone_number) {
-          adminData.append("phone_number", phone_number)
+          adminData.append("phone_number", phone_number);
         }
 
         if (profile_picture) {
-          adminData.append("profile_picture", profile_picture)
+          adminData.append("profile_picture", profile_picture);
         }
 
         if (username) {
-          adminData.append("username", username)
+          adminData.append("username", username);
         }
 
         if (WarehouseId) {
-          adminData.append("WarehouseId", WarehouseId)
+          adminData.append("WarehouseId", WarehouseId);
         }
 
         const response = await axiosInstance.post(
           "/userData/addNewAdmin",
           adminData
-        )
+        );
 
         toast({
           title: "Registration Success",
           description: response.data.message,
           status: "success",
-        })
-        formikAddNewAdmin.setFieldValue("email", "")
-        formikAddNewAdmin.setFieldValue("password", "")
-        formikAddNewAdmin.setFieldValue("phone_number", "")
-        formikAddNewAdmin.setFieldValue("username", "")
-        formikAddNewAdmin.setFieldValue("WarehouseId", "")
-        fetchAdminData()
+        });
+        formikAddNewAdmin.setFieldValue("email", "");
+        formikAddNewAdmin.setFieldValue("password", "");
+        formikAddNewAdmin.setFieldValue("phone_number", "");
+        formikAddNewAdmin.setFieldValue("username", "");
+        formikAddNewAdmin.setFieldValue("WarehouseId", "");
+        fetchAdminData();
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast({
           title: "Registration Failed",
           description: error.response.data.message,
           status: "error",
-        })
+        });
       }
     },
     validationSchema: Yup.object({
@@ -183,7 +183,7 @@ const ManageAdminData = () => {
       username: Yup.string().required().min(3),
     }),
     validateOnChange: false,
-  })
+  });
 
   const editFormik = useFormik({
     initialValues: {
@@ -198,47 +198,47 @@ const ManageAdminData = () => {
       WarehouseId,
     }) => {
       try {
-        const adminData = new FormData()
+        const adminData = new FormData();
 
         if (phone_number) {
-          adminData.append("phone_number", phone_number)
+          adminData.append("phone_number", phone_number);
         }
 
         if (profile_picture) {
-          adminData.append("profile_picture", profile_picture)
+          adminData.append("profile_picture", profile_picture);
         }
 
         if (username) {
-          adminData.append("username", username)
+          adminData.append("username", username);
         }
 
         if (WarehouseId) {
-          adminData.append("WarehouseId", WarehouseId)
+          adminData.append("WarehouseId", WarehouseId);
         }
 
         const response = await axiosInstance.patch(
           `/userData/editAdmin/${openedEdit.id}`,
           adminData
-        )
+        );
         toast({
           title: "Admin Edited",
           description: response.data.message,
           status: "success",
-        })
+        });
 
-        editFormik.setFieldValue("phone_number", "")
-        editFormik.setFieldValue("profile_picture", "")
-        editFormik.setFieldValue("username", "")
-        editFormik.setFieldValue("WarehouseId", "")
-        fetchAdminData()
-        setOpenedEdit(null)
+        editFormik.setFieldValue("phone_number", "");
+        editFormik.setFieldValue("profile_picture", "");
+        editFormik.setFieldValue("username", "");
+        editFormik.setFieldValue("WarehouseId", "");
+        fetchAdminData();
+        setOpenedEdit(null);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast({
           title: "Failed Edit Admin",
           description: error.response.data.message,
           status: "error",
-        })
+        });
       }
     },
     validationSchema: Yup.object({
@@ -246,71 +246,71 @@ const ManageAdminData = () => {
       username: Yup.string().min(3),
     }),
     validateOnChange: false,
-  })
+  });
 
   const deleteAdminHandler = async (id) => {
     try {
-      await axiosInstance.delete(`/userData/deleteAdmin/${id}`)
+      await axiosInstance.delete(`/userData/deleteAdmin/${id}`);
 
-      fetchAdminData()
+      fetchAdminData();
 
       toast({
         title: "Admin Deleted",
         status: "info",
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast({
         title: "Failed Delete Admin",
         description: error.response.data.message,
         status: "error",
-      })
+      });
     }
-  }
+  };
 
   const formikSearch = useFormik({
     initialValues: {
       search: "",
     },
     onSubmit: ({ search }) => {
-      setCurrentSearch(search)
-      setPage(1)
-      setIsLoading(false)
+      setCurrentSearch(search);
+      setPage(1);
+      setIsLoading(false);
     },
-  })
+  });
 
   const searchHandler = ({ target }) => {
-    const { name, value } = target
-    formikSearch.setFieldValue(name, value)
-  }
+    const { name, value } = target;
+    formikSearch.setFieldValue(name, value);
+  };
   const sortCategoryHandler = ({ target }) => {
-    const { value } = target
-    setSortBy(value.split(" ")[0])
-    setSortDir(value.split(" ")[1])
-    setIsLoading(false)
-  }
+    const { value } = target;
+    setSortBy(value.split(" ")[0]);
+    setSortDir(value.split(" ")[1]);
+    setIsLoading(false);
+  };
   const doubleOnClick = () => {
-    onClose()
-    onCloseAddNewAdmin()
-    formikAddNewAdmin.handleSubmit()
-    setIsLoading(false)
-  }
+    onClose();
+    onCloseAddNewAdmin();
+    formikAddNewAdmin.handleSubmit();
+    setIsLoading(false);
+  };
 
   const doubleOnClick1 = () => {
-    editFormik.handleSubmit()
-    onCloseAlert()
-    setSelectedImage(null)
-    setIsLoading(false)
-  }
+    editFormik.handleSubmit();
+    onCloseAlert();
+    setSelectedImage(null);
+    setIsLoading(false);
+  };
 
   const doubleOnClick2 = () => {
-    setDeleteAlert(null)
-    deleteAdminHandler(deleteAlert.id)
-    setIsLoading(false)
-  }
+    setDeleteAlert(null);
+    deleteAdminHandler(deleteAlert.id);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    fetchAdminData()
+    fetchAdminData();
   }, [
     openedEdit,
     deleteAlert,
@@ -319,17 +319,17 @@ const ManageAdminData = () => {
     page,
     sortDir,
     sortBy,
-  ])
+  ]);
 
   useEffect(() => {
     if (openedEdit) {
-      editFormik.setFieldValue("email", openedEdit.email)
-      editFormik.setFieldValue("phone_number", openedEdit.phone_number)
-      editFormik.setFieldValue("profile_picture", openedEdit.profile_picture)
-      editFormik.setFieldValue("username", openedEdit.username)
-      editFormik.setFieldValue("WarehouseId", openedEdit.WarehouseId)
+      editFormik.setFieldValue("email", openedEdit.email);
+      editFormik.setFieldValue("phone_number", openedEdit.phone_number);
+      editFormik.setFieldValue("profile_picture", openedEdit.profile_picture);
+      editFormik.setFieldValue("username", openedEdit.username);
+      editFormik.setFieldValue("WarehouseId", openedEdit.WarehouseId);
     }
-  }, [openedEdit])
+  }, [openedEdit]);
   return (
     <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} h="100vh">
       <Box mb="16px">
@@ -442,7 +442,7 @@ const ManageAdminData = () => {
                     </Box>
                   </Td>
                 </Tr>
-              )
+              );
             })}
           {isLoading === false ? <LoadingManageAdmin /> : null}
         </Tbody>
@@ -527,6 +527,6 @@ const ManageAdminData = () => {
         previousPage={previousPage}
       />
     </Box>
-  )
-}
-export default ManageAdminData
+  );
+};
+export default ManageAdminData;

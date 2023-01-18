@@ -28,10 +28,15 @@ import noTransaction from "../../assets/noTransaction.png";
 import Pagination from "./Pagination";
 import { useFormik } from "formik";
 import { HiOutlineArrowLeft } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fillPaidTrans,
+  fillTrans,
+  fillUnpaidTrans,
+} from "../../redux/features/transSlice";
 
 const TransactionList = () => {
   const [transactionList, setTransactionList] = useState([]);
-  const [unpaidTransaction, setUnpaidTransaction] = useState([]);
   const [payment, setPayment] = useState(true);
   const [goingOn, setGoingOn] = useState(false);
   const [status, setStatus] = useState("");
@@ -42,7 +47,6 @@ const TransactionList = () => {
   const [maxPage, setMaxPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [transData, setTransData] = useState([]);
   const [transactionSort, setTransactionSort] = useState("All Transaction");
   const [sortBy, setSortBy] = useState("id");
   const [sortDir, setSortDir] = useState("Desc");
@@ -57,6 +61,21 @@ const TransactionList = () => {
   const transaction_page = query.get("page");
 
   let search_keyword = query.get("keyword");
+
+  const dispatch = useDispatch();
+
+  const transSelector = useSelector((state) => state.trans);
+
+  const fetchAllTransaction = async () => {
+    try {
+      const response = await axiosInstance.get(
+        "/transactions/all-transaction-list"
+      );
+      dispatch(fillTrans(response.data.data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const fetchMyTransactionList = async () => {
     const maxItemsPerPage = 10;
@@ -74,7 +93,7 @@ const TransactionList = () => {
         }
       );
 
-      setTransData(response.data.data);
+      dispatch(fillPaidTrans(response.data.data));
       setPageCount(response.data.data.map((val) => val.id).length);
       setCount(response.data.dataCount);
       setMaxItemsPage(maxItemsPerPage);
@@ -92,7 +111,7 @@ const TransactionList = () => {
         "/transactions/unpaid-transaction"
       );
 
-      setUnpaidTransaction(response.data.data);
+      dispatch(fillUnpaidTrans(response.data.data));
     } catch (err) {
       console.log(err);
     }
@@ -147,8 +166,6 @@ const TransactionList = () => {
     searchFormik.setFieldValue(name, value);
     setInputSearch(value);
   };
-
-  console.log(inputSearch);
 
   // status
   const allBtnHandler = () => {
@@ -411,10 +428,6 @@ const TransactionList = () => {
     setSearchParam("");
   };
 
-  console.log("IS", inputSearch);
-  console.log("SF", searchFormik.values.search);
-  console.log("SK", search_keyword);
-
   // change page
   const nextPageBtn = () => {
     setPage(page + 1);
@@ -581,6 +594,7 @@ const TransactionList = () => {
           shippingFee={val.shipping_fee}
           fetchMyTransactionList={fetchMyTransactionList}
           transactionId={val.id}
+          fetchAllTransaction={fetchAllTransaction}
         />
       );
     });
@@ -598,6 +612,7 @@ const TransactionList = () => {
     }
     fetchMyTransactionList();
     fetchUnpaidTransaction();
+    fetchAllTransaction();
     if (search_keyword) {
       setPayment(false);
     }
@@ -608,7 +623,7 @@ const TransactionList = () => {
     if (transaction_page) {
       setPage(transaction_page);
     }
-  }, [transData]);
+  }, [order_status, sortBy, sortDir, search_keyword, transaction_page]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -1130,7 +1145,9 @@ const TransactionList = () => {
                       fontSize={"10px "}
                       fontFamily={"Open Sauce One, sans-serif"}
                       bgColor={
-                        unpaidTransaction.length === 0 ? null : "#ef144a"
+                        transSelector.unpaidTrans.length === 0
+                          ? null
+                          : "#ef144a"
                       }
                       p={"0px 2px"}
                       minW={"15px"}
@@ -1141,9 +1158,9 @@ const TransactionList = () => {
                       color={"#fff"}
                       display={"inline-block"}
                     >
-                      {unpaidTransaction.length === 0
+                      {transSelector.unpaidTrans.length === 0
                         ? null
-                        : unpaidTransaction.length}
+                        : transSelector.unpaidTrans.length}
                     </Text>
                     <MdOutlineKeyboardArrowRight
                       style={{
@@ -1485,7 +1502,9 @@ const TransactionList = () => {
               <Text
                 fontSize={"10px "}
                 fontFamily={"Open Sauce One, sans-serif"}
-                bgColor={unpaidTransaction.length === 0 ? null : "#ef144a"}
+                bgColor={
+                  transSelector.unpaidTrans.length === 0 ? null : "#ef144a"
+                }
                 p={"0px 2px"}
                 minW={"15px"}
                 h={"16px"}
@@ -1495,9 +1514,9 @@ const TransactionList = () => {
                 color={"#fff"}
                 display={"inline-block"}
               >
-                {unpaidTransaction.length === 0
+                {transSelector.unpaidTrans.length === 0
                   ? null
-                  : unpaidTransaction.length}
+                  : transSelector.unpaidTrans.length}
               </Text>
               <MdOutlineKeyboardArrowRight
                 style={{

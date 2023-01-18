@@ -17,14 +17,14 @@ import {
   Select,
   Text,
   useDisclosure,
-} from "@chakra-ui/react"
-import { useRef } from "react"
-import React, { useState } from "react"
-import { CgClose } from "react-icons/cg"
-import { TbCameraPlus } from "react-icons/tb"
-import Alert from "../profile/Alert"
-import { axiosInstance } from "../../api"
-import { useEffect } from "react"
+} from "@chakra-ui/react";
+import { useRef } from "react";
+import React, { useState } from "react";
+import { CgClose } from "react-icons/cg";
+import { TbCameraPlus } from "react-icons/tb";
+import Alert from "../profile/Alert";
+import { axiosInstance } from "../../api";
+import { useEffect } from "react";
 
 const EditAdmin = ({
   isOpen,
@@ -35,33 +35,33 @@ const EditAdmin = ({
   onOpen,
   onCloseMod,
 }) => {
-  const [selectedImage, setSelectedImage] = useState(null)
-  const [warehouseData, setWarehouseData] = useState([])
-  const inputFileRef = useRef()
-  const cancelRef = React.useRef()
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [warehouseData, setWarehouseData] = useState([]);
+  const inputFileRef = useRef();
+  const cancelRef = React.useRef();
   const doubleOnClick = () => {
-    onCloseExitAlert()
-    onCloseMod()
-  }
+    onCloseExitAlert();
+    onCloseMod();
+  };
   const {
     isOpen: isOpenExitAlert,
     onOpen: onOpenExitAlert,
     onClose: onCloseExitAlert,
-  } = useDisclosure()
+  } = useDisclosure();
   const editFormChangeHandler = ({ target }) => {
-    const { name, value } = target
-    editFormik.setFieldValue(name, value)
-  }
+    const { name, value } = target;
+    editFormik.setFieldValue(name, value);
+  };
 
   const fetchAllWarehouse = async () => {
     try {
-      const response = await axiosInstance.get("/userData/findAllWarehouse")
+      const response = await axiosInstance.get("/userData/findAllWarehouse");
 
-      setWarehouseData(response.data.data)
+      setWarehouseData(response.data.data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const renderWarehouse = () => {
     return warehouseData.map((val) => {
@@ -69,13 +69,13 @@ const EditAdmin = ({
         <option key={val.id.toString()} value={val.id.toString()}>
           {val.warehouse_name}
         </option>
-      )
-    })
-  }
+      );
+    });
+  };
 
   useEffect(() => {
-    fetchAllWarehouse()
-  }, [editFormChangeHandler])
+    fetchAllWarehouse();
+  }, []);
   return (
     <>
       <Modal
@@ -167,8 +167,8 @@ const EditAdmin = ({
                       editFormik.setFieldValue(
                         "profile_picture",
                         e.target.files[0]
-                      )
-                      setSelectedImage(URL.createObjectURL(e.target.files[0]))
+                      );
+                      setSelectedImage(URL.createObjectURL(e.target.files[0]));
                     }}
                     accept="image/*"
                     name="profile_picture"
@@ -293,7 +293,7 @@ const EditAdmin = ({
         color={color}
       />
     </>
-  )
-}
+  );
+};
 
-export default EditAdmin
+export default EditAdmin;

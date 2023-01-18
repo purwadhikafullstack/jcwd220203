@@ -15,59 +15,65 @@ import {
   AlertDialogFooter,
   useDisclosure,
   CircularProgress,
-} from "@chakra-ui/react"
-import { useEffect } from "react"
-import { useState } from "react"
-import { Link, useLocation, useParams } from "react-router-dom"
-import { axiosInstance } from "../../api"
-import { Carousel } from "react-responsive-carousel"
-import "react-responsive-carousel/lib/styles/carousel.min.css"
-import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai"
-import { useSelector } from "react-redux"
-import { MdModeEdit } from "react-icons/md"
-import ResponsiveProductDetail from "./ResponsiveProdutcDetail"
+} from "@chakra-ui/react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { axiosInstance } from "../../api";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { MdModeEdit } from "react-icons/md";
+import ResponsiveProductDetail from "./ResponsiveProdutcDetail";
+import {
+  addItemToCart,
+  fillCart,
+  getTotalCartQuantity,
+} from "../../redux/features/cartSlice";
 
 const ProductDetail = ({ product_name, id }) => {
-  const [productDetail, setProductDetail] = useState([])
-  const [image, setImage] = useState([])
-  const [stock, setStock] = useState([])
-  const [productId, setProductId] = useState([])
-  const [cartItemQuantity, setCartItemQuantity] = useState(null)
-  const [addNote, setAddNote] = useState(false)
-  const [inputNote, setInputNote] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [productDetail, setProductDetail] = useState([]);
+  const [image, setImage] = useState([]);
+  const [stock, setStock] = useState([]);
+  const [productId, setProductId] = useState([]);
+  const [cartItemQuantity, setCartItemQuantity] = useState(null);
+  const [addNote, setAddNote] = useState(false);
+  const [inputNote, setInputNote] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
-  const authSelector = useSelector((state) => state.auth)
+  const authSelector = useSelector((state) => state.auth);
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const toast = useToast()
+  const toast = useToast();
 
-  const location = useLocation()
+  const location = useLocation();
 
-  const params = useParams()
+  const params = useParams();
 
   const fetchProductDetail = async () => {
     try {
-      const response = await axiosInstance.get(`/product/${params.id}`)
-      setProductDetail(response.data.data)
-      setImage(response.data.data.Image_Urls)
-      setProductId(response.data.data.id)
+      const response = await axiosInstance.get(`/product/${params.id}`);
+      setProductDetail(response.data.data);
+      setImage(response.data.data.Image_Urls);
+      setProductId(response.data.data.id);
 
-      const cartStock = response.data.data.Total_Stocks.map((val) => val.stock)
+      const cartStock = response.data.data.Total_Stocks.map((val) => val.stock);
 
-      let Total = 0
+      let Total = 0;
 
       for (let i = 0; i < cartStock.length; i++) {
-        Total += Number(cartStock[i])
+        Total += Number(cartStock[i]);
       }
 
-      setStock(Total)
-      setIsLoading(true)
+      setStock(Total);
+      setIsLoading(true);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } =
     useNumberInput({
@@ -75,34 +81,55 @@ const ProductDetail = ({ product_name, id }) => {
       defaultValue: 1,
       min: 1,
       max: stock,
-    })
+    });
 
-  const inc = getIncrementButtonProps()
-  const dec = getDecrementButtonProps()
-  const input = getInputProps()
-  const addQuantity = Number(input.value)
+  const inc = getIncrementButtonProps();
+  const dec = getDecrementButtonProps();
+  const input = getInputProps();
+  const addQuantity = Number(input.value);
 
   const userMustLogin = () => {
     if (!authSelector.id) {
-      onOpen()
+      onOpen();
     }
-  }
+  };
+  console.log(cartItemQuantity);
 
   const fetchCartByProductId = async () => {
     try {
       const response = await axiosInstance.get(
         `/carts/cartBy/ProductId/${productId}`
-      )
+      );
 
       if (response.data.data === null) {
-        setCartItemQuantity(null)
+        setCartItemQuantity(null);
       } else {
-        setCartItemQuantity(response.data.data.quantity)
+        setCartItemQuantity(response.data.data.quantity);
       }
+      console.log(response);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
+
+  const fetchMyCart = async () => {
+    try {
+      const response = await axiosInstance.get("/carts/me");
+      dispatch(fillCart(response.data.data));
+
+      const cartQuantity = response.data.data.map((val) => val.quantity);
+
+      let Total = 0;
+
+      for (let i = 0; i < cartQuantity.length; i++) {
+        Total += Number(cartQuantity[i]);
+      }
+
+      dispatch(getTotalCartQuantity(Total));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const addToCart = async () => {
     try {
@@ -110,78 +137,90 @@ const ProductDetail = ({ product_name, id }) => {
         ProductId: productId,
         quantity: addQuantity,
         note: inputNote,
-      }
+      };
 
-      await axiosInstance.post("/carts", addToCart)
+      const response = await axiosInstance.post("/carts", addToCart);
 
+      dispatch(addItemToCart(response.data.data));
       toast({
         title: "Cart Items Added",
         status: "success",
-      })
+      });
 
-      fetchCartByProductId()
+      fetchMyCart();
+      fetchCartByProductId();
     } catch (err) {
-      console.log(err)
+      console.log(err);
 
       if (stock === 0) {
         toast({
           title: `Failed Added Cart Items`,
           status: "error",
           description: "Product out of stock",
-        })
+        });
       } else {
         toast({
           title: `Failed Added Cart Items`,
           status: "error",
           description: err.response.data.message,
-        })
+        });
       }
     }
-  }
+  };
 
   const addToExistingCart = async () => {
     try {
       let newQuantity = {
         quantity: addQuantity,
         note: inputNote,
-      }
-      await axiosInstance.patch(`/carts/addCartItems/${productId}`, newQuantity)
+      };
+      const response = await axiosInstance.patch(
+        `/carts/addCartItems/${productId}`,
+        newQuantity
+      );
+
+      dispatch(addItemToCart(response.data.data));
+
       toast({
         title: "Cart Items Added",
         status: "success",
-      })
+      });
 
-      fetchCartByProductId()
+      fetchCartByProductId();
+      fetchMyCart();
     } catch (err) {
-      console.log(err)
+      console.log(err);
 
-      const itemLeft = stock - cartItemQuantity
+      const itemLeft = stock - cartItemQuantity;
 
       if (stock === 0) {
         toast({
           title: `Failed Added Cart Items`,
           status: "error",
           description: "Product out of stock",
-        })
+        });
       } else {
         toast({
           title: `Only ${itemLeft} left and you already have ${cartItemQuantity} of this item in your cart.`,
           status: "error",
           description: err.response.data.message,
-        })
+        });
       }
     }
-  }
+  };
 
   const cancelNotes = () => {
-    setAddNote(false)
-    setInputNote("")
-  }
+    setAddNote(false);
+    setInputNote("");
+  };
 
   useEffect(() => {
-    fetchCartByProductId()
-    fetchProductDetail()
-  }, [cartItemQuantity, addQuantity, productDetail])
+    fetchProductDetail();
+  }, []);
+
+  useEffect(() => {
+    isLoading && fetchCartByProductId();
+  }, [cartItemQuantity, productDetail, addQuantity]);
   return (
     <>
       <Box
@@ -710,7 +749,7 @@ const ProductDetail = ({ product_name, id }) => {
         userMustLogin={userMustLogin}
       />
     </>
-  )
-}
+  );
+};
 
-export default ProductDetail
+export default ProductDetail;

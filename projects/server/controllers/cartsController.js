@@ -1,655 +1,709 @@
-const db = require("../models")
-const { Cart } = db
+const db = require("../models");
+const { Cart } = db;
 
 const cartsController = {
-    addToCart: async (req, res) => {
-        try {
-            const { ProductId, quantity, note } = req.body
+  addToCart: async (req, res) => {
+    try {
+      const { ProductId, quantity, note } = req.body;
 
-            const findProductinCart = await Cart.findOne({
-                where: {
-                    ProductId,
-                    UserId: req.user.id
+      const findProductinCart = await Cart.findOne({
+        where: {
+          ProductId,
+          UserId: req.user.id,
+        },
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+      });
+
+      const findProductById = await db.Product.findByPk(ProductId, {
+        include: [
+          {
+            model: db.Image_Url,
+          },
+          {
+            model: db.Total_Stock,
+          },
+        ],
+      });
+
+      const stock = findProductById.Total_Stocks.map((val) => val.stock);
+
+      let total = 0;
+
+      for (let i = 0; i < stock.length; i++) {
+        total += Number(stock[i]);
+      }
+
+      const totalStock = total;
+
+      if (totalStock === 0) {
+        return res.status(400).json({
+          message: "Insufficient product stock",
+        });
+      }
+
+      if (!findProductinCart && quantity > totalStock) {
+        return res.status(400).json({
+          message: "Insufficient product stock",
+        });
+      }
+
+      if (!findProductinCart) {
+        const addProductToCart = await Cart.create({
+          UserId: req.user.id,
+          ProductId: ProductId,
+          note: note,
+          quantity: quantity,
+        });
+
+        const findCart = await Cart.findByPk(addProductToCart.id, {
+          include: [
+            {
+              model: db.Product,
+              include: [
+                {
+                  model: db.Image_Url,
                 },
-                include: [
-                    {
-                        model: db.Product,
-                        include: [
-                            {
-                                model: db.Image_Url,
-                            },
-                            {
-                                model: db.Total_Stock
-                            }
-                        ],
-                    },
-                ],
-            })
-
-            const findProductById = await db.Product.findByPk(ProductId, {
-                include: [
-                    {
-                        model: db.Image_Url,
-                    },
-                    {
-                        model: db.Total_Stock
-                    }
-                ],
-            })
-
-
-            const stock = findProductById.Total_Stocks.map((val) => val.stock)
-
-            let total = 0
-
-            for (let i = 0; i < stock.length; i++) {
-                total += Number(stock[i])
-            }
-
-            const totalStock = total
-
-            if (totalStock === 0) {
-                return res.status(400).json({
-                    message: "Insufficient product stock"
-                })
-            }
-
-            if (!findProductinCart && quantity > totalStock) {
-                return res.status(400).json({
-                    message: "Insufficient product stock"
-                })
-            }
-
-            if (!findProductinCart) {
-                const addProductToCart = await Cart.create({
-                    UserId: req.user.id,
-                    ProductId: ProductId,
-                    note: note,
-                    quantity: quantity
-                })
-
-                const findCart = await Cart.findByPk(addProductToCart.id, {
-                    include: [
-                        {
-                            model: db.Product,
-                            include: [
-                                {
-                                    model: db.Image_Url,
-                                },
-                                {
-                                    model: db.Total_Stock
-                                }
-                            ],
-                        },
-                    ],
-                })
-
-                return res.status(201).json({
-                    message: "Product added to cart",
-                    data: findCart
-                })
-            }
-
-            const cartStock = findProductinCart.Product.Total_Stocks.map((val) => val.stock)
-
-            let cartTotal = 0
-
-            for (let i = 0; i < cartStock.length; i++) {
-                cartTotal += Number(cartStock[i])
-            }
-
-            const totalStockCart = cartTotal
-
-            const cartItemQuantity = findProductinCart.quantity
-
-            if (totalStockCart === 0 || totalStockCart < quantity) {
-                return res.status(400).json({
-                    message: "Insufficient product stock"
-                })
-            }
-
-            if (totalStockCart === 0 || totalStockCart < cartItemQuantity + quantity) {
-                return res.status(400).json({
-                    message: "Insufficient product stock"
-                })
-            }
-
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                message: "Server error"
-            })
-        }
-    },
-    addToExistingCart: async (req, res) => {
-        try {
-            const { ProductId } = req.params
-
-            const { quantity, note } = req.body
-
-            const findProductinCart = await Cart.findOne({
-                where: {
-                    ProductId: ProductId,
-                    UserId: req.user.id
+                {
+                  model: db.Total_Stock,
                 },
-                include: [
-                    {
-                        model: db.Product,
-                        include: [
-                            {
-                                model: db.Image_Url,
-                            },
-                            {
-                                model: db.Total_Stock
-                            }
-                        ],
-                    },
-                ],
-            })
+              ],
+            },
+          ],
+        });
 
-            const cartStock = findProductinCart.Product.Total_Stocks.map((val) => val.stock)
+        return res.status(201).json({
+          message: "Product added to cart",
+          data: findCart,
+        });
+      }
 
-            let cartTotal = 0
+      const cartStock = findProductinCart.Product.Total_Stocks.map(
+        (val) => val.stock
+      );
 
-            for (let i = 0; i < cartStock.length; i++) {
-                cartTotal += Number(cartStock[i])
-            }
+      let cartTotal = 0;
 
-            const totalStockCart = cartTotal
+      for (let i = 0; i < cartStock.length; i++) {
+        cartTotal += Number(cartStock[i]);
+      }
 
-            if (findProductinCart.quantity + quantity > totalStockCart) {
-                return res.status(400).json({
-                    message: "Insufficient product stock"
-                })
-            }
+      const totalStockCart = cartTotal;
 
-            if (!quantity) {
+      const cartItemQuantity = findProductinCart.quantity;
 
-                await Cart.update(
-                    {
-                        quantity: findProductinCart.quantity + 1,
-                        note: note
-                    },
-                    {
-                        where: {
-                            id: findProductinCart.id,
-                            UserId: req.user.id
-                        }
-                    }
-                )
+      if (totalStockCart === 0 || totalStockCart < quantity) {
+        return res.status(400).json({
+          message: "Insufficient product stock",
+        });
+      }
 
-                return res.status(200).json({
-                    message: "Cart item added",
-                })
-            }
+      if (
+        totalStockCart === 0 ||
+        totalStockCart < cartItemQuantity + quantity
+      ) {
+        return res.status(400).json({
+          message: "Insufficient product stock",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
+  addToExistingCart: async (req, res) => {
+    try {
+      const { ProductId } = req.params;
 
-            if (quantity) {
-                await Cart.update(
-                    {
-                        quantity: findProductinCart.quantity + quantity,
-                        note: note
-                    },
-                    {
-                        where: {
-                            id: findProductinCart.id,
-                            UserId: req.user.id
-                        }
-                    }
-                )
+      const { quantity, note } = req.body;
 
-                return res.status(200).json({
-                    message: "Cart item added",
-                })
-            }
+      const findProductinCart = await Cart.findOne({
+        where: {
+          ProductId: ProductId,
+          UserId: req.user.id,
+        },
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+      });
 
-        } catch (err) {
-            console.log(err)
-        }
-    },
-    ShowAllMyCartItems: async (req, res) => {
-        try {
-            const getSelectedCart = await db.sequelize.query(
-                `select sum(stock) TotalStock, ts.ProductId, c.id CartId , c.is_checked is_checked, c.UserId from total_stocks ts
-                join carts c
+      const cartStock = findProductinCart.Product.Total_Stocks.map(
+        (val) => val.stock
+      );
+
+      let cartTotal = 0;
+
+      for (let i = 0; i < cartStock.length; i++) {
+        cartTotal += Number(cartStock[i]);
+      }
+
+      const totalStockCart = cartTotal;
+
+      if (findProductinCart.quantity + quantity > totalStockCart) {
+        return res.status(400).json({
+          message: "Insufficient product stock",
+        });
+      }
+
+      if (!quantity) {
+        const addProductToCart = await Cart.update(
+          {
+            quantity: findProductinCart.quantity + 1,
+            note: note,
+          },
+          {
+            where: {
+              id: findProductinCart.id,
+              UserId: req.user.id,
+            },
+          }
+        );
+
+        const findCart = await Cart.findByPk(addProductToCart.id, {
+          include: [
+            {
+              model: db.Product,
+              include: [
+                {
+                  model: db.Image_Url,
+                },
+                {
+                  model: db.Total_Stock,
+                },
+              ],
+            },
+          ],
+        });
+
+        return res.status(200).json({
+          message: "Cart item added",
+          data: findCart,
+        });
+      }
+
+      if (quantity) {
+        const addProductToCart = await Cart.update(
+          {
+            quantity: findProductinCart.quantity + quantity,
+            note: note,
+          },
+          {
+            where: {
+              id: findProductinCart.id,
+              UserId: req.user.id,
+            },
+          }
+        );
+
+        const findCart = await Cart.findByPk(addProductToCart.id, {
+          include: [
+            {
+              model: db.Product,
+              include: [
+                {
+                  model: db.Image_Url,
+                },
+                {
+                  model: db.Total_Stock,
+                },
+              ],
+            },
+          ],
+        });
+
+        return res.status(200).json({
+          message: "Cart item added",
+          data: findCart,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  ShowAllMyCartItems: async (req, res) => {
+    try {
+      const getSelectedCart = await db.sequelize.query(
+        `select sum(stock) TotalStock, ts.ProductId, c.id CartId , c.is_checked is_checked, c.UserId from Total_Stocks ts
+                join Carts c
                 on c.ProductId = ts.ProductId
-                -- where TotakStock 
                 group by c.id
                 having TotalStock > 0 and c.UserId=${req.user.id};`
-            )
+      );
 
-            const cartChecked = getSelectedCart[0].map((val) => val.is_checked)
+      const cartChecked = getSelectedCart[0].map((val) => val.is_checked);
 
-            const getAllMyCartItems = await Cart.findAll({
-                where: {
-                    UserId: req.user.id
-                },
-                include: [
-                    {
-                        model: db.Product,
-                        include: [
-                            {
-                                model: db.Image_Url,
-                            },
-                            {
-                                model: db.Total_Stock
-                            }
-                        ],
-                    },
-                ],
-                order: [["createdAt", "DESC"]],
-            })
+      const getAllMyCartItems = await Cart.findAll({
+        where: {
+          UserId: req.user.id,
+        },
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+        order: [["createdAt", "DESC"]],
+      });
 
-            const getAllMyCheckedCartItems = await Cart.findAll({
-                where: {
-                    UserId: req.user.id,
-                    is_checked: true
-                },
-                include: [
-                    {
-                        model: db.Product,
-                        include: [
-                            {
-                                model: db.Image_Url,
-                            },
-                            {
-                                model: db.Total_Stock
-                            }
-                        ],
-                    },
-                ],
-                order: [["createdAt", "DESC"]],
-            })
+      const getAllMyCheckedCartItems = await Cart.findAll({
+        where: {
+          UserId: req.user.id,
+          is_checked: true,
+        },
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+        order: [["createdAt", "DESC"]],
+      });
 
-            const cartCheckedCount = getAllMyCheckedCartItems.map((val) => val.id)
-            const checkedDataCount = cartCheckedCount.length
+      const cartCheckedCount = getAllMyCheckedCartItems.map((val) => val.id);
+      const checkedDataCount = cartCheckedCount.length;
 
-            return res.status(200).json({
-                message: "showMyItemCart",
-                data: getAllMyCartItems,
-                cartChecked: cartChecked,
-                checkedDataCount: checkedDataCount
-            })
+      return res.status(200).json({
+        message: "showMyItemCart",
+        data: getAllMyCartItems,
+        cartChecked: cartChecked,
+        checkedDataCount: checkedDataCount,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
+  findCartByProductId: async (req, res) => {
+    try {
+      const { ProductId } = req.params;
 
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                message: "Server error"
-            })
+      const findProductinCart = await Cart.findOne({
+        where: {
+          ProductId,
+          UserId: req.user.id,
+        },
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+      });
+
+      return res.status(200).json({
+        message: "Cart item added",
+        data: findProductinCart,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
+  incrementCartItems: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const findCartByid = await Cart.findByPk(id, {
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+      });
+
+      const cartStock = findCartByid.Product.Total_Stocks.map(
+        (val) => val.stock
+      );
+
+      let cartTotal = 0;
+
+      for (let i = 0; i < cartStock.length; i++) {
+        cartTotal += Number(cartStock[i]);
+      }
+
+      const totalStockCart = cartTotal;
+
+      if (findCartByid.quantity + 1 > totalStockCart) {
+        return res.status(400).json({
+          message: "Insufficient product stock",
+        });
+      }
+
+      const addQuantityToCart = await Cart.update(
+        {
+          quantity: findCartByid.quantity + 1,
+        },
+        {
+          where: {
+            id: findCartByid.id,
+            UserId: req.user.id,
+          },
         }
-    },
-    findCartByProductId: async (req, res) => {
-        try {
-            const { ProductId } = req.params
+      );
 
-            const findProductinCart = await Cart.findOne({
-                where: {
-                    ProductId,
-                    UserId: req.user.id
-                },
-                include: [
-                    {
-                        model: db.Product,
-                        include: [
-                            {
-                                model: db.Image_Url,
-                            },
-                            {
-                                model: db.Total_Stock
-                            }
-                        ],
-                    },
-                ],
-            })
+      const findCart = await Cart.findByPk(addQuantityToCart.id, {
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+      });
 
-            return res.status(200).json({
-                message: "Cart item added",
-                data: findProductinCart
-            })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                message: "Server error"
-            })
+      return res.status(200).json({
+        message: "Increment quantity",
+        data: findCart,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  decrementCartItems: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const findCartByid = await Cart.findByPk(id);
+
+      if (findCartByid.quantity <= 1) {
+        return res.status(200).json({
+          message: "Can't decrement",
+        });
+      }
+
+      const addQuantityToCart = await Cart.update(
+        {
+          quantity: findCartByid.quantity - 1,
+        },
+        {
+          where: {
+            id: findCartByid.id,
+            UserId: req.user.id,
+          },
         }
-    },
-    incrementCartItems: async (req, res) => {
-        try {
-            const { id } = req.params
+      );
 
-            const findCartByid = await Cart.findByPk(id, {
-                include: [
-                    {
-                        model: db.Product,
-                        include: [
-                            {
-                                model: db.Image_Url,
-                            },
-                            {
-                                model: db.Total_Stock
-                            }
-                        ],
-                    },
-                ],
-            })
+      const findCart = await Cart.findByPk(addQuantityToCart.id, {
+        include: [
+          {
+            model: db.Product,
+            include: [
+              {
+                model: db.Image_Url,
+              },
+              {
+                model: db.Total_Stock,
+              },
+            ],
+          },
+        ],
+      });
 
-            const cartStock = findCartByid.Product.Total_Stocks.map((val) => val.stock)
+      return res.status(200).json({
+        message: "decrement quantity",
+        data: findCart,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  deleteProductFromCart: async (req, res) => {
+    try {
+      const { id } = req.params;
 
-            let cartTotal = 0
+      await Cart.destroy({
+        where: {
+          id: id,
+          UserId: req.user.id,
+        },
+      });
+      return res.status(200).json({
+        message: "Deleted item from cart",
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
+  deleteAllCartItems: async (req, res) => {
+    try {
+      await Cart.destroy({
+        where: {
+          UserId: req.user.id,
+          is_checked: true,
+        },
+      });
+      return res.status(200).json({
+        message: "Deleted All Items From Cart",
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
+  checkCartItems: async (req, res) => {
+    try {
+      const { id } = req.params;
 
-            for (let i = 0; i < cartStock.length; i++) {
-                cartTotal += Number(cartStock[i])
-            }
+      const findCartByid = await Cart.findByPk(id);
 
-            const totalStockCart = cartTotal
+      if (findCartByid.is_checked === true) {
+        await Cart.update(
+          {
+            is_checked: false,
+          },
+          {
+            where: {
+              id: findCartByid.id,
+              UserId: req.user.id,
+            },
+          }
+        );
+        const cartUncheckedByid = await Cart.findByPk(id, {
+          include: [
+            {
+              model: db.Product,
+              include: [{ model: db.Image_Url }],
+            },
+          ],
+        });
 
+        return res.status(200).json({
+          message: "Cart Item Unchecked",
+          data: cartUncheckedByid,
+        });
+      }
 
-            if (findCartByid.quantity + 1 > totalStockCart) {
-                return res.status(400).json({
-                    message: "Insufficient product stock"
-                })
-            }
-
-            await Cart.update(
-                {
-                    quantity: findCartByid.quantity + 1
-                },
-                {
-                    where: {
-                        id: findCartByid.id,
-                        UserId: req.user.id
-                    }
-                }
-            )
-
-            return res.status(200).json({
-                message: "Increment quantity",
-            })
-
-        } catch (err) {
-            console.log(err)
+      await Cart.update(
+        {
+          is_checked: true,
+        },
+        {
+          where: {
+            id: findCartByid.id,
+            UserId: req.user.id,
+          },
         }
-    },
-    decrementCartItems: async (req, res) => {
-        try {
-            const { id } = req.params
+      );
+      const cartCheckedByid = await Cart.findByPk(id, {
+        include: [
+          {
+            model: db.Product,
+            include: [{ model: db.Image_Url }],
+          },
+        ],
+      });
 
-            const findCartByid = await Cart.findByPk(id)
-
-            if (findCartByid.quantity <= 1) {
-                return res.status(200).json({
-                    message: "Can't decrement",
-                })
-            }
-
-            await Cart.update(
-                {
-                    quantity: findCartByid.quantity - 1
-                },
-                {
-                    where: {
-                        id: findCartByid.id,
-                        UserId: req.user.id
-                    }
-                }
-            )
-
-            return res.status(200).json({
-                message: "decrement quantity",
-            })
-
-        } catch (err) {
-            console.log(err)
-        }
-    },
-    deleteProductFromCart: async (req, res) => {
-        try {
-            const { id } = req.params
-
-            await Cart.destroy({
-                where: {
-                    id: id,
-                    UserId: req.user.id
-                },
-            })
-            return res.status(200).json({
-                message: "Deleted item from cart",
-            })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                message: "Server error"
-            })
-        }
-    },
-    deleteAllCartItems: async (req, res) => {
-        try {
-            await Cart.destroy({
-                where: {
-                    UserId: req.user.id,
-                    is_checked: true
-                },
-            })
-            return res.status(200).json({
-                message: "Deleted All Items From Cart",
-            })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                message: "Server error"
-            })
-        }
-    },
-    checkCartItems: async (req, res) => {
-        try {
-            const { id } = req.params
-
-            const findCartByid = await Cart.findByPk(id)
-
-            if (findCartByid.is_checked === true) {
-                await Cart.update(
-                    {
-                        is_checked: false
-                    },
-                    {
-                        where: {
-                            id: findCartByid.id,
-                            UserId: req.user.id
-                        }
-                    },
-                )
-                const cartUncheckedByid = await Cart.findByPk(id, {
-                    include: [
-                        {
-                            model: db.Product,
-                            include: [
-                                { model: db.Image_Url }
-                            ]
-                        },
-                    ],
-                })
-
-                return res.status(200).json({
-                    message: "Cart Item Unchecked",
-                    data: cartUncheckedByid
-                })
-            }
-
-            await Cart.update(
-                {
-                    is_checked: true
-                },
-                {
-                    where: {
-                        id: findCartByid.id,
-                        UserId: req.user.id
-                    }
-                },
-            )
-            const cartCheckedByid = await Cart.findByPk(id, {
-                include: [
-                    {
-                        model: db.Product,
-                        include: [
-                            { model: db.Image_Url }
-                        ]
-                    },
-                ],
-            })
-
-            return res.status(200).json({
-                message: "Cart Item Checked",
-                data: cartCheckedByid
-            })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                message: "Server error"
-            })
-        }
-    },
-    checkAllCartItems: async (req, res) => {
-        try {
-
-            const getSelectedCart = await db.sequelize.query(
-                `select sum(stock) TotalStock, ts.ProductId, c.id CartId , c.is_checked is_checked, c.UserId from total_stocks ts
-                join carts c
+      return res.status(200).json({
+        message: "Cart Item Checked",
+        data: cartCheckedByid,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
+  checkAllCartItems: async (req, res) => {
+    try {
+      const getSelectedCart = await db.sequelize.query(
+        `select sum(stock) TotalStock, ts.ProductId, c.id CartId , c.is_checked is_checked, c.UserId from Total_Stocks ts
+                join Carts c
                 on c.ProductId = ts.ProductId
-                -- where TotakStock 
                 group by c.id
                 having TotalStock > 0 and c.UserId=${req.user.id};`
-            )
+      );
 
-            const cartIdArr = getSelectedCart[0].map((val) => val.CartId)
+      const cartIdArr = getSelectedCart[0].map((val) => val.CartId);
 
-            const cartChecked = getSelectedCart[0].map((val) => val.is_checked)
+      const cartChecked = getSelectedCart[0].map((val) => val.is_checked);
 
-            if (!cartChecked.includes(0)) {
-                await Cart.update(
-                    {
-                        is_checked: false
-                    },
-                    {
-                        where: {
-                            id: cartIdArr,
-                            UserId: req.user.id
-                        }
-                    },
-                )
+      if (!cartChecked.includes(0)) {
+        await Cart.update(
+          {
+            is_checked: false,
+          },
+          {
+            where: {
+              id: cartIdArr,
+              UserId: req.user.id,
+            },
+          }
+        );
 
-                const findUncheckedCart = await Cart.findAll({
-                    where: {
-                        id: cartIdArr,
-                        UserId: req.user.id
-                    },
-                    include: [
-                        {
-                            model: db.Product,
-                            include: [
-                                { model: db.Image_Url }
-                            ]
-                        },
-                    ],
-                })
-                return res.status(200).json({
-                    message: "All Cart Items Unchecked",
-                    data: findUncheckedCart
-                })
-            }
+        const findUncheckedCart = await Cart.findAll({
+          where: {
+            id: cartIdArr,
+            UserId: req.user.id,
+          },
+          include: [
+            {
+              model: db.Product,
+              include: [{ model: db.Image_Url }],
+            },
+          ],
+        });
+        return res.status(200).json({
+          message: "All Cart Items Unchecked",
+          data: findUncheckedCart,
+        });
+      }
 
-            await Cart.update(
-                {
-                    is_checked: true
-                },
-                {
-                    where: {
-                        id: cartIdArr,
-                        UserId: req.user.id
-                    }
-                },
-            )
-
-            const findAllCheckedCart = await Cart.findAll({
-                where: {
-                    id: cartIdArr,
-                    UserId: req.user.id
-                },
-                include: [
-                    {
-                        model: db.Product,
-                        include: [
-                            { model: db.Image_Url }
-                        ]
-                    },
-                ],
-            })
-
-            return res.status(200).json({
-                message: "All Cart Items Checked",
-                data: findAllCheckedCart
-            })
-
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                message: "Server error"
-            })
+      await Cart.update(
+        {
+          is_checked: true,
+        },
+        {
+          where: {
+            id: cartIdArr,
+            UserId: req.user.id,
+          },
         }
-    },
-    getTotalPrice: async (req, res) => {
-        try {
-            const { id } = req.user
+      );
 
-            const getTotalPrice = await db.sequelize.query(
-                `select sum(p.price * c.quantity) as totalPrice, sum(c.quantity) as totalQuantity from carts c
-                    join products p
+      const findAllCheckedCart = await Cart.findAll({
+        where: {
+          id: cartIdArr,
+          UserId: req.user.id,
+        },
+        include: [
+          {
+            model: db.Product,
+            include: [{ model: db.Image_Url }],
+          },
+        ],
+      });
+
+      return res.status(200).json({
+        message: "All Cart Items Checked",
+        data: findAllCheckedCart,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
+  getTotalPrice: async (req, res) => {
+    try {
+      const { id } = req.user;
+
+      const getTotalPrice = await db.sequelize.query(
+        `select sum(p.price * c.quantity) as totalPrice, sum(c.quantity) as totalQuantity from Carts c
+                    join Products p
                     on c.ProductId = p.id
                     where is_checked = ${true} && UserId = ${id}`
-            )
+      );
 
-            const totalPrice = getTotalPrice[0][0]
+      const totalPrice = getTotalPrice[0][0];
 
-            return res.status(200).json({
-                message: "Get All Cart Items",
-                data: totalPrice
-            })
-
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                message: "Server error"
-            })
-        }
-    },
-    addCartNote: async (req, res) => {
-        try {
-
-            const { id } = req.params
-            const { note } = req.body
-
-            await Cart.update(
-                {
-                    note: note
-                },
-                {
-                    where: {
-                        id: id,
-                        UserId: req.user.id
-                    }
-                },
-            )
-
-            const updateCartNote = await Cart.findByPk(id)
-            return res.status(200).json({
-                message: "Get All Cart Items",
-                data: updateCartNote
-            })
-
-        } catch (err) {
-            return res.status(500).json({
-                message: "Server error"
-            })
-        }
+      return res.status(200).json({
+        message: "Get All Cart Items",
+        data: totalPrice,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server error",
+      });
     }
-}
+  },
+  addCartNote: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { note } = req.body;
 
-module.exports = cartsController
+      await Cart.update(
+        {
+          note: note,
+        },
+        {
+          where: {
+            id: id,
+            UserId: req.user.id,
+          },
+        }
+      );
+
+      const updateCartNote = await Cart.findByPk(id);
+      return res.status(200).json({
+        message: "Get All Cart Items",
+        data: updateCartNote,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
+};
+
+module.exports = cartsController;
