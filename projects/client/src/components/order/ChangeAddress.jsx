@@ -14,65 +14,64 @@ import {
   Text,
   useDisclosure,
   useToast,
-} from "@chakra-ui/react"
-import React, { useEffect, useState } from "react"
-import { axiosInstance } from "../../api"
-import AddressChangeCard from "./AddressChangeCard"
-import FormAddress from "../profile/FormAddress"
-import { useFormik } from "formik"
-import * as Yup from "yup"
-import Alert from "../profile/Alert"
-import EditForm from "../profile/EditForm"
-import { TbSearch } from "react-icons/tb"
+} from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { axiosInstance } from "../../api";
+import AddressChangeCard from "./AddressChangeCard";
+import FormAddress from "../profile/FormAddress";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Alert from "../profile/Alert";
+import EditForm from "../profile/EditForm";
+import { TbSearch } from "react-icons/tb";
 
 const ChangeAddress = ({ defaultAddressUser }) => {
-  const { onOpen, isOpen, onClose } = useDisclosure()
+  const { onOpen, isOpen, onClose } = useDisclosure();
   const {
     onOpen: onOpenAddNewAddress,
     isOpen: isOpenAddNewAddress,
     onClose: onCloseAddNewAddress,
-  } = useDisclosure()
+  } = useDisclosure();
 
   const {
     onOpen: onOpenAlertAddNewAddress,
     isOpen: isOpenAlertAddNewAddress,
     onClose: onCloseAlertAddNewAddress,
-  } = useDisclosure()
+  } = useDisclosure();
 
   const {
     onOpen: onOpenAlert,
     isOpen: isOpenAlert,
     onClose: onCloseAlert,
-  } = useDisclosure()
+  } = useDisclosure();
 
-  const cancelRef = React.useRef()
-  const toast = useToast()
-  const [address, setAddress] = useState([])
-  const [allAddress, setAllAddress] = useState([])
-  const [selectedNewProvince, setSelectedNewProvince] = useState(0)
-  const [selectedNewCity, setSelectedNewCity] = useState(0)
-  const [selectedEditProvince, setSelectedEditProvince] = useState(0)
-  console.log(selectedEditProvince)
-  const [selectedEditCity, setSelectedEditCity] = useState(0)
-  const [openedEdit, setOpenedEdit] = useState(null)
-  const [currentSearch, setCurrentSearch] = useState("")
-  const [defaultAddressId, setDefaultAddressId] = useState(0)
-  const [refreshAddress, setRefreshAddress] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  defaultAddressUser(defaultAddressId)
+  const cancelRef = React.useRef();
+  const toast = useToast();
+  const [address, setAddress] = useState([]);
+  const [allAddress, setAllAddress] = useState([]);
+  const [selectedNewProvince, setSelectedNewProvince] = useState(0);
+  const [selectedNewCity, setSelectedNewCity] = useState(0);
+  const [selectedEditProvince, setSelectedEditProvince] = useState(0);
+  const [selectedEditCity, setSelectedEditCity] = useState(0);
+  const [openedEdit, setOpenedEdit] = useState(null);
+  const [currentSearch, setCurrentSearch] = useState("");
+  const [defaultAddressId, setDefaultAddressId] = useState(0);
+  const [refreshAddress, setRefreshAddress] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  defaultAddressUser(defaultAddressId);
 
   const fetchAddress = async () => {
     try {
       const response = await axiosInstance.get(
         "/checkoutAddress/defaultAddress"
-      )
-      setAddress(response.data.data)
-      setDefaultAddressId(response.data.data.id)
-      setIsLoading(true)
+      );
+      setAddress(response.data.data);
+      setDefaultAddressId(response.data.data.id);
+      setIsLoading(true);
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
     }
-  }
+  };
 
   const fetchAllAddress = async () => {
     try {
@@ -81,47 +80,47 @@ const ChangeAddress = ({ defaultAddressUser }) => {
           recipients_name: currentSearch,
           full_address: currentSearch,
         },
-      })
-      setAllAddress(response.data.data)
+      });
+      setAllAddress(response.data.data);
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
     }
-  }
+  };
 
   const refreshPage = () => {
-    window.location.reload(false)
-  }
+    window.location.reload(false);
+  };
 
   const onCloseAddressModal = () => {
     if (refreshAddress === false) {
-      onClose()
+      onClose();
     }
     if (refreshAddress === true) {
-      refreshPage()
+      refreshPage();
     }
-  }
+  };
 
   const setAsDefault = async (id) => {
     try {
-      const response = await axiosInstance.patch(`/address/setDefault/${id}`)
+      const response = await axiosInstance.patch(`/address/setDefault/${id}`);
 
       toast({
         message: "Address set as default",
         description: response.data.message,
         status: "success",
-      })
-      fetchAllAddress()
-      fetchAddress()
-      setRefreshAddress(true)
+      });
+      fetchAllAddress();
+      fetchAddress();
+      setRefreshAddress(true);
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       toast({
         message: "Fail to set default",
         description: error.response.data.message,
         status: "error",
-      })
+      });
     }
-  }
+  };
 
   const formikAddNewAddress = useFormik({
     initialValues: {
@@ -149,29 +148,29 @@ const ChangeAddress = ({ defaultAddressUser }) => {
           city: selectedNewCity,
           districts,
           full_address,
-        })
+        });
         toast({
           title: "Success to add new adderess",
           description: response.data.message,
           status: "success",
-        })
+        });
 
-        formikAddNewAddress.setFieldValue("recipients_name", "")
-        formikAddNewAddress.setFieldValue("phone_number", "")
-        formikAddNewAddress.setFieldValue("address_labels", "")
-        formikAddNewAddress.setFieldValue("province", "")
-        formikAddNewAddress.setFieldValue("city", "")
-        formikAddNewAddress.setFieldValue("districts", "")
-        formikAddNewAddress.setFieldValue("full_address", "")
-        fetchAddress()
-        fetchAllAddress()
+        formikAddNewAddress.setFieldValue("recipients_name", "");
+        formikAddNewAddress.setFieldValue("phone_number", "");
+        formikAddNewAddress.setFieldValue("address_labels", "");
+        formikAddNewAddress.setFieldValue("province", "");
+        formikAddNewAddress.setFieldValue("city", "");
+        formikAddNewAddress.setFieldValue("districts", "");
+        formikAddNewAddress.setFieldValue("full_address", "");
+        fetchAddress();
+        fetchAllAddress();
       } catch (error) {
-        console.log(error.response)
+        console.log(error.response);
         toast({
           title: "Failed to add",
           description: error.response.data.message,
           status: "error",
-        })
+        });
       }
     },
     validationSchema: Yup.object({
@@ -186,12 +185,12 @@ const ChangeAddress = ({ defaultAddressUser }) => {
       full_address: Yup.string().required(),
     }),
     validateOnChange: false,
-  })
+  });
 
   const formChangeHandler = ({ target }) => {
-    const { name, value } = target
-    formikAddNewAddress.setFieldValue(name, value)
-  }
+    const { name, value } = target;
+    formikAddNewAddress.setFieldValue(name, value);
+  };
 
   const editFormik = useFormik({
     initialValues: {
@@ -220,29 +219,29 @@ const ChangeAddress = ({ defaultAddressUser }) => {
             districts,
             full_address,
           }
-        )
-        console.log(response)
+        );
+        console.log(response);
         toast({
           title: "Address Edited",
           description: response.data.message,
           status: "success",
-        })
+        });
 
-        editFormik.setFieldValue("recipients_name", "")
-        editFormik.setFieldValue("phone_number", "")
-        editFormik.setFieldValue("address_labels", "")
-        editFormik.setFieldValue("full_address", "")
-        editFormik.setFieldValue("districts", "")
-        fetchAddress()
-        fetchAllAddress()
-        setOpenedEdit(null)
+        editFormik.setFieldValue("recipients_name", "");
+        editFormik.setFieldValue("phone_number", "");
+        editFormik.setFieldValue("address_labels", "");
+        editFormik.setFieldValue("full_address", "");
+        editFormik.setFieldValue("districts", "");
+        fetchAddress();
+        fetchAllAddress();
+        setOpenedEdit(null);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast({
           title: "Failed Edit Admin",
           description: error.response.data.message,
           status: "error",
-        })
+        });
       }
     },
     validationSchema: Yup.object({
@@ -253,62 +252,62 @@ const ChangeAddress = ({ defaultAddressUser }) => {
       full_address: Yup.string(),
     }),
     validateOnChange: false,
-  })
+  });
 
   const editFormChangeHandler = ({ target }) => {
-    const { name, value } = target
-    editFormik.setFieldValue(name, value)
-  }
+    const { name, value } = target;
+    editFormik.setFieldValue(name, value);
+  };
 
   const doubleOnClick = () => {
-    onCloseAlertAddNewAddress()
-    onCloseAddNewAddress()
-    setSelectedNewProvince(0)
-    setSelectedNewCity(0)
-    formikAddNewAddress.handleSubmit()
-  }
+    onCloseAlertAddNewAddress();
+    onCloseAddNewAddress();
+    setSelectedNewProvince(0);
+    setSelectedNewCity(0);
+    formikAddNewAddress.handleSubmit();
+  };
 
   const doubleOnClick1 = () => {
-    editFormik.handleSubmit()
-    setSelectedEditProvince(0)
-    setSelectedEditCity(0)
-    onCloseAlert()
-    setRefreshAddress(true)
-  }
+    editFormik.handleSubmit();
+    setSelectedEditProvince(0);
+    setSelectedEditCity(0);
+    onCloseAlert();
+    setRefreshAddress(true);
+  };
 
   const formikSearch = useFormik({
     initialValues: {
       search: "",
     },
     onSubmit: ({ search }) => {
-      setCurrentSearch(search)
+      setCurrentSearch(search);
     },
-  })
+  });
 
   const searchAdminHandler = ({ target }) => {
-    const { name, value } = target
-    formikSearch.setFieldValue(name, value)
-  }
+    const { name, value } = target;
+    formikSearch.setFieldValue(name, value);
+  };
 
   useEffect(() => {
-    fetchAddress()
-  }, [])
+    fetchAddress();
+  }, []);
 
   useEffect(() => {
-    fetchAllAddress()
-  }, [isOpen, currentSearch])
+    fetchAllAddress();
+  }, [isOpen, currentSearch]);
 
   useEffect(() => {
     if (openedEdit) {
-      editFormik.setFieldValue("address_labels", openedEdit.address_labels)
-      editFormik.setFieldValue("full_address", openedEdit.full_address)
-      editFormik.setFieldValue("recipients_name", openedEdit.recipients_name)
-      editFormik.setFieldValue("phone_number", openedEdit.phone_number)
-      editFormik.setFieldValue("districts", openedEdit.districts)
-      editFormik.setFieldValue("cityId", openedEdit.cityId)
-      editFormik.setFieldValue("provinceId", openedEdit.provinceId)
+      editFormik.setFieldValue("address_labels", openedEdit.address_labels);
+      editFormik.setFieldValue("full_address", openedEdit.full_address);
+      editFormik.setFieldValue("recipients_name", openedEdit.recipients_name);
+      editFormik.setFieldValue("phone_number", openedEdit.phone_number);
+      editFormik.setFieldValue("districts", openedEdit.districts);
+      editFormik.setFieldValue("cityId", openedEdit.cityId);
+      editFormik.setFieldValue("provinceId", openedEdit.provinceId);
     }
-  }, [openedEdit])
+  }, [openedEdit]);
   return (
     <>
       <Box display={{ lg: "inline", base: "none" }}>
@@ -345,6 +344,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
                   />
                 ) : null}
               </Text>
+
               <Text
                 mr="2px"
                 color={"#31353B"}
@@ -352,7 +352,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
                 fontFamily={"Open Sauce One, sans-serif"}
                 fontSize={"13px"}
               >
-                {`(${isLoading && address.address_labels})`}
+                {isLoading ? `(${address.address_labels})` : null}
                 {isLoading === false ? (
                   <Skeleton
                     height={"16px"}
@@ -363,6 +363,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
                   />
                 ) : null}
               </Text>
+
               <Box
                 display={"inline-flex"}
                 alignItems={"center"}
@@ -614,7 +615,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
                   on_default={() => setAsDefault(val.id)}
                   is_default={val?.is_default}
                 />
-              )
+              );
             })}
           </ModalBody>
         </ModalContent>
@@ -667,7 +668,7 @@ const ChangeAddress = ({ defaultAddressUser }) => {
         color={"#F7931E"}
       />
     </>
-  )
-}
+  );
+};
 
-export default ChangeAddress
+export default ChangeAddress;

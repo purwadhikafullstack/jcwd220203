@@ -762,8 +762,33 @@ const transactionsController = {
         }
       );
 
+      const MyTransactionList = await Transaction.findAll({
+        include: [
+          {
+            model: TransactionItem,
+            include: [
+              {
+                model: db.Product,
+                include: [
+                  {
+                    model: db.Image_Url,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            model: db.Order_status,
+          },
+        ],
+        where: {
+          UserId: req.user.id,
+        },
+      });
+
       return res.status(200).json({
         message: "Order finished",
+        data: MyTransactionList,
       });
     } catch (err) {
       console.log(err);
@@ -772,7 +797,6 @@ const transactionsController = {
       });
     }
   },
-
   cancelUnpaidTransactionHandler: async (req, res) => {
     try {
       const { transaction_name } = req.params;
@@ -818,8 +842,33 @@ const transactionsController = {
         }
       );
 
+      const MyTransactionList = await Transaction.findAll({
+        include: [
+          {
+            model: TransactionItem,
+            include: [
+              {
+                model: db.Product,
+                include: [
+                  {
+                    model: db.Image_Url,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            model: db.Order_status,
+          },
+        ],
+        where: {
+          UserId: req.user.id,
+        },
+      });
+
       return res.status(200).json({
         message: "You have successfully canceled this transaction",
+        data: MyTransactionList,
       });
     } catch (err) {
       console.log(err);

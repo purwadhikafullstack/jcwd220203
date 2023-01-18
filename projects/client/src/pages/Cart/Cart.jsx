@@ -9,105 +9,119 @@ import {
   Text,
   useDisclosure,
   useToast,
-} from "@chakra-ui/react"
-import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { axiosInstance } from "../../api"
-import { fillCart, getTotalQuantity } from "../../redux/features/cartSlice"
-import CartItems from "./CartItems"
-import { getTotalPrice } from "../../redux/features/cartSlice"
-import emptyCart from "../../assets/emptyCart.png"
-import { Link, useNavigate } from "react-router-dom"
-import * as Yup from "yup"
-import { useFormik } from "formik"
-import FormAddress from "../../components/profile/FormAddress"
-import Alert from "../../components/profile/Alert"
-import AlertDialogDeleteSelectedCart from "../../components/Cart/AlertDialogDeleteSelectedCart"
-import { HiOutlineArrowLeft } from "react-icons/hi"
+} from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { axiosInstance } from "../../api";
+import {
+  fillCart,
+  getTotalCartQuantity,
+  getTotalQuantity,
+} from "../../redux/features/cartSlice";
+import CartItems from "./CartItems";
+import { getTotalPrice } from "../../redux/features/cartSlice";
+import emptyCart from "../../assets/emptyCart.png";
+import { Link, useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import FormAddress from "../../components/profile/FormAddress";
+import Alert from "../../components/profile/Alert";
+import AlertDialogDeleteSelectedCart from "../../components/Cart/AlertDialogDeleteSelectedCart";
+import { HiOutlineArrowLeft } from "react-icons/hi";
 
 const Cart = () => {
-  const [allChecked, setAllChecked] = useState(false)
-  const [address, setAddress] = useState([])
-  const [selectedNewProvince, setSelectedNewProvince] = useState(0)
-  const [selectedNewCity, setSelectedNewCity] = useState(0)
-  const [selectedCart, setSelectedCart] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
+  const [allChecked, setAllChecked] = useState(false);
+  const [address, setAddress] = useState([]);
+  const [selectedNewProvince, setSelectedNewProvince] = useState(0);
+  const [selectedNewCity, setSelectedNewCity] = useState(0);
+  const [selectedCart, setSelectedCart] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const cancelRef = React.useRef()
+  const cancelRef = React.useRef();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const cartSelector = useSelector((state) => state.cart)
+  const cartSelector = useSelector((state) => state.cart);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const toast = useToast()
+  const toast = useToast();
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const {
     isOpen: isOpenAddNewAddress,
     onOpen: onOpenAddNewAddress,
     onClose: onCloseAddNewAddress,
-  } = useDisclosure()
+  } = useDisclosure();
 
   const {
     isOpen: isOpenAlertAddNewAddress,
     onOpen: onOpenAlertAddNewAddress,
     onClose: onCloseAlertAddNewAddress,
-  } = useDisclosure()
+  } = useDisclosure();
 
   const fetchMyCart = async () => {
     try {
-      const response = await axiosInstance.get("/carts/me")
-      dispatch(fillCart(response.data.data))
+      const response = await axiosInstance.get("/carts/me");
+      dispatch(fillCart(response.data.data));
 
-      setSelectedCart(response.data.checkedDataCount)
+      setSelectedCart(response.data.checkedDataCount);
 
-      if (!response.data.cartChecked.includes(0)) {
-        setAllChecked(true)
-      } else {
-        setAllChecked(false)
+      const cartQuantity = response.data.data.map((val) => val.quantity);
+
+      let Total = 0;
+
+      for (let i = 0; i < cartQuantity.length; i++) {
+        Total += Number(cartQuantity[i]);
       }
 
-      setIsLoading(true)
+      dispatch(getTotalCartQuantity(Total));
+
+      if (!response.data.cartChecked.includes(0)) {
+        setAllChecked(true);
+      } else {
+        setAllChecked(false);
+      }
+
+      setIsLoading(true);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const deleteBtnHandler = async (id) => {
     try {
-      await axiosInstance.delete(`/carts/${id}`)
+      await axiosInstance.delete(`/carts/${id}`);
 
-      fetchMyCart()
-      fetchTotalPrice()
+      fetchMyCart();
+      fetchTotalPrice();
 
       toast({
         title: "Deleted Item From Cart",
         status: "info",
-      })
+      });
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const deleteAllCartsBtnHandler = async () => {
     try {
-      await axiosInstance.delete(`/carts/delete/AllCarts`)
+      await axiosInstance.delete(`/carts/delete/AllCarts`);
 
-      fetchMyCart()
-      fetchTotalPrice()
-      onClose()
+      fetchMyCart();
+      fetchTotalPrice();
+      onClose();
 
       toast({
         title: " Deleted Selected Items in Cart",
         status: "info",
-      })
+      });
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const renderCartItems = () => {
     return cartSelector.cart.map((val) => {
@@ -128,42 +142,40 @@ const Cart = () => {
           allChecked={allChecked}
           fetchTotalPrice={fetchTotalPrice}
         />
-      )
-    })
-  }
+      );
+    });
+  };
 
   const checkAllCartItems = async () => {
     try {
-      const response = await axiosInstance.patch("/carts/checkAllCarts")
+      const response = await axiosInstance.patch("/carts/checkAllCarts");
 
-      const cartChecked = response.data.data.map((val) => val.is_checked)
+      const cartChecked = response.data.data.map((val) => val.is_checked);
 
       if (!cartChecked.includes(false)) {
-        setAllChecked(true)
-      }
-      else {
-        setAllChecked(false)
+        setAllChecked(true);
+      } else {
+        setAllChecked(false);
       }
 
-      fetchMyCart()
-      fetchTotalPrice()
+      fetchMyCart();
+      fetchTotalPrice();
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const fetchTotalPrice = async () => {
     try {
-      const response = await axiosInstance.get("/carts/price/total")
+      const response = await axiosInstance.get("/carts/price/total");
 
-      dispatch(getTotalPrice(response.data.data.totalPrice))
+      dispatch(getTotalPrice(response.data.data.totalPrice));
 
-      dispatch(getTotalQuantity(response.data.data.totalQuantity))
-
+      dispatch(getTotalQuantity(response.data.data.totalQuantity));
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const formikAddNewAddress = useFormik({
     initialValues: {
@@ -194,29 +206,29 @@ const Cart = () => {
             districts,
             full_address,
           }
-        )
+        );
         toast({
           title: "Success to add new adderess",
           description: response.data.message,
           status: "success",
-        })
+        });
 
-        formikAddNewAddress.setFieldValue("recipients_name", "")
-        formikAddNewAddress.setFieldValue("phone_number", "")
-        formikAddNewAddress.setFieldValue("address_labels", "")
-        formikAddNewAddress.setFieldValue("province", "")
-        formikAddNewAddress.setFieldValue("city", "")
-        formikAddNewAddress.setFieldValue("districts", "")
-        formikAddNewAddress.setFieldValue("full_address", "")
-        fetchAddress()
-        navigate("/cart/shipment")
+        formikAddNewAddress.setFieldValue("recipients_name", "");
+        formikAddNewAddress.setFieldValue("phone_number", "");
+        formikAddNewAddress.setFieldValue("address_labels", "");
+        formikAddNewAddress.setFieldValue("province", "");
+        formikAddNewAddress.setFieldValue("city", "");
+        formikAddNewAddress.setFieldValue("districts", "");
+        formikAddNewAddress.setFieldValue("full_address", "");
+        fetchAddress();
+        navigate("/cart/shipment");
       } catch (error) {
-        console.log(error.response)
+        console.log(error.response);
         toast({
           title: "Failed to add",
           description: error.response.data.message,
           status: "error",
-        })
+        });
       }
     },
     validationSchema: Yup.object({
@@ -231,59 +243,71 @@ const Cart = () => {
       full_address: Yup.string().required(),
     }),
     validateOnChange: false,
-  })
+  });
 
   const formChangeHandler = ({ target }) => {
-    const { name, value } = target
-    formikAddNewAddress.setFieldValue(name, value)
-  }
+    const { name, value } = target;
+    formikAddNewAddress.setFieldValue(name, value);
+  };
 
   const fetchAddress = async () => {
     try {
       const response = await axiosInstance.get(
         "/checkoutAddress/defaultAddress"
-      )
-      setAddress(response.data.data)
+      );
+      setAddress(response.data.data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const doubleOnClick = () => {
     if (address) {
-      return navigate("/cart/shipment")
+      return navigate("/cart/shipment");
     }
-    onOpenAddNewAddress()
+    onOpenAddNewAddress();
     toast({
       title: "Add first your address",
       status: "info",
-    })
-  }
+    });
+  };
 
   const doubleOnClick1 = () => {
-    onCloseAlertAddNewAddress()
-    onCloseAddNewAddress()
-    setSelectedNewProvince(0)
-    setSelectedNewCity(0)
-    formikAddNewAddress.handleSubmit()
-  }
+    onCloseAlertAddNewAddress();
+    onCloseAddNewAddress();
+    setSelectedNewProvince(0);
+    setSelectedNewCity(0);
+    formikAddNewAddress.handleSubmit();
+  };
 
   useEffect(() => {
-    fetchMyCart()
-    fetchTotalPrice()
-  }, [])
+    fetchMyCart();
+    fetchTotalPrice();
+  }, []);
 
   useEffect(() => {
-    fetchAddress()
-  }, [])
+    fetchAddress();
+  }, []);
 
   // if cart empty
   if (!cartSelector.cart.length && isLoading === false) {
     return (
-      <Box w={'1583px'} h={'700px'} display={'flex'} justifyContent={'center'} alignItems={'center'} alignContent={'center'}>
-        <CircularProgress isIndeterminate color='#0095DA' thickness='160px' size='100px' />
+      <Box
+        w={"1583px"}
+        h={"700px"}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        alignContent={"center"}
+      >
+        <CircularProgress
+          isIndeterminate
+          color="#0095DA"
+          thickness="160px"
+          size="100px"
+        />
       </Box>
-    )
+    );
   } else if (!cartSelector.cart.length && isLoading === true) {
     return (
       <Box mt={"140px"} mb={"70px"} textAlign={"center"} display={"block"}>
@@ -335,11 +359,11 @@ const Cart = () => {
           </Button>
         </Link>
       </Box>
-    )
+    );
   } else {
     return (
       <>
-        <Box display={{ lg: 'inline', base: 'none' }}>
+        <Box display={{ lg: "inline", base: "none" }}>
           {/* cart filled */}
           <Box mt={"67px"}>
             <Box
@@ -419,9 +443,7 @@ const Cart = () => {
 
                   {/* cart item list */}
                   <Box width={"650px"} h={"5px"} bgColor={"#f7931E"} />
-                  <Box>
-                    {isLoading && renderCartItems()}
-                  </Box>
+                  <Box>{isLoading && renderCartItems()}</Box>
                   <Box pb={"50px"}></Box>
                 </Box>
               </GridItem>
@@ -478,12 +500,14 @@ const Cart = () => {
                       lineHeight={"18px"}
                       margin={"2px 0px"}
                     >
-                      {new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      })
-                        .format(cartSelector.totalPrice)
-                        .split(",")[0]}
+                      {
+                        new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                        })
+                          .format(cartSelector.totalPrice)
+                          .split(",")[0]
+                      }
                     </Text>
                   </Box>
                   <Box
@@ -568,27 +592,44 @@ const Cart = () => {
         </Box>
 
         {/* mobile responsive */}
-        <Box display={{ lg: 'none', base: 'inline' }}>
+        <Box display={{ lg: "none", base: "inline" }}>
           <Box
-            bgColor={'white'}
-            position={'fixed'}
+            bgColor={"white"}
+            position={"fixed"}
             left="0"
             right={"0"}
             top="0"
             zIndex="9998"
             boxShadow={"rgb(0 0 0 / 15%) 0px 1px 3px 0px"}
           >
-            <Box h={'52px'} maxW={'500px'} display={'flex'} alignItems={'center'} flexdir={'row'} justifyContent={'flex-start'} >
-              <Link to={'/'}>
-                <Box w={'52px'} h={'52px'} p={'1px 6px'} pr={'8px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                  <HiOutlineArrowLeft style={{ height: "24px", width: "24px", color: "#7d8086" }} />
+            <Box
+              h={"52px"}
+              maxW={"500px"}
+              display={"flex"}
+              alignItems={"center"}
+              flexdir={"row"}
+              justifyContent={"flex-start"}
+            >
+              <Link to={"/"}>
+                <Box
+                  w={"52px"}
+                  h={"52px"}
+                  p={"1px 6px"}
+                  pr={"8px"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <HiOutlineArrowLeft
+                    style={{ height: "24px", width: "24px", color: "#7d8086" }}
+                  />
                 </Box>
               </Link>
               <Text
-                fontSize={'16px'}
-                color={'#212121'}
+                fontSize={"16px"}
+                color={"#212121"}
                 fontFamily={"Open Sauce One,Nunito Sans, sans-serif"}
-                lineHeight={'20px'}
+                lineHeight={"20px"}
                 fontWeight={800}
               >
                 Cart
@@ -596,9 +637,9 @@ const Cart = () => {
             </Box>
             <Box
               h={"50px"}
-              maxW={'500px'}
-              m={'0px '}
-              p={'16px'}
+              maxW={"500px"}
+              m={"0px "}
+              p={"16px"}
               display={"flex"}
               justifyContent={"space-between"}
             >
@@ -634,53 +675,68 @@ const Cart = () => {
               )}
             </Box>
           </Box>
-          <Box h={'102px'} maxW={'500px'} />
-          <Box h={'8px'} bgColor={'#f0f3f7'} maxW={'500px'} />
-          <Box>
-            {renderCartItems()}
-          </Box>
+          <Box h={"102px"} maxW={"500px"} />
+          <Box h={"8px"} bgColor={"#f0f3f7"} maxW={"500px"} />
+          <Box>{renderCartItems()}</Box>
           {!cartSelector.totalQuantity ? (
             <>
-              <Box maxW={'500px'} h={'72px'} />
-              <Box display={'flex'} flexDir={'row'} justifyContent={'space-between'} p={'16px'} maxW={'500px'} h={'72px'} position={'fixed'}
+              <Box maxW={"500px"} h={"72px"} />
+              <Box
+                display={"flex"}
+                flexDir={"row"}
+                justifyContent={"space-between"}
+                p={"16px"}
+                maxW={"500px"}
+                h={"72px"}
+                position={"fixed"}
                 left="0"
                 right={"0"}
                 bottom="0"
                 zIndex="9998"
-                bgColor={'#fff'}
+                bgColor={"#fff"}
               >
-                <Box display={'flex'} flexDir={'column'} justifyContent={'center'} >
+                <Box
+                  display={"flex"}
+                  flexDir={"column"}
+                  justifyContent={"center"}
+                >
                   <Text
-                    color={'#31353BAD'}
-                    fontSize={'14px'}
-                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                    lineHeight={'16px'}
+                    color={"#31353BAD"}
+                    fontSize={"14px"}
+                    fontFamily={
+                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                    }
+                    lineHeight={"16px"}
                     fontWeight={700}
                   >
                     Total Price
                   </Text>
                   <Text
-                    color={'#31353BF5'}
-                    fontSize={'16px'}
-                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                    lineHeight={'18px'}
+                    color={"#31353BF5"}
+                    fontSize={"16px"}
+                    fontFamily={
+                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                    }
+                    lineHeight={"18px"}
                     fontWeight={700}
-                    m={'4px 0px'}
+                    m={"4px 0px"}
                   >
                     -
                   </Text>
                 </Box>
                 <Button
-                  borderRadius={'8px'}
-                  h={'100%'}
-                  color={'#AAB4C8'}
+                  borderRadius={"8px"}
+                  h={"100%"}
+                  color={"#AAB4C8"}
                   bgColor={"#E4EBF5"}
                   onClick={doubleOnClick}
-                  fontSize={'16px'}
-                  fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                  lineHeight={'18px'}
+                  fontSize={"16px"}
+                  fontFamily={
+                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                  }
+                  lineHeight={"18px"}
                   fontWeight={700}
-                  w={'164px'}
+                  w={"164px"}
                 >
                   Buy (0)
                 </Button>
@@ -688,49 +744,70 @@ const Cart = () => {
             </>
           ) : (
             <>
-              <Box maxW={'500px'} h={'74px'} />
-              <Box display={'flex'} flexDir={'row'} justifyContent={'space-between'} p={'16px'} maxW={'500px'} h={'74px'} position={'fixed'}
+              <Box maxW={"500px"} h={"74px"} />
+              <Box
+                display={"flex"}
+                flexDir={"row"}
+                justifyContent={"space-between"}
+                p={"16px"}
+                maxW={"500px"}
+                h={"74px"}
+                position={"fixed"}
                 left="0"
                 right={"0"}
                 bottom="0"
                 zIndex="9998"
-                bgColor={'#fff'}
+                bgColor={"#fff"}
               >
-                <Box display={'flex'} flexDir={'column'} justifyContent={'center'} >
+                <Box
+                  display={"flex"}
+                  flexDir={"column"}
+                  justifyContent={"center"}
+                >
                   <Text
-                    color={'#31353BAD'}
-                    fontSize={'14px'}
-                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                    lineHeight={'16px'}
+                    color={"#31353BAD"}
+                    fontSize={"14px"}
+                    fontFamily={
+                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                    }
+                    lineHeight={"16px"}
                     fontWeight={700}
                   >
                     Total Price
                   </Text>
                   <Text
-                    color={'#31353BF5'}
-                    fontSize={'16px'}
-                    fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                    lineHeight={'18px'}
+                    color={"#31353BF5"}
+                    fontSize={"16px"}
+                    fontFamily={
+                      "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                    }
+                    lineHeight={"18px"}
                     fontWeight={700}
-                    m={'4px 0px'}
+                    m={"4px 0px"}
                   >
-                    {new Intl.NumberFormat("id-ID", {
-                      style: "currency",
-                      currency: "IDR",
-                    }).format(cartSelector.totalPrice).split(",")[0]}
+                    {
+                      new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      })
+                        .format(cartSelector.totalPrice)
+                        .split(",")[0]
+                    }
                   </Text>
                 </Box>
                 <Button
-                  h={'100%'}
-                  color={'#fff'}
+                  h={"100%"}
+                  color={"#fff"}
                   bgColor={"#0095DA"}
                   onClick={doubleOnClick}
-                  fontSize={'16px'}
-                  fontFamily={"Open Sauce One, Nunito Sans, -apple-system, sans-serif"}
-                  lineHeight={'18px'}
+                  fontSize={"16px"}
+                  fontFamily={
+                    "Open Sauce One, Nunito Sans, -apple-system, sans-serif"
+                  }
+                  lineHeight={"18px"}
                   fontWeight={700}
-                  w={'164px'}
-                  borderRadius={'8px'}
+                  w={"164px"}
+                  borderRadius={"8px"}
                   _hover={{
                     bgColor: "#0370A2",
                   }}
@@ -776,8 +853,8 @@ const Cart = () => {
           color={"#F7931E"}
         />
       </>
-    )
+    );
   }
-}
+};
 
-export default Cart
+export default Cart;

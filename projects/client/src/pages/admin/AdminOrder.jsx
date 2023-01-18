@@ -20,61 +20,60 @@ import {
   Tr,
   useDisclosure,
   useToast,
-} from "@chakra-ui/react"
-import { useFormik } from "formik"
-import React, { useEffect } from "react"
-import { useState } from "react"
-import { TbCircleCheck, TbCircleMinus, TbSearch } from "react-icons/tb"
-import { axiosInstance } from "../../api"
-import Alert from "../../components/profile/Alert"
-import RejectForm from "../order/RejectForm"
-import { Link } from "react-router-dom"
-import moment from "moment"
-import { IoIosAlert } from "react-icons/io"
-import { useSelector } from "react-redux"
-import LoadingAdminOrder from "../../components/loading/LoadingAdminOrder"
-import Search from "../../components/Search"
-import Pagination from "../../components/admin/Pagination"
+} from "@chakra-ui/react";
+import { useFormik } from "formik";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { TbCircleCheck, TbCircleMinus, TbSearch } from "react-icons/tb";
+import { axiosInstance } from "../../api";
+import Alert from "../../components/profile/Alert";
+import RejectForm from "../order/RejectForm";
+import { Link } from "react-router-dom";
+import moment from "moment";
+import { IoIosAlert } from "react-icons/io";
+import { useSelector } from "react-redux";
+import LoadingAdminOrder from "../../components/loading/LoadingAdminOrder";
+import Search from "../../components/Search";
+import Pagination from "../../components/admin/Pagination";
 
 const AdminOrder = () => {
-  const [order, setOrder] = useState([])
-  const [approve, setApprove] = useState(null)
-  const [send, setSend] = useState(null)
-  const [reject, setReject] = useState(null)
-  const [cancel, setCancel] = useState(null)
-  const [deliver, setDeliver] = useState(null)
-  const [modalImage, setModalImage] = useState(null)
-  console.log(modalImage)
-  const [currentSearch, setCurrentSearch] = useState("")
-  const [totalCount, setTotalCount] = useState(0)
-  const [sortBy, setSortBy] = useState("id")
-  const [sortDir, setSortDir] = useState("ASC")
-  const [page, setPage] = useState(1)
-  const [maxPage, setMaxPage] = useState(1)
-  const [orderStatus, setOrderStatus] = useState([])
-  const [paymentStatus, setPaymentStatus] = useState([])
-  const [warehouse, setWarehouse] = useState([])
-  const [orderSort, setOrderSort] = useState(0)
-  const [paymentSort, setPaymentSort] = useState(0)
-  const [warehouseSort, setWarehouseSort] = useState(0)
-  const [paymentMethod, setPaymentMethod] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [order, setOrder] = useState([]);
+  const [approve, setApprove] = useState(null);
+  const [send, setSend] = useState(null);
+  const [reject, setReject] = useState(null);
+  const [cancel, setCancel] = useState(null);
+  const [deliver, setDeliver] = useState(null);
+  const [modalImage, setModalImage] = useState(null);
+  const [currentSearch, setCurrentSearch] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+  const [sortBy, setSortBy] = useState("id");
+  const [sortDir, setSortDir] = useState("DESC");
+  const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(1);
+  const [orderStatus, setOrderStatus] = useState([]);
+  const [paymentStatus, setPaymentStatus] = useState([]);
+  const [warehouse, setWarehouse] = useState([]);
+  const [orderSort, setOrderSort] = useState(0);
+  const [paymentSort, setPaymentSort] = useState(0);
+  const [warehouseSort, setWarehouseSort] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const authSelector = useSelector((state) => state.auth)
+  const authSelector = useSelector((state) => state.auth);
 
-  const toast = useToast()
+  const toast = useToast();
 
-  const cancelRef = React.useRef()
+  const cancelRef = React.useRef();
 
   const {
     onOpen: onOpenAlert,
     isOpen: isOpenAlert,
     onClose: onCloseAlert,
-  } = useDisclosure()
+  } = useDisclosure();
 
   const fetchOrder = async () => {
     try {
-      const maxItemsPerPage = 3
+      const maxItemsPerPage = 3;
       const response = await axiosInstance.get(
         "/adminOrder/waitingConfirmation",
         {
@@ -91,136 +90,136 @@ const AdminOrder = () => {
             _sortDir: sortDir,
           },
         }
-      )
+      );
 
-      setTotalCount(response.data.dataCount)
-      setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage))
+      setTotalCount(response.data.dataCount);
+      setMaxPage(Math.ceil(response.data.dataCount / maxItemsPerPage));
 
       if (page === 1) {
-        setOrder(response.data.data)
+        setOrder(response.data.data);
       } else {
-        setOrder(response.data.data)
+        setOrder(response.data.data);
       }
-      setIsLoading(true)
+      setIsLoading(true);
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
     }
-  }
+  };
 
   const fetchOrderStatus = async () => {
     try {
-      const response = await axiosInstance.get("/adminOrder/findOrderStatus")
-      setOrderStatus(response.data.data)
+      const response = await axiosInstance.get("/adminOrder/findOrderStatus");
+      setOrderStatus(response.data.data);
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
     }
-  }
+  };
 
   const fetchPaymentStatus = async () => {
     try {
-      const response = await axiosInstance.get("/adminOrder/findPaymentStatus")
-      setPaymentStatus(response.data.data)
+      const response = await axiosInstance.get("/adminOrder/findPaymentStatus");
+      setPaymentStatus(response.data.data);
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
     }
-  }
+  };
 
   const fetchWarehouse = async () => {
     try {
-      const response = await axiosInstance.get("/adminOrder/findWarehouse")
-      setWarehouse(response.data.data)
+      const response = await axiosInstance.get("/adminOrder/findWarehouse");
+      setWarehouse(response.data.data);
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
     }
-  }
+  };
 
   const approveBtnHandler = async () => {
     try {
       const response = await axiosInstance.patch(
         `/adminOrder/approvePayment/${approve.id}`
-      )
+      );
 
       toast({
         title: "Payment Approved",
         status: "success",
         description: response.data.message,
-      })
-      fetchOrder()
+      });
+      fetchOrder();
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       toast({
         title: "Payment Approved Failed",
         status: "error",
         description: error.response.data.message,
-      })
+      });
     }
-  }
+  };
 
   const sendOrderBtnHandler = async () => {
     try {
       const response = await axiosInstance.patch(
         `/adminOrder/sendOrder/${send.id}`
-      )
+      );
 
       toast({
         title: "Order Send",
         status: "success",
         description: response.data.message,
-      })
-      fetchOrder()
+      });
+      fetchOrder();
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       toast({
         title: "Send Order Failed",
         status: "error",
         description: error.response.data.message,
-      })
+      });
     }
-  }
+  };
 
   const cancelOrderBtnHandler = async () => {
     try {
       const response = await axiosInstance.patch(
         `/adminOrder/cancelOrder/${cancel.id}`
-      )
+      );
 
       toast({
         title: "Cancel Order",
         status: "success",
         description: response.data.message,
-      })
-      fetchOrder()
+      });
+      fetchOrder();
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       toast({
         title: "Cancel Order Failed",
         status: "error",
         description: error.response.data.message,
-      })
+      });
     }
-  }
+  };
 
   const deliverOrderBtnHandler = async () => {
     try {
       const response = await axiosInstance.patch(
         `/adminOrder/deliverOrder/${deliver.id}`
-      )
+      );
 
       toast({
         title: "Order Deliver",
         status: "success",
         description: response.data.message,
-      })
-      fetchOrder()
+      });
+      fetchOrder();
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       toast({
         title: "Deliver Order Failed",
         status: "error",
         description: error.response.data.message,
-      })
+      });
     }
-  }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -228,119 +227,119 @@ const AdminOrder = () => {
     },
     onSubmit: async ({ message }) => {
       try {
-        console.log(reject.id)
+        console.log(reject.id);
         await axiosInstance.patch(`/adminOrder/rejectPayment/${reject.id}`, {
           message,
-        })
+        });
 
-        fetchOrder()
-        setReject(null)
+        fetchOrder();
+        setReject(null);
 
         toast({
           title: "Payment Rejected",
           status: "info",
-        })
+        });
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast({
           title: "Filed Reject Payment",
           description: error.response.data.message,
           status: "error",
-        })
+        });
       }
     },
-  })
+  });
 
   const formikSearch = useFormik({
     initialValues: {
       search: "",
     },
     onSubmit: ({ search }) => {
-      setCurrentSearch(search)
-      setPage(1)
-      setIsLoading(false)
+      setCurrentSearch(search);
+      setPage(1);
+      setIsLoading(false);
     },
-  })
+  });
 
   const searchHandler = ({ target }) => {
-    const { name, value } = target
-    formikSearch.setFieldValue(name, value)
-  }
+    const { name, value } = target;
+    formikSearch.setFieldValue(name, value);
+  };
 
   const doubleOnClick = () => {
-    approveBtnHandler(approve.id)
-    setApprove(null)
-    setIsLoading(false)
-  }
+    approveBtnHandler(approve.id);
+    setApprove(null);
+    setIsLoading(false);
+  };
 
   const doubleOnClick1 = () => {
-    formik.handleSubmit()
-    onCloseAlert()
-    setIsLoading(false)
-  }
+    formik.handleSubmit();
+    onCloseAlert();
+    setIsLoading(false);
+  };
 
   const doubleOnClick2 = () => {
-    sendOrderBtnHandler(send.id)
-    setSend(null)
-    setIsLoading(false)
-  }
+    sendOrderBtnHandler(send.id);
+    setSend(null);
+    setIsLoading(false);
+  };
 
   const doubleOnClick3 = () => {
-    cancelOrderBtnHandler(cancel.id)
-    setSend(null)
-    setCancel(null)
-    setIsLoading(false)
-  }
+    cancelOrderBtnHandler(cancel.id);
+    setSend(null);
+    setCancel(null);
+    setIsLoading(false);
+  };
 
   const doubleOnClick4 = () => {
-    deliverOrderBtnHandler(deliver.id)
-    setDeliver(null)
-    setIsLoading(false)
-  }
+    deliverOrderBtnHandler(deliver.id);
+    setDeliver(null);
+    setIsLoading(false);
+  };
 
   const nextPage = () => {
-    setPage(page + 1)
-    setIsLoading(false)
-  }
+    setPage(page + 1);
+    setIsLoading(false);
+  };
 
   const previousPage = () => {
-    setPage(page - 1)
-    setIsLoading(false)
-  }
+    setPage(page - 1);
+    setIsLoading(false);
+  };
 
   const orderStatusHandler = ({ target }) => {
-    const { value } = target
-    setOrderSort(value)
-    setIsLoading(false)
-  }
+    const { value } = target;
+    setOrderSort(value);
+    setIsLoading(false);
+  };
 
   const paymentStatusHandler = ({ target }) => {
-    const { value } = target
-    setPaymentSort(value)
-    setIsLoading(false)
-  }
+    const { value } = target;
+    setPaymentSort(value);
+    setIsLoading(false);
+  };
 
   const paymentMethodHandler = ({ target }) => {
-    const { value } = target
-    setPaymentMethod(value)
-    setIsLoading(false)
-  }
+    const { value } = target;
+    setPaymentMethod(value);
+    setIsLoading(false);
+  };
 
   const warehouseHandler = ({ target }) => {
-    const { value } = target
-    setWarehouseSort(value)
-    setIsLoading(false)
-  }
+    const { value } = target;
+    setWarehouseSort(value);
+    setIsLoading(false);
+  };
 
   const sortHandler = ({ target }) => {
-    const { value } = target
-    setSortBy(value.split(" ")[0])
-    setSortDir(value.split(" ")[1])
-    setIsLoading(false)
-  }
+    const { value } = target;
+    setSortBy(value.split(" ")[0]);
+    setSortDir(value.split(" ")[1]);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    fetchOrder()
+    fetchOrder();
   }, [
     approve,
     reject,
@@ -352,13 +351,13 @@ const AdminOrder = () => {
     paymentMethod,
     orderSort,
     warehouseSort,
-  ])
+  ]);
 
   useEffect(() => {
-    fetchOrderStatus()
-    fetchPaymentStatus()
-    fetchWarehouse()
-  }, [])
+    fetchOrderStatus();
+    fetchPaymentStatus();
+    fetchWarehouse();
+  }, []);
   return (
     <Box ml="220px" p="24px" bgColor={"var(--NN50,#F0F3F7);"} height="100vh">
       <Box mb="16px">
@@ -390,7 +389,7 @@ const AdminOrder = () => {
             bgColor={"white"}
           >
             {orderStatus.map((val) => {
-              return <option value={val.id}>{val.order_status_name}</option>
+              return <option value={val.id}>{val.order_status_name}</option>;
             })}
           </Select>
 
@@ -403,7 +402,7 @@ const AdminOrder = () => {
             bgColor={"white"}
           >
             {paymentStatus.map((val) => {
-              return <option value={val.id}>{val.payment_status_name}</option>
+              return <option value={val.id}>{val.payment_status_name}</option>;
             })}
           </Select>
 
@@ -432,7 +431,7 @@ const AdminOrder = () => {
               bgColor={"white"}
             >
               {warehouse.map((val) => {
-                return <option value={val.id}>{val.warehouse_name}</option>
+                return <option value={val.id}>{val.warehouse_name}</option>;
               })}
             </Select>
           ) : null}
@@ -467,7 +466,7 @@ const AdminOrder = () => {
             bgColor={"white"}
           >
             {orderStatus.map((val) => {
-              return <option value={val.id}>{val.order_status_name}</option>
+              return <option value={val.id}>{val.order_status_name}</option>;
             })}
           </Select>
 
@@ -480,7 +479,7 @@ const AdminOrder = () => {
             bgColor={"white"}
           >
             {paymentStatus.map((val) => {
-              return <option value={val.id}>{val.payment_status_name}</option>
+              return <option value={val.id}>{val.payment_status_name}</option>;
             })}
           </Select>
 
@@ -509,7 +508,7 @@ const AdminOrder = () => {
               bgColor={"white"}
             >
               {warehouse.map((val) => {
-                return <option value={val.id}>{val.warehouse_name}</option>
+                return <option value={val.id}>{val.warehouse_name}</option>;
               })}
             </Select>
           ) : null}
@@ -672,7 +671,7 @@ const AdminOrder = () => {
                     ) : null}
                   </Td>
                 </Tr>
-              )
+              );
             })}
           {isLoading === false ? <LoadingAdminOrder /> : null}
         </Tbody>
@@ -783,7 +782,7 @@ const AdminOrder = () => {
         </ModalContent>
       </Modal>
     </Box>
-  )
-}
+  );
+};
 
-export default AdminOrder
+export default AdminOrder;
