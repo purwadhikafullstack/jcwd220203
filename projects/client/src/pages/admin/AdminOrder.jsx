@@ -84,7 +84,9 @@ const AdminOrder = () => {
             transaction_name: currentSearch,
             PaymentStatusId: paymentSort,
             OrderStatusId: orderSort,
-            WarehouseId: warehouseSort,
+            WarehouseId: authSelector.WarehouseId
+              ? authSelector.WarehouseId
+              : warehouseSort,
             payment_method: paymentMethod,
             _sortBy: sortBy,
             _sortDir: sortDir,
