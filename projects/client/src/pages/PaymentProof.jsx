@@ -178,7 +178,6 @@ const PaymentProof = () => {
     setSelectImage(null);
     setUploadImage(false);
     confirmOnClose();
-    openVerify();
   };
 
   const doubleOnClick = () => {
@@ -277,7 +276,7 @@ const PaymentProof = () => {
       openAlert();
     }
     fetchTransactionByName();
-  }, [paymentStatus]);
+  }, [transaction, paymentStatus]);
 
   return (
     <>
