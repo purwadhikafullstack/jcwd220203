@@ -63,7 +63,7 @@ const exportController = {
   },
 
   exportcsv: async (req, res) => {
-    const ws = fs.createWriteStream("../server/templates/product_stock.csv");
+    const ws = fs.createWriteStream(path.resolve(__dirname,".././templates/product_stock.csv"));
     try {
       // console.log(req.query, "hELLO");
       const findUser = await db.User.findOne({
@@ -108,7 +108,7 @@ const exportController = {
           text: "Stock Changes Report",
           attachments: [{   
             filename: 'product_stock.csv',
-            path: "../server/templates/product_stock.csv"
+            path: path.resolve(__dirname,".././templates/product_stock.csv")
         }]
         });
 
