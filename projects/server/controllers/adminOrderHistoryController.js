@@ -12,7 +12,7 @@ const Image_Url = db.Image_Url;
 
 const adminOrderHistoryController = {
   getAllOrderHistory: async (req, res) => {
-    const WarehouseId = req.query.WarehouseId[0];
+    const WarehouseId = req.query.WarehouseId;
     const {
       createdAt,
       transaction_name = "",

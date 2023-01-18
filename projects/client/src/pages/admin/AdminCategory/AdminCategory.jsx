@@ -223,7 +223,7 @@ const AdminCategory = () => {
 
   return (
     <>
-      <Box mt={"40px"} width="750px" h={"750px"} ml={"500px"}>
+      <Box mt={"40px"} width="750px" h={"750px"} ml={"35%"}>
         <Box p="" display={"flex"} justifyContent="space-between">
           <VStack>
             <Text
@@ -469,7 +469,7 @@ const AdminCategory = () => {
 
       {/* Change Page */}
       <GridItem>
-        <HStack justifyContent={"center"} mt={"50px"} mb={"50px"} mr={"150px"}>
+        <HStack justifyContent={"center"} m="50px auto">
           <Button
             bgColor={"white"}
             color={"#0095DA"}

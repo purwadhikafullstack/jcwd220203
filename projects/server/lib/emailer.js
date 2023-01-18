@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer")
 
-const emailer = async ({ to, subject, text, html }) => {
+const emailer = async ({ to, subject, text, html, attachments }) => {
   if (!to) {
     throw new Error("Emailer needs recipient email. `to` parameter is missing")
   }
@@ -18,6 +18,7 @@ const emailer = async ({ to, subject, text, html }) => {
     subject,
     text,
     html,
+    attachments,
   })
 }
 

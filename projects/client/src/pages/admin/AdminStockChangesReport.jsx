@@ -134,7 +134,7 @@ const AdminStockChangesReport = () => {
         },
       });
       toast({
-        title: "Successfully exported CSV in your Server folder",
+        title: "Successfully exported CSV in your email",
         status: "success",
       });
     } catch (error) {
@@ -224,9 +224,9 @@ const AdminStockChangesReport = () => {
               name="end"
               onChange={endTimeHandler}
               value={formikDate.values.end}
-              defaultValue="2022-12-31"
+              defaultValue="2025-12-31"
               min="2020-01-01"
-              max="2022-12-31"
+              max="2025-12-31"
             ></Input>
           </Box>
         </HStack>

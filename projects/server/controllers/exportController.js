@@ -5,8 +5,11 @@ const { Op } = require("sequelize");
 const pool = require("../config/connectionConfig");
 const fastcsv = require("fast-csv");
 const mysql = require("mysql");
-
 const fs = require("fs");
+const path = require("path");
+const handlebars = require("handlebars");
+const emailer = require("../lib/emailer");
+
 
 const exportController = {
   showAllStockData: async (req, res) => {
@@ -60,12 +63,19 @@ const exportController = {
   },
 
   exportcsv: async (req, res) => {
-    const ws = fs.createWriteStream("product_stock.csv");
+    const ws = fs.createWriteStream("../server/templates/product_stock.csv");
     try {
       // console.log(req.query, "hELLO");
+      const findUser = await db.User.findOne({
+        where: {
+          id: req.user.id
+        }
+      })
+
       const { currentTime, endTime } = req.query;
-      let sqlQuery = `SELECT SJ.*, TJ.name, TJ.type, P.product_name FROM journals AS SJ LEFT JOIN Type_journals AS TJ ON SJ.TypeJournalId = TJ.id JOIN Products AS P ON SJ.ProductId = P.id WHERE SJ.createdAt BETWEEN '${currentTime}' AND '${endTime}'`;
-      pool.query(sqlQuery, function (err, data) {
+      console.log(currentTime, endTime)
+      let sqlQuery = `SELECT SJ.*, TJ.name, TJ.type, P.product_name FROM Journals AS SJ LEFT JOIN Type_Journals AS TJ ON SJ.TypeJournalId = TJ.id JOIN Products AS P ON SJ.ProductId = P.id WHERE SJ.createdAt BETWEEN '${currentTime}' AND '${endTime}'`;
+      pool.query(sqlQuery, async function (err, data) {
         if (err) throw err;
 
         //JSON
@@ -81,6 +91,27 @@ const exportController = {
             );
           })
           .pipe(ws);
+          
+        const rawHTML = fs.readFileSync(
+          path.resolve(__dirname, ".././templates/productStockChanges.html"),
+          "utf-8"
+        );
+    
+        const compiledHTML = handlebars.compile(rawHTML);
+    
+        const htmlResult = compiledHTML({});
+    
+        const email = await emailer({
+          to: findUser.email,
+          html: htmlResult,
+          subject: "Stock Changes Report",
+          text: "Stock Changes Report",
+          attachments: [{   
+            filename: 'product_stock.csv',
+            path: "../server/templates/product_stock.csv"
+        }]
+        });
+
 
         res.send("All process is done!");
       });
